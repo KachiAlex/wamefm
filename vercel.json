@@ -2,7 +2,7 @@
   "version": 2,
   "buildCommand": "npm run build:frontend && npm run build:api",
   "outputDirectory": "frontend/dist",
-  "installCommand": "npm install && cd frontend && npm install && cd api && npm install",
+  "installCommand": "npm install && cd frontend && npm install && cd .. && cd api && npm install",
   "headers": [
     {
       "source": "/index.html",
