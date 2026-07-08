@@ -185,7 +185,7 @@ router.post('/:id/recording', authenticateToken, requireRole('broadcaster', 'adm
     if (!req.file) { res.status(400).json({ error: 'Recording file required' }); return }
     const recording_url = await new Promise<string>((resolve, reject) => {
       cloudinary.uploader.upload_stream(
-        { folder: 'sureword/broadcasts', resource_type: 'video', tags: ['broadcast_recording'] },
+        { folder: 'wamefm/broadcasts', resource_type: 'video', tags: ['broadcast_recording'] },
         (err, result) => {
           if (err || !result) reject(err || new Error('Upload failed'))
           else resolve(result.secure_url)

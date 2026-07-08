@@ -46,7 +46,7 @@ router.post('/', authenticateToken, requireRole('admin'), uploadPdf.single('pdf'
 
     const pdf_url: string = await new Promise((resolve, reject) => {
       cloudinary.uploader.upload_stream(
-        { folder: 'sureword/print-media', resource_type: 'raw', format: 'pdf', tags: ['print_media'] },
+        { folder: 'wamefm/print-media', resource_type: 'raw', format: 'pdf', tags: ['print_media'] },
         (err, result) => {
           if (err || !result) reject(err || new Error('Upload failed'))
           else resolve(result.secure_url)
@@ -81,7 +81,7 @@ router.patch('/:id', authenticateToken, requireRole('admin'), uploadPdf.single('
     if (req.file) {
       pdf_url = await new Promise((resolve, reject) => {
         cloudinary.uploader.upload_stream(
-          { folder: 'sureword/print-media', resource_type: 'raw', format: 'pdf', tags: ['print_media'] },
+          { folder: 'wamefm/print-media', resource_type: 'raw', format: 'pdf', tags: ['print_media'] },
           (err, result) => {
             if (err || !result) reject(err || new Error('Upload failed'))
             else resolve(result.secure_url)

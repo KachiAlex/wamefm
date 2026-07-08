@@ -129,7 +129,7 @@ async function sendPushNotifications(title: string, body: string, reference?: st
   // 1. Web Push
   if (vapidPublic && vapidPrivate) {
     const subs = await db.all(`SELECT endpoint, p256dh, auth FROM push_subscriptions`)
-    const payload = JSON.stringify({ title: 'SureWord Radio', body: fullBody, icon: '/logo.png', badge: '/logo.png' })
+    const payload = JSON.stringify({ title: 'Embassy Radio', body: fullBody, icon: '/logo.png', badge: '/logo.png' })
     for (const sub of subs) {
       try {
         await webpush.sendNotification(
@@ -158,7 +158,7 @@ async function sendPushNotifications(title: string, body: string, reference?: st
           },
           body: JSON.stringify({
             to: row.token,
-            notification: { title: 'SureWord Radio', body: fullBody },
+            notification: { title: 'Embassy Radio', body: fullBody },
             data: { type: 'daily_verse', title, body, reference }
           })
         })

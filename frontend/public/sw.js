@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sureword-v1'
+const CACHE_NAME = 'wamefm-v1'
 const STATIC_ASSETS = ['/', '/index.html']
 
 self.addEventListener('install', (event) => {
@@ -82,7 +82,7 @@ self.addEventListener('fetch', (event) => {
 
 // ── Push Notifications ─────────────────────────────────────────
 self.addEventListener('push', (event) => {
-  let data = { title: 'SureWord Radio', body: 'New update from Sure Word Media', url: '/' }
+  let data = { title: 'Embassy Radio', body: 'New update from Word and Miracle Embassy Church', url: '/' }
   try {
     if (event.data) data = { ...data, ...event.data.json() }
   } catch {}
@@ -92,7 +92,7 @@ self.addEventListener('push', (event) => {
       body: data.body,
       icon: '/logo.png',
       badge: '/logo.png',
-      tag: 'sureword-push',
+      tag: 'wamefm-push',
       renotify: true,
       data: { url: data.url || '/' },
       actions: [

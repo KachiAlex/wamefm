@@ -40,7 +40,7 @@ router.post('/image', authenticateToken, requireRole('broadcaster', 'admin'), up
     if (!req.file) { res.status(400).json({ error: 'Image file required' }); return }
 
     if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
-      const url = await uploadStream(req.file.buffer, 'sureword/uploads', 'image')
+      const url = await uploadStream(req.file.buffer, 'wamefm/uploads', 'image')
       res.json({ url })
     } else {
       const base64 = req.file.buffer.toString('base64')
@@ -58,7 +58,7 @@ router.post('/audio', authenticateToken, requireRole('admin'), uploadAudio.singl
     if (!req.file) { res.status(400).json({ error: 'Audio file required' }); return }
 
     if (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET) {
-      const url = await uploadStream(req.file.buffer, 'sureword/audio', 'video')
+      const url = await uploadStream(req.file.buffer, 'wamefm/audio', 'video')
       res.json({ url })
     } else {
       const base64 = req.file.buffer.toString('base64')

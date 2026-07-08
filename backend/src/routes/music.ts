@@ -47,7 +47,7 @@ router.get('/signature', authenticateToken, requireRole('admin'), (req, res) => 
   if (!cloudName || !apiKey || !apiSecret) {
     res.status(500).json({ error: 'Cloudinary not configured' }); return
   }
-  const folder = (req.query.folder as string) || 'sureword/uploads'
+  const folder = (req.query.folder as string) || 'wamefm/uploads'
   const timestamp = Math.round(Date.now() / 1000)
   const signature = crypto
     .createHash('sha1')
@@ -77,13 +77,13 @@ router.post('/', authenticateToken, requireRole('admin'),
         const f = files.audio[0]
         file_format = f.mimetype
         file_size = f.size
-        audio_url = await uploadStream(f.buffer, 'sureword/music/audio', 'video')
+        audio_url = await uploadStream(f.buffer, 'wamefm/music/audio', 'video')
       }
       if (!audio_url) { res.status(400).json({ error: 'Audio file or URL required' }); return }
 
       let finalCover: string = cover_url || req.body.cover_url || ''
       if (files?.cover?.[0]) {
-        finalCover = await uploadStream(files.cover[0].buffer, 'sureword/music/covers', 'image')
+        finalCover = await uploadStream(files.cover[0].buffer, 'wamefm/music/covers', 'image')
       }
 
       const id = uuidv4()

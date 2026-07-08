@@ -1,8 +1,8 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'org.sureword.radio',
-  appName: 'SureWord Radio',
+  appId: 'org.wamefm.radio',
+  appName: 'Embassy Radio',
   webDir: 'dist',
   server: {
     androidScheme: 'https',

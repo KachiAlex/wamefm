@@ -343,7 +343,7 @@ async function _doInitDb() {
   if (!admin) {
     const hash = await bcrypt.hash('admin123', 10)
     await dbQuery(`INSERT INTO users (id, email, password_hash, name, role) VALUES ($1,$2,$3,$4,$5)`,
-      ['admin-1', 'admin@surewordradio.org', hash, 'Admin User', 'admin'])
+      ['admin-1', 'admin@wamefm.com', hash, 'Admin User', 'admin'])
   }
 }
 
@@ -396,7 +396,7 @@ function configureVapid() {
   if (_vapidConfigured) return
   const vapidPublic = process.env.VAPID_PUBLIC_KEY || 'BEl62iUYgUivxIkv69yViEuiBIa-Ib9-SkvMeAtA3LFgDzkrxZJjSgSnfckjBJuBkr3qBUYIHBQFLXYp5Nksh8U'
   const vapidPrivate = process.env.VAPID_PRIVATE_KEY || ''
-  const vapidSubject = process.env.VAPID_SUBJECT || 'mailto:admin@surewordradio.org'
+  const vapidSubject = process.env.VAPID_SUBJECT || 'mailto:admin@wamefm.com'
   if (vapidPrivate) {
     webpush.setVapidDetails(vapidSubject, vapidPublic, vapidPrivate)
     _vapidConfigured = true
@@ -446,7 +446,7 @@ async function sendEmailNotifications(subject: string, body: string, _url: strin
   let sent = 0, failed = 0
   for (const user of users) {
     try {
-      await transporter.sendMail({ from, to: user.email, subject, text: body + '\n\nVisit SUREWORD RADIO: https://www.surewordradio.org' + _url })
+      await transporter.sendMail({ from, to: user.email, subject, text: body + '\n\nVisit EMBASSY RADIO: https://wamefm.vercel.app' + _url })
       sent++
     } catch { failed++ }
   }
@@ -607,7 +607,7 @@ app.patch('/broadcasts/:id/start', auth, requireRole('admin', 'broadcaster'), as
     await dbQuery("UPDATE broadcasts SET status='live', started_at=NOW() WHERE id=$1", [req.params.id])
     res.json({ success: true })
     // Notify subscribers asynchronously
-    broadcastNotification('broadcast_live', broadcast?.title || 'Live Broadcast', 'A broadcast is now live on SUREWORD RADIO', `/live/${req.params.id}`).catch(() => {})
+    broadcastNotification('broadcast_live', broadcast?.title || 'Live Broadcast', 'A broadcast is now live on EMBASSY RADIO', `/live/${req.params.id}`).catch(() => {})
   } catch (e: any) { res.status(500).json({ error: e.message }) }
 })
 
@@ -730,7 +730,7 @@ app.post('/sermons', auth, requireRole('admin'), async (req: AuthReq, res) => {
       [id, title, description || null, scripture_reference || null, speaker || null, series || null,
        audio_url || null, video_url || null, thumbnail_url || null, sermonDate, duration || 0])
     res.status(201).json({ sermon: { id, title, description, scripture_reference, speaker, series, audio_url, video_url, thumbnail_url, date: sermonDate, duration } })
-    broadcastNotification('sermon', 'New Sermon Available', `${title} by ${speaker || 'SUREWORD RADIO'}`, `/sermons/${id}`).catch(() => {})
+    broadcastNotification('sermon', 'New Sermon Available', `${title} by ${speaker || 'EMBASSY RADIO'}`, `/sermons/${id}`).catch(() => {})
   } catch (e: any) { res.status(500).json({ error: e.message }) }
 })
 
@@ -858,7 +858,7 @@ app.get('/music/signature', auth, requireRole('admin'), (req: AuthReq, res) => {
     res.status(500).json({ error: 'Cloudinary not configured' })
     return
   }
-  const folder = (req.query.folder as string) || 'sureword/uploads'
+  const folder = (req.query.folder as string) || 'wamefm/uploads'
   const timestamp = Math.round(Date.now() / 1000)
   const signature = generateCloudinarySignature(folder, timestamp)
   if (!signature) {
@@ -894,28 +894,28 @@ app.post('/music', auth, requireRole('admin'), upload.fields([{ name: 'audio', m
       const audioFile = files.audio[0]
       file_format = audioFile.mimetype
       file_size = audioFile.size
-      audio_url = await uploadToCloudinary(audioFile.buffer, 'sureword/music/audio', 'video')
+      audio_url = await uploadToCloudinary(audioFile.buffer, 'wamefm/music/audio', 'video')
     }
     if (!audio_url) { res.status(400).json({ error: 'Audio file or URL required' }); return }
 
     let finalCoverUrl = cover_url || req.body.cover_url || ''
     if (files?.cover && files.cover[0]) {
       const coverFile = files.cover[0]
-      finalCoverUrl = await uploadToCloudinary(coverFile.buffer, 'sureword/music/covers', 'image')
+      finalCoverUrl = await uploadToCloudinary(coverFile.buffer, 'wamefm/music/covers', 'image')
     }
 
     const id = uuidv4()
     await dbQuery(`INSERT INTO music (id, title, artist, album, genre, audio_url, cover_url, duration, lyrics, file_format, file_size) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)`,
       [id, title, artist || '', album || '', genre || '', audio_url, finalCoverUrl || '', parseInt(duration) || 0, lyrics || '', file_format, file_size])
     res.status(201).json({ id, title })
-    broadcastNotification('music', 'New Music on SUREWORD RADIO', `${title} by ${artist || 'SUREWORD RADIO'}`, `/music`).catch(() => {})
+    broadcastNotification('music', 'New Music on EMBASSY RADIO', `${title} by ${artist || 'EMBASSY RADIO'}`, `/music`).catch(() => {})
   } catch (e: any) { res.status(500).json({ error: e.message || 'Upload failed' }) }
 })
 
 app.post('/uploads/image', auth, requireRole('admin'), uploadImage.single('image'), async (req: AuthReq, res) => {
   try {
     if (!req.file) { res.status(400).json({ error: 'Image file required' }); return }
-    const image_url = await uploadToCloudinary(req.file.buffer, 'sureword/uploads', 'image')
+    const image_url = await uploadToCloudinary(req.file.buffer, 'wamefm/uploads', 'image')
     res.json({ image_url })
   } catch (e: any) { res.status(500).json({ error: e.message }) }
 })
@@ -923,7 +923,7 @@ app.post('/uploads/image', auth, requireRole('admin'), uploadImage.single('image
 app.post('/uploads/audio', auth, requireRole('admin'), upload.single('audio'), async (req: AuthReq, res) => {
   try {
     if (!req.file) { res.status(400).json({ error: 'Audio file required' }); return }
-    const audio_url = await uploadToCloudinary(req.file.buffer, 'sureword/audio', 'video')
+    const audio_url = await uploadToCloudinary(req.file.buffer, 'wamefm/audio', 'video')
     res.json({ audio_url })
   } catch (e: any) { res.status(500).json({ error: e.message }) }
 })
@@ -934,7 +934,7 @@ app.post('/broadcasts/:id/recording', auth, requireRole('admin', 'broadcaster'),
     await initDb()
     const recording_url = await new Promise<string>((resolve, reject) => {
       cloudinary.uploader.upload_stream(
-        { folder: 'sureword/broadcasts', resource_type: 'video', tags: ['broadcast_recording'] },
+        { folder: 'wamefm/broadcasts', resource_type: 'video', tags: ['broadcast_recording'] },
         (err, result) => {
           if (err || !result) reject(err || new Error('Upload failed'))
           else resolve(result.secure_url)
