@@ -3,15 +3,15 @@ import { v4 as uuidv4 } from 'uuid'
 import type { DbClient } from '../db.js'
 
 export async function up(db: DbClient) {
-  const existing = await db.get('SELECT id FROM users WHERE email = $1', ['admin@sureword.com'])
+  const existing = await db.get('SELECT id FROM users WHERE email = $1', ['admin@wamefm.com'])
   if (!existing) {
     const hash = await bcrypt.hash('admin123', 10)
     await db.run(
       'INSERT INTO users (id, email, password_hash, name, role) VALUES ($1, $2, $3, $4, $5)',
-      [uuidv4(), 'admin@sureword.com', hash, 'Admin User', 'admin']
+      [uuidv4(), 'admin@wamefm.com', hash, 'Admin User', 'admin']
     )
-    console.log('[MIGRATION] Admin account created: admin@sureword.com')
+    console.log('[MIGRATION] Admin account created: admin@wamefm.com')
   } else {
-    console.log('[MIGRATION] Admin account already exists: admin@sureword.com')
+    console.log('[MIGRATION] Admin account already exists: admin@wamefm.com')
   }
 }

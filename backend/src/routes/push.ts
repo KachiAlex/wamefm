@@ -9,7 +9,7 @@ const router = Router()
 // Configure web-push VAPID keys from env
 const vapidPublic = process.env.VAPID_PUBLIC_KEY || ''
 const vapidPrivate = process.env.VAPID_PRIVATE_KEY || ''
-const vapidSubject = process.env.VAPID_SUBJECT || 'mailto:admin@surewordradio.org'
+const vapidSubject = process.env.VAPID_SUBJECT || 'mailto:admin@wamefm.com'
 if (vapidPublic && vapidPrivate) {
   webpush.setVapidDetails(vapidSubject, vapidPublic, vapidPrivate)
 }
