@@ -21,6 +21,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/:path*",
+      "destination": "/api/index"
+    },
+    {
       "source": "/sw.js",
       "destination": "/sw.js"
     },
