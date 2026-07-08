@@ -1132,7 +1132,7 @@ app.get('/relay/:broadcastId/stream', async (req, res) => {
     res.setHeader('Connection', 'keep-alive')
 
     // Start near live
-    const latestRow = await dbGet<{ chunk_index: number }>(
+    const latestRow = await dbGet(
       'SELECT chunk_index FROM stream_chunks WHERE broadcast_id = $1 ORDER BY chunk_index DESC LIMIT 1',
       [broadcastId]
     )
@@ -1148,7 +1148,7 @@ app.get('/relay/:broadcastId/stream', async (req, res) => {
           res.end()
           return
         }
-        const rows = await dbQuery<{ chunk_index: number; chunk_data: string }>(
+        const rows = await dbQuery(
           'SELECT chunk_index, chunk_data FROM stream_chunks WHERE broadcast_id = $1 AND chunk_index >= $2 ORDER BY chunk_index ASC LIMIT 30',
           [broadcastId, nextIndex]
         )
@@ -1709,7 +1709,7 @@ app.post('/spiritual-health', auth, requireRole('admin'), async (req: AuthReq, r
     const id = uuidv4()
     await dbQuery('INSERT INTO spiritual_health (id, scripture, message, created_by) VALUES ($1,$2,$3,$4)', [id, scripture.trim(), message || null, req.user!.id])
     const result = await broadcastNotification('spiritual_health', 'Spiritual Health Monitor', `${scripture.trim()} — ${message || 'Daily scripture for you'}`, '/')
-    res.json({ ok: true, id, ...result })
+    res.json({ ok: true, ...result })
   } catch (e: any) { res.status(500).json({ error: e.message }) }
 })
 
@@ -1775,7 +1775,7 @@ app.post('/print-media', auth, requireRole('admin'), uploadPdf.single('pdf'), as
     if (!title) { res.status(400).json({ error: 'Title is required' }); return }
     let pdf_url = req.body.pdf_url || ''
     if (req.file) {
-      pdf_url = await uploadToCloudinary(req.file.buffer, 'sureword/print', 'raw')
+      pdf_url = await uploadToCloudinary(req.file.buffer, 'wamefm/print', 'auto')
     }
     if (!pdf_url) { res.status(400).json({ error: 'PDF file or URL is required' }); return }
     const id = uuidv4()
