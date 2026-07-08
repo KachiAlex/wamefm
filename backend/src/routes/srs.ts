@@ -35,7 +35,7 @@ router.post('/streams', authenticateToken, requireRole('broadcaster', 'admin'), 
       [streamKey, broadcastId]
     )
 
-    const rtmpUrl = `rtmp://${process.env.SRS_HOST || 'sureword.fly.dev'}:1935/live/${streamKey}`
+    const rtmpUrl = `rtmp://${process.env.SRS_HOST || 'wamefm.vercel.app'}:1935/live/${streamKey}`
     const hlsUrl = `/hls/live/${streamKey}.m3u8`
 
     res.json({

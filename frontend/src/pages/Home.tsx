@@ -641,7 +641,7 @@ export default function Home() {
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <button className="btn btn-flame">Get notifications</button>
-            <button className="btn btn-ghost">Visit embassyradio.org</button>
+            <button className="btn btn-ghost">Visit wamefm.vercel.app</button>
           </div>
         </div>
       </div>

@@ -4,8 +4,8 @@
     '@type': 'Organization',
     name: 'Embassy Radio',
     alternateName: 'Word and Miracle Embassy Church',
-    url: 'https://embassyradio.org',
-    logo: 'https://embassyradio.org/logo.png',
+    url: 'https://wamefm.vercel.app',
+    logo: 'https://wamefm.vercel.app/logo.png',
     description: 'The official digital radio ministry of Word and Miracle Embassy Church.',
     sameAs: [
       'https://facebook.com/embassyradio',
@@ -18,10 +18,10 @@
     '@context': 'https://schema.org',
     '@type': 'WebSite',
     name: 'Embassy Radio',
-    url: 'https://embassyradio.org',
+    url: 'https://wamefm.vercel.app',
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://embassyradio.org/search?q={search_term_string}',
+      target: 'https://wamefm.vercel.app/search?q={search_term_string}',
       'query-input': 'required name=search_term_string',
     },
   }
