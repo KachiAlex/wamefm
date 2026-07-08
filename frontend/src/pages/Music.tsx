@@ -101,8 +101,8 @@ export default function MusicPage() {
       await downloadWithTags({
         audioUrl: track.audio_url,
         title: track.title,
-        artist: track.artist || 'SUREWORD RADIO',
-        album: track.album || 'SUREWORD RADIO Music',
+        artist: track.artist || 'Embassy Radio',
+        album: track.album || 'Embassy Radio Music',
         genre: track.genre || 'Gospel',
         coverUrl: track.cover_url,
         filename: `${track.title}.mp3`
@@ -116,7 +116,7 @@ export default function MusicPage() {
     const shareUrl = `${window.location.origin}/music?track=${track.id}`
     const shareData = {
       title: track.title,
-      text: `Listen to "${track.title}" by ${track.artist || 'Unknown artist'} on SUREWORD RADIO`,
+      text: `Listen to "${track.title}" by ${track.artist || 'Unknown artist'} on Embassy Radio`,
       url: shareUrl
     }
     try {

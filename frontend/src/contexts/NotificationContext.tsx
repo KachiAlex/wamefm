@@ -211,7 +211,7 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
       const cred = await navigator.credentials.create({
         publicKey: {
           challenge,
-          rp: { name: 'SUREWORD RADIO', id: window.location.hostname },
+          rp: { name: 'Embassy Radio', id: window.location.hostname },
           user: { id: userId, name: user.email, displayName: user.name || user.email },
           pubKeyCredParams: [{ alg: -7, type: 'public-key' }, { alg: -257, type: 'public-key' }],
           authenticatorSelection: { authenticatorAttachment: 'platform', userVerification: 'required' },

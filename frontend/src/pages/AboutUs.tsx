@@ -11,9 +11,9 @@ export default function AboutUs() {
           <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: 'var(--gold)' }}>
             <Cross className="w-8 h-8" style={{ color: '#1b1208' }} />
           </div>
-          <h1 className="text-3xl font-bold" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}>About SUREWORD RADIO</h1>
+          <h1 className="text-3xl font-bold" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}>About Embassy Radio</h1>
           <p className="mt-2 max-w-xl mx-auto" style={{ color: 'var(--dim)' }}>
-            The official digital radio ministry of Sure Word Media.
+            The official digital radio ministry of Word and Miracle Embassy Church.
           </p>
         </div>
 
@@ -21,12 +21,12 @@ export default function AboutUs() {
         <div className="mb-12 p-8 rounded-2xl" style={{ background: 'var(--ink-2)', border: '1px solid var(--line)' }}>
           <h2 className="text-xl font-semibold mb-4" style={{ fontFamily: 'Cormorant Garamond, Georgia, serif' }}>Our Mission</h2>
           <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--dim)' }}>
-            SUREWORD RADIO exists to broadcast the Gospel of Jesus Christ to the nations through powerful sermons, 
+            Embassy Radio exists to broadcast the Gospel of Jesus Christ to the nations through powerful sermons, 
             worship, prayer, and life-transforming conversations. We believe in the power of media to reach 
             every heart, every home, and every community with the message of redemption.
           </p>
           <p className="text-sm leading-relaxed" style={{ color: 'var(--dim)' }}>
-            As the digital radio ministry of Sure Word Media, we are committed to equipping believers, 
+            As the digital radio ministry of Word and Miracle Embassy Church, we are committed to equipping believers, 
             reaching the lost, and building a community of faith that spans across borders and cultures.
           </p>
         </div>
@@ -77,7 +77,7 @@ export default function AboutUs() {
           <p className="text-sm mb-4" style={{ color: 'var(--dim)' }}>
             Have questions, feedback, or partnership inquiries? We would love to hear from you.
           </p>
-          <a href="mailto:info@surewordradio.org" className="btn-gold text-sm">Contact Us</a>
+          <a href="mailto:info@embassyradio.org" className="btn-gold text-sm">Contact Us</a>
         </div>
       </div>
     </div>

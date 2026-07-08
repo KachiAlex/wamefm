@@ -20,7 +20,7 @@ interface FavoritesContextType {
   count: number
 }
 
-const STORAGE_KEY = 'sureword:favorites'
+const STORAGE_KEY = 'embassy:favorites'
 
 function loadFromStorage(): FavoritesState {
   try {

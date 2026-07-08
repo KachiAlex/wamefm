@@ -305,7 +305,7 @@ export default function AdminDashboard() {
           <line x1="13.5" y1="13.5" x2="18.5" y2="13.5" stroke="#fff" strokeWidth=".7" opacity=".45" />
         </svg>
         <div>
-          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, letterSpacing: '.08em', lineHeight: 1 }}>Sure Word Radio</div>
+          <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 16, letterSpacing: '.08em', lineHeight: 1 }}>Embassy Radio</div>
           <div style={{ fontSize: 10, color: 'var(--ash2)', letterSpacing: '.1em', textTransform: 'uppercase' }}>Admin Console</div>
         </div>
         <button onClick={() => setMobileSidebarOpen(false)} className="lg:hidden ml-auto" style={{ color: 'var(--ash)' }}><X className="w-5 h-5" /></button>

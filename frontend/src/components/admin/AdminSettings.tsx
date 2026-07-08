@@ -274,7 +274,7 @@ export default function AdminSettings() {
         <div className="space-y-2 text-sm">
           <div className="flex items-center gap-2 text-[#9a7c60]">
             <Mail className="w-4 h-4 text-[#E05A1A]" />
-            <span>info@surewordradio.org</span>
+            <span>info@embassyradio.org</span>
           </div>
           <p className="text-xs text-[#9a7c60]">All newsletter subscriptions and contact enquiries route to this address.</p>
         </div>

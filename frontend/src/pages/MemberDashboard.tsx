@@ -54,7 +54,7 @@ function Sidebar({ activePath, activeSection, onSection, mobileOpen, onClose }: 
               <Cross className="w-5 h-5 text-[#E05A1A]" />
             </div>
             <div>
-              <p className="text-sm font-semibold text-white">SUREWORD RADIO</p>
+              <p className="text-sm font-semibold text-white">Embassy Radio</p>
               <p className="text-[10px] text-[#9a7c60]">The Whole Word to the Whole World</p>
             </div>
           </div>
@@ -89,7 +89,7 @@ function Sidebar({ activePath, activeSection, onSection, mobileOpen, onClose }: 
           })}
         </nav>
         <div className="mt-5 rounded-xl p-4 bg-gradient-to-br from-[#2f1206] to-[#230d02] border border-[rgba(240,190,100,0.08)]">
-          <p className="text-[10px] text-[#9a7c60] mb-2">Download SUREWORD RADIO App</p>
+          <p className="text-[10px] text-[#9a7c60] mb-2">Download Embassy Radio App</p>
           <p className="text-[10px] text-[#9a7c60] mb-3">Take the presence of God with you everywhere.</p>
           <button className="w-full rounded-lg bg-[#E05A1A] text-[#1b1208] text-[10px] font-medium py-1.5 flex items-center justify-center gap-1">
             <Smartphone className="w-3 h-3" /> Get App
@@ -135,7 +135,7 @@ function LivePlayerHero({ broadcast, isPlaying, setIsPlaying, isMuted, setIsMute
                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> LIVE ON AIR
                   </span>
                 )}
-                <span className="text-[10px] text-[#9a7c60] uppercase tracking-wider">SUREWORD RADIO Live Radio</span>
+                <span className="text-[10px] text-[#9a7c60] uppercase tracking-wider">Embassy Radio Live Radio</span>
               </div>
               <h2 className="font-serif text-lg md:text-xl font-medium text-white">{broadcast?.title || 'No broadcast currently live'}</h2>
               {broadcast?.description && <p className="text-xs text-[#9a7c60] mt-0.5">{broadcast.description}</p>}
@@ -718,7 +718,7 @@ export default function MemberDashboard() {
           <div className="mt-8 py-4 border-t border-[rgba(240,190,100,0.08)] flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
             <div className="flex items-center gap-2">
               <Cross className="w-4 h-4 text-[#E05A1A]" />
-              <span className="text-xs text-[#9a7c60]">SUREWORD RADIO � <span className="text-[10px] uppercase tracking-wider">The Whole Word to the Whole World</span></span>
+              <span className="text-xs text-[#9a7c60]">Embassy Radio — <span className="text-[10px] uppercase tracking-wider">Word and Miracle Embassy Church</span></span>
             </div>
             <p className="text-[10px] text-[#9a7c60] italic">&ldquo;Go into all the world and preach the gospel to all creation.&rdquo; � Mark 16:15</p>
           </div>

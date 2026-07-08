@@ -69,7 +69,7 @@ export default function Donate() {
           </div>
           <h1 className="text-2xl sm:text-3xl font-semibold text-white mb-2 tracking-tight">Give & Support</h1>
           <p className="text-sm sm:text-base" style={{ color: 'var(--dim)' }}>
-            Your partnership helps us spread the Gospel, support outreach, and keep SUREWORD RADIO reaching lives.
+            Your partnership helps us spread the Gospel, support outreach, and keep Embassy Radio reaching lives.
           </p>
         </div>
 
@@ -114,7 +114,7 @@ export default function Donate() {
             <h2 className="text-lg font-medium text-white">Bank Transfer Details</h2>
           </div>
           <div className="space-y-3 mb-5">
-            <DetailRow icon={Building2} label="Account Name" value="Sure Word Media Ministries" />
+            <DetailRow icon={Building2} label="Account Name" value="Word and Miracle Embassy Church" />
             <DetailRow icon={Hash} label="Account Number" value="1312546374" copyable />
             <DetailRow icon={Landmark} label="Bank" value="Zenith Bank" />
           </div>

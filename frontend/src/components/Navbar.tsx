@@ -10,7 +10,7 @@ function LogoImg({ size = 40 }: { size?: number }) {
   return (
     <img
       src="/logo.png"
-      alt="Sure Word Radio"
+      alt="Embassy Radio"
       width={size}
       height={size}
       style={{ borderRadius: '50%', objectFit: 'cover' }}
@@ -57,8 +57,8 @@ export default function Navbar() {
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
           <LogoImg size={38} />
           <div style={{ lineHeight: 1 }} className="hidden sm:block">
-            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, letterSpacing: '.06em', color: 'var(--white)' }}>Sure Word Radio</div>
-            <div style={{ fontSize: 10, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--ash)' }}>surewordradio.org</div>
+            <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, letterSpacing: '.06em', color: 'var(--white)' }}>Embassy Radio</div>
+            <div style={{ fontSize: 10, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--ash)' }}>embassyradio.org</div>
           </div>
         </Link>
 

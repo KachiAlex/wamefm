@@ -101,8 +101,8 @@ export default function SermonDetail() {
       await downloadWithTags({
         audioUrl: sermon.audio_url,
         title: sermon.title,
-        artist: sermon.speaker || 'SUREWORD RADIO',
-        album: sermon.series || 'SUREWORD RADIO Sermons',
+        artist: sermon.speaker || 'Embassy Radio',
+        album: sermon.series || 'Embassy Radio Sermons',
         genre: 'Sermon',
         coverUrl: sermon.thumbnail_url,
         comment: sermon.scripture_reference,
@@ -118,7 +118,7 @@ export default function SermonDetail() {
     const shareUrl = `${window.location.origin}/sermons/${sermon.id}`
     try {
       if (navigator.share) {
-        await navigator.share({ title: sermon.title, text: `Listen to "${sermon.title}" on SUREWORD RADIO`, url: shareUrl })
+        await navigator.share({ title: sermon.title, text: `Listen to "${sermon.title}" on Embassy Radio`, url: shareUrl })
       } else {
         await navigator.clipboard.writeText(shareUrl)
         showToast('Link copied to clipboard!', 'success')

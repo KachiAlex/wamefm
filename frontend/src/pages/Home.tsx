@@ -17,7 +17,7 @@ function SignalLogo({ size = 100 }: { size?: number }) {
   return (
     <img
       src="/logo.png"
-      alt="Sure Word Radio"
+      alt="Embassy Radio"
       width={size}
       height={size}
       style={{ borderRadius: '50%', objectFit: 'cover' }}
@@ -194,7 +194,7 @@ export default function Home() {
           fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(120px,20vw,280px)',
           letterSpacing: '.06em', whiteSpace: 'nowrap', color: 'var(--flame)', opacity: .04,
           pointerEvents: 'none', zIndex: 0, userSelect: 'none', lineHeight: 1
-        }}>SURE WORD</div>
+        }}>EMBASSY</div>
 
         {/* Diagonal accent band */}
         <div style={{
@@ -399,7 +399,7 @@ export default function Home() {
           <div className="eyebrow">Today on air</div>
           <h2 className="font-bebas" style={{ fontSize: 'clamp(34px,4vw,52px)', margin: '8px 0 6px' }}>Program Schedule</h2>
           <p style={{ color: 'var(--ash2)', fontSize: 15.5, maxWidth: 540, lineHeight: 1.6 }}>
-            What's broadcasting on Sure Word Radio today. Tune in or find it in the archive after.
+            What's broadcasting on Embassy Radio today. Tune in or find it in the archive after.
           </p>
         </div>
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 16 }}>
@@ -641,7 +641,7 @@ export default function Home() {
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <button className="btn btn-flame">Get notifications</button>
-            <button className="btn btn-ghost">Visit surewordradio.org</button>
+            <button className="btn btn-ghost">Visit embassyradio.org</button>
           </div>
         </div>
       </div>
@@ -649,7 +649,7 @@ export default function Home() {
       {/* ══ FOOTER ══ */}
       <footer style={{ borderTop: '1px solid var(--line)', padding: '40px 24px', maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
         <div>
-          <div className="font-bebas" style={{ fontSize: 18, letterSpacing: '.06em' }}>Sure Word Radio</div>
+          <div className="font-bebas" style={{ fontSize: 18, letterSpacing: '.06em' }}>Embassy Radio</div>
           <div style={{ fontSize: 11, color: 'var(--ash)' }}>The whole word to the whole world</div>
         </div>
         <div style={{ display: 'flex', gap: 20, fontSize: 13, color: 'var(--ash)' }}>
@@ -659,7 +659,7 @@ export default function Home() {
           <Link to="/donate" style={{ transition: 'color .15s' }} className="hover:!text-[var(--sunrise)]">Give</Link>
           <Link to="/about" style={{ transition: 'color .15s' }} className="hover:!text-[var(--sunrise)]">Contact</Link>
         </div>
-        <div className="font-mono" style={{ fontSize: 12, color: 'var(--ash)' }}>© 2026 Sure Word Media</div>
+        <div className="font-mono" style={{ fontSize: 12, color: 'var(--ash)' }}>© 2026 Word and Miracle Embassy Church</div>
       </footer>
 
       {/* Responsive overrides */}

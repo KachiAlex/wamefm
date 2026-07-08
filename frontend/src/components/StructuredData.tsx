@@ -2,26 +2,26 @@
   const org = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'SureWord Radio',
-    alternateName: 'The Whole Word to the Whole World',
-    url: 'https://surewordradio.org',
-    logo: 'https://surewordradio.org/logo.png',
-    description: 'The official digital radio ministry of Sure Word Media.',
+    name: 'Embassy Radio',
+    alternateName: 'Word and Miracle Embassy Church',
+    url: 'https://embassyradio.org',
+    logo: 'https://embassyradio.org/logo.png',
+    description: 'The official digital radio ministry of Word and Miracle Embassy Church.',
     sameAs: [
-      'https://facebook.com/surewordradio',
-      'https://instagram.com/surewordradio',
-      'https://youtube.com/surewordradio',
-      'https://twitter.com/surewordradio',
+      'https://facebook.com/embassyradio',
+      'https://instagram.com/embassyradio',
+      'https://youtube.com/embassyradio',
+      'https://twitter.com/embassyradio',
     ],
   }
   const website = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'SureWord Radio',
-    url: 'https://surewordradio.org',
+    name: 'Embassy Radio',
+    url: 'https://embassyradio.org',
     potentialAction: {
       '@type': 'SearchAction',
-      target: 'https://surewordradio.org/search?q={search_term_string}',
+      target: 'https://embassyradio.org/search?q={search_term_string}',
       'query-input': 'required name=search_term_string',
     },
   }

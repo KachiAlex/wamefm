@@ -100,7 +100,7 @@ function StreamPlayer({ broadcastId, title, thumbnailUrl, streamKey, streamType 
       ? [{ src: thumbnailUrl, sizes: '512x512', type: 'image/jpeg' }]
       : [{ src: '/icon-512.png', sizes: '512x512', type: 'image/png' }]
     navigator.mediaSession.metadata = new MediaMetadata({
-      title: broadcastTitle, artist: 'SUREWORD RADIO', album: 'The Whole Word to the Whole World', artwork
+      title: broadcastTitle, artist: 'Embassy Radio', album: 'Word and Miracle Embassy Church', artwork
     })
     navigator.mediaSession.setActionHandler('play', () => mediaRef.current?.play().catch(() => {}))
     navigator.mediaSession.setActionHandler('pause', () => mediaRef.current?.pause())

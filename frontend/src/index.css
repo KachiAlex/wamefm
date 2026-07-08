@@ -10,24 +10,24 @@
   }
 
   :root {
-    /* ── New Sure Word Radio Palette ── */
-    --ember:   #0f0400;
-    --coal:    #1c0901;
-    --mahog:   #2b1005;
-    --panel:   #361408;
-    --panel2:  #421a0a;
-    --line:    rgba(245, 166, 35, .10);
-    --line2:   rgba(245, 166, 35, .18);
-    --cream:   #fff0d4;
-    --cream2:  #e8cfa0;
-    --ash:     #8a6e52;
-    --ash2:    #b08c6a;
-    --flame:   #E05A1A;
-    --flame2:  #c94c10;
-    --flame3:  #ff6b2b;
-    --sunrise: #F5A623;
-    --sun2:    #f0c040;
-    --white:   #fff8ee;
+    /* ── Embassy Radio Palette - Dark Purple with White ── */
+    --ember:   #1a0a2e;
+    --coal:    #2d1b4e;
+    --mahog:   #3d2a5c;
+    --panel:   #4a3570;
+    --panel2:  #5c4a85;
+    --line:    rgba(147, 112, 219, .15);
+    --line2:   rgba(147, 112, 219, .25);
+    --cream:   #ffffff;
+    --cream2:  #e8e0f0;
+    --ash:     #a890c0;
+    --ash2:    #c4b0d8;
+    --flame:   #9b59b6;
+    --flame2:  #8e44ad;
+    --flame3:  #bb77dd;
+    --sunrise: #d4a5e0;
+    --sun2:    #e0c0f0;
+    --white:   #ffffff;
 
     /* legacy aliases for existing component reuse */
     --ink: var(--ember);
