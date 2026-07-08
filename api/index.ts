@@ -103,6 +103,7 @@ let _dbInit = false
 let _dbInitPromise: Promise<void> | null = null
 async function _doInitDb() {
   if (!sql) return
+  // Create tables with all columns upfront to avoid ALTER statements
   await dbQuery(`CREATE TABLE IF NOT EXISTS users (
     id TEXT PRIMARY KEY, email TEXT UNIQUE NOT NULL, password_hash TEXT NOT NULL,
     name TEXT NOT NULL, role TEXT NOT NULL DEFAULT 'listener', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -111,7 +112,8 @@ async function _doInitDb() {
     id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT, scripture_reference TEXT,
     status TEXT NOT NULL DEFAULT 'scheduled', started_at TIMESTAMP, ended_at TIMESTAMP,
     broadcaster_id TEXT NOT NULL, audio_path TEXT, stream_key TEXT, stream_type TEXT DEFAULT 'church_online',
-    church_online_url TEXT, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    church_online_url TEXT, rtmp_url TEXT, thumbnail_url TEXT, speaker TEXT, recording_url TEXT, recorded_at TIMESTAMP,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`)
   await dbQuery(`CREATE TABLE IF NOT EXISTS sermons (
     id TEXT PRIMARY KEY, title TEXT NOT NULL, description TEXT, scripture_reference TEXT,
@@ -120,7 +122,8 @@ async function _doInitDb() {
   )`)
   await dbQuery(`CREATE TABLE IF NOT EXISTS chat_messages (
     id TEXT PRIMARY KEY, broadcast_id TEXT, user_id TEXT, user_name TEXT,
-    recipient_id TEXT, guest_name TEXT, message TEXT NOT NULL, is_private BOOLEAN DEFAULT FALSE, created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    recipient_id TEXT, guest_name TEXT, message TEXT NOT NULL, is_private BOOLEAN DEFAULT FALSE,
+    reactions JSONB DEFAULT '{}', created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`)
   await dbQuery(`CREATE TABLE IF NOT EXISTS schedule (
     id TEXT PRIMARY KEY, title TEXT NOT NULL, day_of_week INTEGER NOT NULL,
@@ -137,45 +140,9 @@ async function _doInitDb() {
   )`)
   await dbQuery(`CREATE TABLE IF NOT EXISTS stream_listeners (
     id TEXT PRIMARY KEY, broadcast_id TEXT NOT NULL, session_id TEXT NOT NULL,
-    platform TEXT DEFAULT 'web', last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    platform TEXT DEFAULT 'web', last_seen TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    country TEXT, region TEXT, city TEXT, ip TEXT
   )`)
-  // Add chat_messages columns if missing
-  try { await dbQuery(`ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS guest_name TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS recipient_id TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS is_private BOOLEAN DEFAULT FALSE`) } catch {}
-  try { await dbQuery(`UPDATE chat_messages SET is_private=FALSE WHERE is_private IS NULL`) } catch {}
-  try { await dbQuery(`ALTER TABLE chat_messages ADD COLUMN IF NOT EXISTS reactions JSONB DEFAULT '{}'`) } catch {}
-  try { await dbQuery(`UPDATE chat_messages SET reactions='{}' WHERE reactions IS NULL`) } catch {}
-  // Add geo columns to stream_listeners
-  try { await dbQuery(`ALTER TABLE stream_listeners ADD COLUMN IF NOT EXISTS country TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE stream_listeners ADD COLUMN IF NOT EXISTS region TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE stream_listeners ADD COLUMN IF NOT EXISTS city TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE stream_listeners ADD COLUMN IF NOT EXISTS ip TEXT`) } catch {}
-
-  // Add stream config columns if missing (safe for existing tables)
-  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS rtmp_url TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS stream_key TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS thumbnail_url TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS speaker TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS recording_url TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS recorded_at TIMESTAMP`) } catch {}
-
-  // Auto-delete broadcast recordings older than 90 days
-  try {
-    const expired = await dbQuery(
-      `SELECT id, recording_url FROM broadcasts WHERE recording_url IS NOT NULL AND recorded_at < NOW() - INTERVAL '90 days'`
-    )
-    for (const row of (expired || [])) {
-      try {
-        // Extract Cloudinary public_id from URL and destroy
-        const match = (row.recording_url as string).match(/\/v\d+\/(.+?)(?:\.[a-z0-9]+)?$/i)
-        if (match) {
-          await cloudinary.uploader.destroy(match[1], { resource_type: 'video' })
-        }
-      } catch {}
-      await dbQuery(`UPDATE broadcasts SET recording_url=NULL, recorded_at=NULL WHERE id=$1`, [row.id])
-    }
-  } catch {}
 
   // Add sermon columns if missing
   try { await dbQuery(`ALTER TABLE sermons ADD COLUMN IF NOT EXISTS video_url TEXT`) } catch {}
@@ -512,6 +479,20 @@ app.post('/auth/register', async (req, res) => {
     const token = jwt.sign({ id, email, name, role: 'listener' }, process.env.JWT_SECRET || 'dev', { expiresIn: '7d' })
     res.json({ token, user: { id, email, name, role: 'listener' } })
   } catch (e: any) { res.status(500).json({ error: e.message }) }
+})
+
+// ── Health check ───────────────────────────────────────────────
+app.get('/health', async (_req, res) => {
+  try {
+    if (!sql) {
+      return res.status(500).json({ status: 'error', message: 'DATABASE_URL not configured' })
+    }
+    // Quick database check
+    await dbQuery('SELECT 1')
+    res.json({ status: 'ok', database: 'connected' })
+  } catch (e: any) {
+    res.status(500).json({ status: 'error', message: e.message })
+  }
 })
 
 app.post('/auth/login', async (req, res) => {
