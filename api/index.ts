@@ -750,6 +750,20 @@ app.get('/schedule', async (_req, res) => {
   } catch (e: any) { res.status(500).json({ error: e.message }) }
 })
 
+app.get('/radio-schedules/public', async (_req, res) => {
+  try {
+    await initDb()
+    const rows = await dbQuery('SELECT * FROM schedule ORDER BY day_of_week, time')
+    const today = new Date().getDay()
+    const result = rows.map((s: any) => {
+      const daysUntil = (s.day_of_week - today + 7) % 7
+      const next = new Date(); next.setDate(next.getDate() + daysUntil)
+      return { ...s, next_date: next.toISOString().split('T')[0], days_until: daysUntil }
+    })
+    res.json({ schedules: result })
+  } catch (e: any) { res.status(500).json({ error: e.message }) }
+})
+
 // ── Chat routes ───────────────────────────────────────────────
 app.get('/chat/:broadcastId', optionalAuth, async (req, res) => {
   try {
