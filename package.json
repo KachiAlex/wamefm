@@ -6,10 +6,11 @@
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
     "dev:backend": "cd backend && npm run dev",
     "dev:frontend": "cd frontend && npm run dev",
-    "build": "npm run build:backend && npm run build:frontend",
+    "build": "npm run build:frontend && npm run build:api",
     "build:backend": "cd backend && npm run build",
     "build:frontend": "cd frontend && npm run build",
-    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+    "build:api": "cd api && npm run build",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ../api && npm install"
   },
   "devDependencies": {
     "@types/nodemailer": "^6.4.15",
