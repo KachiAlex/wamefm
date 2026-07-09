@@ -50,7 +50,7 @@ function LiveWaveform({ active }: { active: boolean }) {
   return (
     <div className="flex items-end gap-[2px] h-8 my-2">
       {bars.map((h, i) => (
-        <div key={i} className={`w-[3px] rounded-full transition-all duration-200 ${active ? 'bg-[#E05A1A]' : 'bg-[#E05A1A]/30'}`} style={{ height: `${h}%` }} />
+        <div key={i} className={`w-[3px] rounded-full transition-all duration-200 ${active ? 'bg-[var(--dash-accent)]' : 'bg-[var(--dash-accent)]/30'}`} style={{ height: `${h}%` }} />
       ))}
     </div>
   )
@@ -71,7 +71,7 @@ function VUMeter({ active }: { active: boolean }) {
         <div key={i} style={{
           width: 3, borderRadius: 1,
           height: `${h}%`,
-          background: h > 80 ? 'var(--red)' : h > 50 ? 'var(--flame3)' : 'var(--green)',
+          background: h > 80 ? 'var(--dash-danger)' : h > 50 ? 'var(--dash-accent)' : 'var(--dash-success)',
           opacity: active ? 1 : .25,
           transition: 'height .18s ease'
         }} />
@@ -89,7 +89,7 @@ function SignalBars({ label, value }: { label: string; value: number }) {
         {bars.map((h, i) => (
           <div key={i} style={{
             width: 4, borderRadius: 1, height: `${h * .16}px`,
-            background: value >= h ? (i >= 3 ? 'var(--flame3)' : 'var(--green)') : 'var(--line)',
+            background: value >= h ? (i >= 3 ? 'var(--dash-accent)' : 'var(--dash-success)') : 'var(--dash-border)',
             transition: 'background .2s'
           }} />
         ))}
@@ -276,9 +276,9 @@ export default function AdminDashboard() {
       <button onClick={() => { setActiveTab(tab); setMobileSidebarOpen(false) }}
         className="sb-item" style={{
           display: 'flex', alignItems: 'center', gap: 10, padding: '9px 10px', borderRadius: 3,
-          fontSize: 13, color: active ? 'var(--flame3)' : 'var(--ash2)',
-          background: active ? 'var(--mahog)' : 'transparent', border: 'none', width: '100%', textAlign: 'left',
-          transition: 'all .13s', cursor: 'pointer', borderLeft: active ? '2px solid var(--flame)' : '2px solid transparent'
+          fontSize: 13, color: active ? 'var(--dash-accent)' : 'var(--dash-text-secondary)',
+          background: active ? 'var(--dash-card)' : 'transparent', border: 'none', width: '100%', textAlign: 'left',
+          transition: 'all .13s', cursor: 'pointer', borderLeft: active ? '2px solid var(--dash-accent)' : '2px solid transparent'
         }}>
         <I className="w-[15px] h-[15px] flex-shrink-0" style={{ opacity: active ? 1 : .7 }} />
         <span style={{ flex: 1 }}>{label}</span>
@@ -296,11 +296,11 @@ export default function AdminDashboard() {
       {/* Brand */}
       <div style={{ padding: '18px 16px 16px', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', gap: 10 }}>
         <svg width="32" height="32" viewBox="0 0 32 32" style={{ flexShrink: 0 }}>
-          <circle cx="16" cy="16" r="15" fill="#221008" stroke="#E05A1A" strokeWidth="1.5" />
-          <circle cx="16" cy="16" r="10" fill="none" stroke="#F5A623" strokeWidth=".7" strokeDasharray="2 3" />
-          <rect x="12.5" y="7" width="7" height="11" rx="3.5" fill="#E05A1A" />
-          <line x1="16" y1="18" x2="16" y2="22" stroke="#F5A623" strokeWidth="1.5" strokeLinecap="round" />
-          <line x1="12" y1="22" x2="20" y2="22" stroke="#F5A623" strokeWidth="1.5" strokeLinecap="round" />
+          <circle cx="16" cy="16" r="15" fill="#1a0a2e" stroke="#6b4c9a" strokeWidth="1.5" />
+          <circle cx="16" cy="16" r="10" fill="none" stroke="#9a84b7" strokeWidth=".7" strokeDasharray="2 3" />
+          <rect x="12.5" y="7" width="7" height="11" rx="3.5" fill="#6b4c9a" />
+          <line x1="16" y1="18" x2="16" y2="22" stroke="#9a84b7" strokeWidth="1.5" strokeLinecap="round" />
+          <line x1="12" y1="22" x2="20" y2="22" stroke="#9a84b7" strokeWidth="1.5" strokeLinecap="round" />
           <line x1="13.5" y1="11" x2="18.5" y2="11" stroke="#fff" strokeWidth=".7" opacity=".45" />
           <line x1="13.5" y1="13.5" x2="18.5" y2="13.5" stroke="#fff" strokeWidth=".7" opacity=".45" />
         </svg>
@@ -314,16 +314,16 @@ export default function AdminDashboard() {
       {/* Live badge */}
       <div style={{
         display: 'flex', alignItems: 'center', gap: 8,
-        background: live ? 'rgba(224,90,26,.1)' : 'rgba(122,96,72,.08)',
-        border: `1px solid ${live ? 'rgba(224,90,26,.25)' : 'rgba(122,96,72,.2)'}`,
+        background: live ? 'var(--dash-success-soft)' : 'var(--dash-panel)',
+        border: `1px solid ${live ? 'rgba(16,185,129,.25)' : 'var(--dash-border)'}`,
         margin: '12px 12px 4px', borderRadius: 3, padding: '8px 12px'
       }}>
         <span className="ldot" style={{
-          width: 7, height: 7, borderRadius: '50%', background: live ? 'var(--flame3)' : 'var(--ash)',
+          width: 7, height: 7, borderRadius: '50%', background: live ? 'var(--dash-success)' : 'var(--dash-text-muted)',
           display: 'inline-block', flexShrink: 0, animation: live ? 'pulse 1.8s ease-in-out infinite' : 'none'
         }} />
-        <span style={{ fontSize: 11.5, fontWeight: 600, color: live ? 'var(--flame3)' : 'var(--ash2)' }}>{live ? 'On air' : 'Off air'}</span>
-        {live && <span className="font-mono" style={{ fontSize: 11, color: 'var(--cream2)', marginLeft: 'auto' }}>{formatDuration(liveElapsed)}</span>}
+        <span style={{ fontSize: 11.5, fontWeight: 600, color: live ? 'var(--dash-success)' : 'var(--dash-text-muted)' }}>{live ? 'On air' : 'Off air'}</span>
+        {live && <span className="font-mono" style={{ fontSize: 11, color: 'var(--dash-success)', marginLeft: 'auto' }}>{formatDuration(liveElapsed)}</span>}
       </div>
 
       {/* Nav */}
@@ -408,15 +408,15 @@ export default function AdminDashboard() {
               <div className="admin-card p-4">
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                   <h3 style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <ListMusic className="w-3.5 h-3.5" style={{ color: 'var(--gold)' }} /> Radio Station
+                    <ListMusic className="w-3.5 h-3.5" style={{ color: 'var(--dash-accent)' }} /> Radio Station
                   </h3>
                   {radioStatus ? (
-                    <span style={{ fontSize: 10, color: '#4ade80', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#4ade80] animate-pulse" /> On Air
+                    <span style={{ fontSize: 10, color: 'var(--dash-success)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--dash-success)] animate-pulse" /> On Air
                     </span>
                   ) : (
-                    <span style={{ fontSize: 10, color: 'var(--ash)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#9a7c60]" /> Off Air
+                    <span style={{ fontSize: 10, color: 'var(--dash-text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
+                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--dash-text-muted)]" /> Off Air
                     </span>
                   )}
                 </div>
@@ -428,11 +428,11 @@ export default function AdminDashboard() {
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
                       <button onClick={skipRadioSermon} disabled={radioLoading}
-                        style={{ fontSize: 10.5, padding: '4px 10px', borderRadius: 3, background: 'rgba(201,162,39,0.1)', color: 'var(--gold)', border: '1px solid rgba(201,162,39,0.2)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+                        style={{ fontSize: 10.5, padding: '4px 10px', borderRadius: 3, background: 'var(--dash-accent-soft)', color: 'var(--dash-accent)', border: '1px solid var(--dash-border-strong)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
                         {radioLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <SkipForward className="w-3 h-3" />} Skip
                       </button>
                       <button onClick={stopRadioStream} disabled={radioLoading}
-                        style={{ fontSize: 10.5, padding: '4px 10px', borderRadius: 3, background: 'rgba(220,38,38,0.1)', color: '#fca5a5', border: '1px solid rgba(220,38,38,0.2)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
+                        style={{ fontSize: 10.5, padding: '4px 10px', borderRadius: 3, background: 'var(--dash-danger-soft)', color: 'var(--dash-danger)', border: '1px solid rgba(224,64,64,.25)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
                         {radioLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Square className="w-3 h-3" />} Stop
                       </button>
                     </div>
@@ -447,22 +447,22 @@ export default function AdminDashboard() {
               {/* KPI row */}
               <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
                 {[
-                  { icon: Headphones, label: 'Listeners', value: dashboard?.listenersOnline?.toLocaleString() || '0', sub: 'Active now', bg: 'rgba(224,90,26,.12)', col: 'var(--flame3)' },
-                  { icon: Users, label: 'Total Listeners', value: dashboard?.totalListenersToday?.toLocaleString() || '0', sub: '24h', bg: 'rgba(74,158,255,.1)', col: 'var(--blue)' },
-                  { icon: BookOpen, label: 'Sermons', value: String(sermons.length || 0), sub: 'Total', bg: 'rgba(62,207,110,.1)', col: 'var(--green)' },
-                  { icon: Heart, label: 'Prayers', value: String(prayers.length || 0), sub: 'Pending', bg: 'rgba(224,90,26,.12)', col: 'var(--flame)' },
-                  { icon: DollarSign, label: 'Donations', value: dashboard?.totalDonations ? `$${Number(dashboard.totalDonations).toLocaleString()}` : '$0', sub: 'All time', bg: 'rgba(240,192,64,.1)', col: 'var(--sun2)' },
-                  { icon: BarChart3, label: 'Streams', value: dashboard?.totalListenersToday?.toLocaleString() || '0', sub: 'Today', bg: 'rgba(139,124,248,.12)', col: '#8b7cf8' },
+                  { icon: Headphones, label: 'Listeners', value: dashboard?.listenersOnline?.toLocaleString() || '0', sub: 'Active now', bg: 'var(--dash-accent-soft)', col: 'var(--dash-accent)' },
+                  { icon: Users, label: 'Total Listeners', value: dashboard?.totalListenersToday?.toLocaleString() || '0', sub: '24h', bg: 'var(--dash-info-soft)', col: 'var(--dash-info)' },
+                  { icon: BookOpen, label: 'Sermons', value: String(sermons.length || 0), sub: 'Total', bg: 'var(--dash-success-soft)', col: 'var(--dash-success)' },
+                  { icon: Heart, label: 'Prayers', value: String(prayers.length || 0), sub: 'Pending', bg: 'var(--dash-warning-soft)', col: 'var(--dash-warning)' },
+                  { icon: DollarSign, label: 'Donations', value: dashboard?.totalDonations ? `$${Number(dashboard.totalDonations).toLocaleString()}` : '$0', sub: 'All time', bg: 'var(--dash-accent-soft)', col: 'var(--dash-accent)' },
+                  { icon: BarChart3, label: 'Streams', value: dashboard?.totalListenersToday?.toLocaleString() || '0', sub: 'Today', bg: 'var(--dash-info-soft)', col: 'var(--dash-info)' },
                 ].map((c, i) => (
                   <div key={i} className="admin-card p-4 hover-lift animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
                       <div style={{ width: 32, height: 32, borderRadius: 4, background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <c.icon className="w-4 h-4" style={{ color: c.col }} />
                       </div>
-                      <span style={{ fontSize: 10.5, color: 'var(--ash2)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{c.label}</span>
+                      <span style={{ fontSize: 10.5, color: 'var(--dash-text-secondary)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{c.label}</span>
                     </div>
-                    <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 26, letterSpacing: '.02em', lineHeight: 1 }}>{c.value}</div>
-                    <div style={{ fontSize: 10.5, color: 'var(--ash)', marginTop: 4 }}>{c.sub}</div>
+                    <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 26, letterSpacing: '.02em', lineHeight: 1, color: 'var(--dash-text)' }}>{c.value}</div>
+                    <div style={{ fontSize: 10.5, color: 'var(--dash-text-muted)', marginTop: 4 }}>{c.sub}</div>
                   </div>
                 ))}
               </div>
@@ -471,16 +471,16 @@ export default function AdminDashboard() {
                 <div className="xl:col-span-8 admin-card p-4">
                   <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
                     <h3 style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em' }}>Activity – 7 day listeners</h3>
-                    <span style={{ fontSize: 10, color: 'var(--ash2)' }}>View full analytics</span>
+                    <span style={{ fontSize: 10, color: 'var(--dash-text-secondary)' }}>View full analytics</span>
                   </div>
                   <ResponsiveContainer width="100%" height={180}>
                     <LineChart data={listenerChart.length ? listenerChart : [{ time: 'Mon', l: 0, u: 0 }, { time: 'Tue', l: 0, u: 0 }, { time: 'Wed', l: 0, u: 0 }, { time: 'Thu', l: 0, u: 0 }, { time: 'Fri', l: 0, u: 0 }, { time: 'Sat', l: 0, u: 0 }, { time: 'Sun', l: 0, u: 0 }]}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(245,166,35,.06)" />
-                      <XAxis dataKey="time" stroke="var(--ash)" fontSize={10} tickLine={false} axisLine={false} />
-                      <YAxis stroke="var(--ash)" fontSize={10} tickLine={false} axisLine={false} />
-                      <Tooltip contentStyle={{ background: 'var(--coal)', border: '1px solid var(--line)', borderRadius: 4, fontSize: 11 }} />
-                      <Line type="monotone" dataKey="l" name="Listeners" stroke="var(--flame)" strokeWidth={2} dot={{ r: 3, fill: 'var(--flame)' }} />
-                      <Line type="monotone" dataKey="u" name="Unique" stroke="var(--blue)" strokeWidth={2} dot={{ r: 3, fill: 'var(--blue)' }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--dash-border)" />
+                      <XAxis dataKey="time" stroke="var(--dash-text-muted)" fontSize={10} tickLine={false} axisLine={false} />
+                      <YAxis stroke="var(--dash-text-muted)" fontSize={10} tickLine={false} axisLine={false} />
+                      <Tooltip contentStyle={{ background: 'var(--dash-card)', border: '1px solid var(--dash-border)', borderRadius: 4, fontSize: 11 }} />
+                      <Line type="monotone" dataKey="l" name="Listeners" stroke="var(--dash-accent)" strokeWidth={2} dot={{ r: 3, fill: 'var(--dash-accent)' }} />
+                      <Line type="monotone" dataKey="u" name="Unique" stroke="var(--dash-info)" strokeWidth={2} dot={{ r: 3, fill: 'var(--dash-info)' }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -488,22 +488,22 @@ export default function AdminDashboard() {
                   <h3 style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 12 }}>Quick Actions</h3>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
                     {[
-                      { icon: Radio, label: 'Start Live Broadcast', desc: 'Begin a new stream', action: () => setActiveTab('broadcasts'), color: 'var(--flame3)' },
-                      { icon: BookOpen, label: 'Upload New Sermon', desc: 'Add sermon audio', action: () => setActiveTab('sermons'), color: 'var(--green)' },
-                      { icon: FileText, label: 'Create Print Media', desc: 'Design PDF or poster', action: () => setActiveTab('print'), color: 'var(--blue)' },
-                      { icon: Calendar, label: 'Schedule Event', desc: 'Plan upcoming broadcast', action: () => setActiveTab('events'), color: 'var(--sun2)' },
+                      { icon: Radio, label: 'Start Live Broadcast', desc: 'Begin a new stream', action: () => setActiveTab('broadcasts'), color: 'var(--dash-accent)' },
+                      { icon: BookOpen, label: 'Upload New Sermon', desc: 'Add sermon audio', action: () => setActiveTab('sermons'), color: 'var(--dash-success)' },
+                      { icon: FileText, label: 'Create Print Media', desc: 'Design PDF or poster', action: () => setActiveTab('print'), color: 'var(--dash-info)' },
+                      { icon: Calendar, label: 'Schedule Event', desc: 'Plan upcoming broadcast', action: () => setActiveTab('events'), color: 'var(--dash-warning)' },
                     ].map((a, i) => (
                       <button key={i} onClick={a.action} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 3, background: 'transparent', border: '1px solid var(--line)', textAlign: 'left', cursor: 'pointer', transition: 'all .13s', color: 'inherit' }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--sunrise)'; e.currentTarget.style.background = 'var(--mahog)' }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--line)'; e.currentTarget.style.background = 'transparent' }}>
-                        <div style={{ width: 28, height: 28, borderRadius: 3, background: 'var(--mahog)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--dash-border-strong)'; e.currentTarget.style.background = 'var(--dash-panel)' }}
+                        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--dash-border)'; e.currentTarget.style.background = 'transparent' }}>
+                        <div style={{ width: 28, height: 28, borderRadius: 3, background: 'var(--dash-panel)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                           <a.icon className="w-3.5 h-3.5" style={{ color: a.color }} />
                         </div>
                         <div>
-                          <div style={{ fontSize: 12.5, fontWeight: 600 }}>{a.label}</div>
-                          <div style={{ fontSize: 10.5, color: 'var(--ash2)' }}>{a.desc}</div>
+                          <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--dash-text)' }}>{a.label}</div>
+                          <div style={{ fontSize: 10.5, color: 'var(--dash-text-secondary)' }}>{a.desc}</div>
                         </div>
-                        <ChevronRight className="w-4 h-4 ml-auto" style={{ color: 'var(--ash)' }} />
+                        <ChevronRight className="w-4 h-4 ml-auto" style={{ color: 'var(--dash-text-muted)' }} />
                       </button>
                     ))}
                   </div>
@@ -523,7 +523,7 @@ export default function AdminDashboard() {
                     ) : (
                       col.items.map((item: string, j: number) => (
                         <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: j < col.items.length - 1 ? '1px solid var(--line)' : 'none' }}>
-                          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--flame3)', flexShrink: 0 }} />
+                          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--dash-accent)', flexShrink: 0 }} />
                           <span style={{ fontSize: 12 }}>{item}</span>
                         </div>
                       ))
@@ -541,7 +541,7 @@ export default function AdminDashboard() {
                 <div className="overflow-x-auto">
                   <table style={{ width: '100%', fontSize: 11, borderCollapse: 'collapse' }}>
                     <thead>
-                      <tr style={{ color: 'var(--ash)', borderBottom: '1px solid var(--line)' }}>
+                      <tr style={{ color: 'var(--dash-text-muted)', borderBottom: '1px solid var(--dash-border)' }}>
                         <th style={{ textAlign: 'left', padding: '8px 0', fontWeight: 400 }}>Title</th>
                         <th style={{ textAlign: 'left', padding: '8px 0', fontWeight: 400 }}>Speaker</th>
                         <th style={{ textAlign: 'left', padding: '8px 0', fontWeight: 400 }}>Date</th>
@@ -550,14 +550,14 @@ export default function AdminDashboard() {
                     </thead>
                     <tbody>
                       {(sermons.length ? sermons : []).slice(0, 6).map((s: any) => (
-                        <tr key={s.id} style={{ borderBottom: '1px solid rgba(245,166,35,.04)' }}>
+                        <tr key={s.id} style={{ borderBottom: '1px solid var(--dash-border)' }}>
                           <td style={{ padding: '8px 0', fontWeight: 500 }}>{s.title}</td>
-                          <td style={{ padding: '8px 0', color: 'var(--ash2)' }}>{s.speaker}</td>
-                          <td style={{ padding: '8px 0', color: 'var(--ash2)' }}>{s.date ? s.date.split('T')[0] : '-'}</td>
+                          <td style={{ padding: '8px 0', color: 'var(--dash-text-secondary)' }}>{s.speaker}</td>
+                          <td style={{ padding: '8px 0', color: 'var(--dash-text-secondary)' }}>{s.date ? s.date.split('T')[0] : '-'}</td>
                           <td style={{ padding: '8px 0' }}><span className="admin-tag admin-tag-green">Published</span></td>
                         </tr>
                       ))}
-                      {sermons.length === 0 && <tr><td colSpan={4} style={{ padding: '24px 0', textAlign: 'center', color: 'var(--ash)' }}>No sermons uploaded yet</td></tr>}
+                      {sermons.length === 0 && <tr><td colSpan={4} style={{ padding: '24px 0', textAlign: 'center', color: 'var(--dash-text-muted)' }}>No sermons uploaded yet</td></tr>}
                     </tbody>
                   </table>
                 </div>
@@ -569,13 +569,13 @@ export default function AdminDashboard() {
               <div className="admin-card p-5">
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                    <div style={{ width: 64, height: 64, borderRadius: 4, background: live ? 'var(--flame)' : 'var(--mahog)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                      <Radio className="w-7 h-7" style={{ color: live ? '#fff' : 'var(--ash)' }} />
+                    <div style={{ width: 64, height: 64, borderRadius: 4, background: live ? 'var(--dash-success)' : 'var(--dash-panel)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                      <Radio className="w-7 h-7" style={{ color: live ? '#fff' : 'var(--dash-text-muted)' }} />
                     </div>
                     <div>
-                      <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, letterSpacing: '.04em' }}>{live ? 'On Air' : 'Off Air'}</div>
-                      <div style={{ fontSize: 12, color: 'var(--ash2)', marginTop: 2 }}>{live ? (live.title || 'Live Broadcast') : 'No active broadcast'}</div>
-                      {live && <div className="font-mono" style={{ fontSize: 11, color: 'var(--flame3)', marginTop: 2 }}>{formatDuration(liveElapsed)} elapsed</div>}
+                      <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 22, letterSpacing: '.04em', color: 'var(--dash-text)' }}>{live ? 'On Air' : 'Off Air'}</div>
+                      <div style={{ fontSize: 12, color: 'var(--dash-text-secondary)', marginTop: 2 }}>{live ? (live.title || 'Live Broadcast') : 'No active broadcast'}</div>
+                      {live && <div className="font-mono" style={{ fontSize: 11, color: 'var(--dash-success)', marginTop: 2 }}>{formatDuration(liveElapsed)} elapsed</div>}
                     </div>
                   </div>
                   <div style={{ display: 'flex', gap: 8 }}>
@@ -589,9 +589,9 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 {/* VU meter */}
-                <div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--coal)', border: '1px solid var(--line)', borderRadius: 3 }}>
+                <div style={{ marginTop: 16, padding: '12px 16px', background: 'var(--dash-card)', border: '1px solid var(--dash-border)', borderRadius: 3 }}>
                   <VUMeter active={!!live} />
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8, fontSize: 10, color: 'var(--ash2)' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8, fontSize: 10, color: 'var(--dash-text-secondary)' }}>
                     <span>L</span>
                     <span style={{ fontFamily: "'IBM Plex Mono',monospace" }}>-12 dB</span>
                     <span>R</span>
@@ -602,12 +602,12 @@ export default function AdminDashboard() {
                   <SignalBars label="L" value={live ? 92 : 0} />
                   <SignalBars label="R" value={live ? 88 : 0} />
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <span style={{ fontSize: 10, color: 'var(--ash2)', width: 40, textAlign: 'right' }}>Bit rate</span>
-                    <span style={{ fontSize: 10, color: 'var(--cream2)', fontWeight: 600 }}>{live ? '128 kbps' : '—'}</span>
+                    <span style={{ fontSize: 10, color: 'var(--dash-text-secondary)', width: 40, textAlign: 'right' }}>Bit rate</span>
+                    <span style={{ fontSize: 10, color: 'var(--dash-text)', fontWeight: 600 }}>{live ? '128 kbps' : '—'}</span>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <span style={{ fontSize: 10, color: 'var(--ash2)', width: 40, textAlign: 'right' }}>Buffer</span>
-                    <span style={{ fontSize: 10, color: 'var(--cream2)', fontWeight: 600 }}>{live ? '0.4s' : '—'}</span>
+                    <span style={{ fontSize: 10, color: 'var(--dash-text-secondary)', width: 40, textAlign: 'right' }}>Buffer</span>
+                    <span style={{ fontSize: 10, color: 'var(--dash-text)', fontWeight: 600 }}>{live ? '0.4s' : '—'}</span>
                   </div>
                 </div>
               </div>
@@ -619,13 +619,13 @@ export default function AdminDashboard() {
             <div className="admin-card p-4">
               <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 12 }}>User Management</div>
               {loading ? (
-                <div className="p-8 text-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 mx-auto" style={{ borderColor: 'var(--flame)' }} /><p className="mt-3 text-xs" style={{ color: 'var(--ash)' }}>Loading users...</p></div>
+                <div className="p-8 text-center"><div className="animate-spin rounded-full h-6 w-6 border-b-2 mx-auto" style={{ borderColor: 'var(--dash-accent)' }} /><p className="mt-3 text-xs" style={{ color: 'var(--dash-text-muted)' }}>Loading users...</p></div>
               ) : users.length === 0 ? (
-                <div className="p-8 text-center"><Users className="w-8 h-8 mx-auto mb-3" style={{ color: 'var(--line)' }} /><p className="text-xs" style={{ color: 'var(--ash)' }}>No users yet</p></div>
+                <div className="p-8 text-center"><Users className="w-8 h-8 mx-auto mb-3" style={{ color: 'var(--dash-border)' }} /><p className="text-xs" style={{ color: 'var(--dash-text-muted)' }}>No users yet</p></div>
               ) : null}
               <div className="space-y-1">
                 {users.map(u => u ? (
-                  <div key={u.id} className="px-4 py-3 rounded-lg flex items-center justify-between" style={{ transition: 'all .13s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(245,166,35,.03)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
+                  <div key={u.id} className="px-4 py-3 rounded-lg flex items-center justify-between" style={{ transition: 'all .13s' }} onMouseEnter={e => e.currentTarget.style.background = 'var(--dash-accent-soft)'} onMouseLeave={e => e.currentTarget.style.background = 'transparent'}>
                     <div><p className="text-xs font-medium">{u.name || u.email}</p><p className="text-[10px]" style={{ color: 'var(--ash)' }}>{u.email}</p></div>
                     <select value={u.role} onChange={e => updateUserRole(u.id, e.target.value)} className="text-xs rounded-md px-2.5 py-1 outline-none" style={{ background: 'var(--coal)', border: '1px solid var(--line)', color: 'var(--cream)' }}>
                       <option value="listener">Listener</option><option value="broadcaster">Broadcaster</option><option value="admin">Admin</option>

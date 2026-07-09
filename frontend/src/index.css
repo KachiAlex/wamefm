@@ -141,28 +141,63 @@
   .admin-tag-ash { background: rgba(122,96,72,.12); color: var(--ash2); border: 1px solid rgba(122,96,72,.2); }
   .admin-tag-blue { background: rgba(74,158,255,.1); color: var(--blue); border: 1px solid rgba(74,158,255,.25); }
 
-  /* Light dashboard theme: white primary, dark purple text/secondary */
+  /* ── Dashboard light theme ──
+     Soft lavender-white primary, deep purple text, purple accents.
+     Uses scoped variables so sidebar/topbar stay dark. */
   .dashboard-content {
-    --ember: #ffffff;
-    --coal: #f5f2f8;
-    --mahog: #ffffff;
-    --panel: #f3eff8;
-    --panel2: #ffffff;
-    --line: rgba(26, 10, 46, .12);
-    --line2: rgba(26, 10, 46, .2);
-    --cream: #1a0a2e;
-    --cream2: #4a3570;
-    --ash: #7a6a8f;
-    --ash2: #5c4a85;
-    --flame: #1a0a2e;
-    --flame2: #2d1b4e;
-    --flame3: #4a3570;
-    --sunrise: #4a3570;
-    --sun2: #5c4a85;
-    --white: #1a0a2e;
-    background: #ffffff;
-    color: #1a0a2e;
+    --dash-bg: #f8f6fb;
+    --dash-card: #ffffff;
+    --dash-panel: #f0ebf5;
+    --dash-text: #1a0a2e;
+    --dash-text-secondary: #5c4a85;
+    --dash-text-muted: #7a6a8f;
+    --dash-border: #e8e0f0;
+    --dash-border-strong: #d4c8e4;
+    --dash-accent: #6b4c9a;
+    --dash-accent-hover: #4a3570;
+    --dash-accent-soft: rgba(107, 76, 154, .12);
+    --dash-success: #10b981;
+    --dash-success-soft: rgba(16, 185, 129, .12);
+    --dash-danger: #e04040;
+    --dash-danger-soft: rgba(224, 64, 64, .12);
+    --dash-info: #3b82f6;
+    --dash-info-soft: rgba(59, 130, 246, .12);
+    --dash-warning: #f59e0b;
+    --dash-warning-soft: rgba(245, 158, 11, .12);
+
+    /* Map existing variables used throughout the dashboard */
+    --ember: var(--dash-bg);
+    --coal: var(--dash-card);
+    --mahog: var(--dash-card);
+    --panel: var(--dash-panel);
+    --panel2: var(--dash-card);
+    --line: var(--dash-border);
+    --line2: var(--dash-border-strong);
+    --cream: var(--dash-text);
+    --cream2: var(--dash-text-secondary);
+    --ash: var(--dash-text-muted);
+    --ash2: var(--dash-text-secondary);
+    --flame: var(--dash-accent);
+    --flame2: var(--dash-accent-hover);
+    --flame3: var(--dash-accent);
+    --sunrise: var(--dash-accent);
+    --sun2: var(--dash-text-secondary);
+    --white: var(--dash-text);
+
+    background: var(--dash-bg);
+    color: var(--dash-text);
   }
+
+  .dashboard-content .admin-card {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(26, 10, 46, .06), 0 1px 2px rgba(26, 10, 46, .04);
+  }
+  .dashboard-content .admin-tag-green { background: var(--dash-success-soft); color: var(--dash-success); border: 1px solid rgba(16, 185, 129, .25); }
+  .dashboard-content .admin-tag-live { background: var(--dash-success-soft); color: var(--dash-success); border: 1px solid rgba(16, 185, 129, .25); }
+  .dashboard-content .admin-tag-ash { background: rgba(107, 76, 154, .08); color: var(--dash-text-secondary); border: 1px solid var(--dash-border); }
+  .dashboard-content .admin-tag-blue { background: var(--dash-info-soft); color: var(--dash-info); border: 1px solid rgba(59, 130, 246, .25); }
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
