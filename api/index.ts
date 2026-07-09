@@ -9,7 +9,6 @@ import { v2 as cloudinary } from 'cloudinary'
 import crypto from 'crypto'
 import webpush from 'web-push'
 import nodemailer from 'nodemailer'
-import serverless from 'serverless-http'
 
 // Cloudinary auto-configures from CLOUDINARY_URL env var
 // Parse URL so we can expose cloud_name + api_key to clients for signed uploads
@@ -1962,4 +1961,7 @@ app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {
   res.status(err.status || 500).json({ error: err.message || 'Internal server error' })
 })
 
-export default serverless(app)
+// Vercel serverless handler
+export default function handler(req: any, res: any) {
+  return app(req, res)
+}
