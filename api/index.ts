@@ -90,7 +90,11 @@ const sql = dbUrl ? neon(dbUrl) : null
 
 async function dbQuery(query: string, params?: any[]) {
   if (!sql) throw new Error('DATABASE_URL not configured')
-  return sql.query(query, params) as Promise<any[]>
+  const q = sql.query(query, params) as Promise<any[]>
+  return Promise.race([
+    q,
+    new Promise((_, reject) => setTimeout(() => reject(new Error('Database query timeout')), 5000))
+  ]) as Promise<any[]>
 }
 
 async function dbGet(query: string, params?: any[]) {
