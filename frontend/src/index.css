@@ -140,6 +140,29 @@
   .admin-tag-green { background: rgba(62,207,110,.1); color: var(--green); border: 1px solid rgba(62,207,110,.25); }
   .admin-tag-ash { background: rgba(122,96,72,.12); color: var(--ash2); border: 1px solid rgba(122,96,72,.2); }
   .admin-tag-blue { background: rgba(74,158,255,.1); color: var(--blue); border: 1px solid rgba(74,158,255,.25); }
+
+  /* Light dashboard theme: white primary, dark purple text/secondary */
+  .dashboard-content {
+    --ember: #ffffff;
+    --coal: #f5f2f8;
+    --mahog: #ffffff;
+    --panel: #f3eff8;
+    --panel2: #ffffff;
+    --line: rgba(26, 10, 46, .12);
+    --line2: rgba(26, 10, 46, .2);
+    --cream: #1a0a2e;
+    --cream2: #4a3570;
+    --ash: #7a6a8f;
+    --ash2: #5c4a85;
+    --flame: #1a0a2e;
+    --flame2: #2d1b4e;
+    --flame3: #4a3570;
+    --sunrise: #4a3570;
+    --sun2: #5c4a85;
+    --white: #1a0a2e;
+    background: #ffffff;
+    color: #1a0a2e;
+  }
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

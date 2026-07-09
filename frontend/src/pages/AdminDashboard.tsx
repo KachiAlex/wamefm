@@ -380,7 +380,7 @@ export default function AdminDashboard() {
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Topbar */}
         <header style={{
-          height: 56, flexShrink: 0, background: 'rgba(13,4,0,.9)', borderBottom: '1px solid var(--line)',
+          height: 56, flexShrink: 0, background: 'var(--coal)', borderBottom: '1px solid var(--line)',
           display: 'flex', alignItems: 'center', gap: 16, padding: '0 24px', backdropFilter: 'blur(8px)'
         }}>
           <button onClick={() => setMobileSidebarOpen(true)} className="lg:hidden" style={{ color: 'var(--ash)' }}><Menu className="w-5 h-5" /></button>
@@ -401,7 +401,7 @@ export default function AdminDashboard() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto" style={{ padding: 24 }}>
+        <div className="flex-1 overflow-y-auto dashboard-content" style={{ padding: 24 }}>
           {activeTab === 'dashboard' ? (
             <div className="space-y-6">
               {/* Radio Station Card */}
