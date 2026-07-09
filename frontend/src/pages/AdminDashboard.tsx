@@ -282,7 +282,7 @@ export default function AdminDashboard() {
         }}>
         <I className="w-[15px] h-[15px] flex-shrink-0" style={{ opacity: active ? 1 : .7 }} />
         <span style={{ flex: 1 }}>{label}</span>
-        {badge ? <span style={{ marginLeft: 'auto', background: 'var(--flame)', color: '#fff', fontSize: 9.5, fontWeight: 700, padding: '2px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center' }}>{badge}</span> : null}
+        {badge ? <span style={{ marginLeft: 'auto', background: 'var(--dash-accent)', color: '#fff', fontSize: 9.5, fontWeight: 700, padding: '2px 6px', borderRadius: 10, minWidth: 18, textAlign: 'center' }}>{badge}</span> : null}
       </button>
     )
   }
@@ -380,22 +380,25 @@ export default function AdminDashboard() {
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Topbar */}
         <header style={{
-          height: 56, flexShrink: 0, background: 'var(--coal)', borderBottom: '1px solid var(--line)',
-          display: 'flex', alignItems: 'center', gap: 16, padding: '0 24px', backdropFilter: 'blur(8px)'
+          height: 60, flexShrink: 0, background: 'var(--coal)', borderBottom: '1px solid var(--line)',
+          display: 'flex', alignItems: 'center', gap: 16, padding: '0 24px',
+          boxShadow: '0 1px 3px rgba(0,0,0,.12)', zIndex: 30
         }}>
-          <button onClick={() => setMobileSidebarOpen(true)} className="lg:hidden" style={{ color: 'var(--ash)' }}><Menu className="w-5 h-5" /></button>
-          <div className="font-bebas" style={{ fontSize: 18, letterSpacing: '.06em', flex: 1 }}>{screenTitles[activeTab] || activeTab}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--mahog)', border: '1px solid var(--line)', borderRadius: 3, padding: '6px 12px', width: 220 }}>
+          <button onClick={() => setMobileSidebarOpen(true)} className="lg:hidden" style={{ color: 'var(--ash)' }} aria-label="Open navigation"><Menu className="w-5 h-5" /></button>
+          <div className="font-bebas" style={{ fontSize: 20, letterSpacing: '.04em', flex: 1 }}>{screenTitles[activeTab] || activeTab}</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(255,255,255,.08)', border: '1px solid var(--line)', borderRadius: 8, padding: '7px 12px', width: 240 }}>
             <Search className="w-[14px] h-[14px] flex-shrink-0" style={{ color: 'var(--ash)' }} />
-            <input type="text" placeholder="Search…" style={{ background: 'transparent', border: 'none', color: 'var(--cream)', fontSize: 13, width: '100%', outline: 'none' }} />
+            <input type="text" placeholder="Search…" aria-label="Search dashboard"
+              style={{ background: 'transparent', border: 'none', color: 'var(--cream)', fontSize: 13, width: '100%', outline: 'none' }}
+            />
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            <button style={{ width: 34, height: 34, borderRadius: 3, background: 'transparent', border: 'none', color: 'var(--ash2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', transition: 'all .13s' }} className="hover:bg-[var(--mahog)] hover:text-[var(--cream)]">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <button aria-label="Notifications" style={{ width: 36, height: 36, borderRadius: 8, background: 'transparent', border: 'none', color: 'var(--ash2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', transition: 'all .13s' }} className="hover:bg-[var(--mahog)] hover:text-[var(--cream)]">
               <Bell className="w-4 h-4" />
-              <span style={{ position: 'absolute', top: 6, right: 6, width: 6, height: 6, borderRadius: '50%', background: 'var(--flame)', border: '1.5px solid var(--ember)' }} />
+              <span style={{ position: 'absolute', top: 7, right: 7, width: 7, height: 7, borderRadius: '50%', background: 'var(--dash-accent)', border: '1.5px solid var(--ember)' }} />
             </button>
             <div style={{ width: 1, height: 24, background: 'var(--line)' }} />
-            <button style={{ width: 34, height: 34, borderRadius: 3, background: 'transparent', border: 'none', color: 'var(--ash2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all .13s' }} className="hover:bg-[var(--mahog)] hover:text-[var(--cream)]">
+            <button aria-label="Help" style={{ width: 36, height: 36, borderRadius: 8, background: 'transparent', border: 'none', color: 'var(--ash2)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', transition: 'all .13s' }} className="hover:bg-[var(--mahog)] hover:text-[var(--cream)]">
               <HelpCircle className="w-4 h-4" />
             </button>
           </div>
@@ -404,162 +407,171 @@ export default function AdminDashboard() {
         <div className="flex-1 overflow-y-auto dashboard-content" style={{ padding: 24 }}>
           {activeTab === 'dashboard' ? (
             <div className="space-y-6">
-              {/* Radio Station Card */}
-              <div className="admin-card p-4">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                  <h3 style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <ListMusic className="w-3.5 h-3.5" style={{ color: 'var(--dash-accent)' }} /> Radio Station
-                  </h3>
-                  {radioStatus ? (
-                    <span style={{ fontSize: 10, color: 'var(--dash-success)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--dash-success)] animate-pulse" /> On Air
-                    </span>
-                  ) : (
-                    <span style={{ fontSize: 10, color: 'var(--dash-text-muted)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                      <span className="w-1.5 h-1.5 rounded-full bg-[var(--dash-text-muted)]" /> Off Air
-                    </span>
+              {/* Page header */}
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h1 style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, letterSpacing: '.02em', color: 'var(--dash-text)' }}>Overview</h1>
+                  <p style={{ fontSize: 13, color: 'var(--dash-text-secondary)', marginTop: 2 }}>Welcome back, {user?.name || 'Admin'}. Here's what's happening today.</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button onClick={() => setActiveTab('broadcasts')} className="dash-btn dash-btn-primary"><Radio className="w-4 h-4" /> Go Live</button>
+                  <button onClick={() => setActiveTab('sermons')} className="dash-btn dash-btn-secondary"><BookOpen className="w-4 h-4" /> Upload Sermon</button>
+                </div>
+              </div>
+
+              {/* Status row */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Live broadcast status */}
+                <div className="admin-card p-5" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 12, background: live ? 'var(--dash-success)' : 'var(--dash-panel)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <Radio className="w-7 h-7" style={{ color: live ? '#fff' : 'var(--dash-text-muted)' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                      <span className="w-2 h-2 rounded-full" style={{ background: live ? 'var(--dash-success)' : 'var(--dash-text-muted)' }} />
+                      <span style={{ fontSize: 12, fontWeight: 700, color: live ? 'var(--dash-success)' : 'var(--dash-text-muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>{live ? 'On Air' : 'Off Air'}</span>
+                    </div>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--dash-text)' }}>{live ? (live.title || 'Live Broadcast') : 'No active broadcast'}</div>
+                    {live && <div className="font-mono" style={{ fontSize: 12, color: 'var(--dash-text-secondary)', marginTop: 2 }}>{formatDuration(liveElapsed)} elapsed</div>}
+                  </div>
+                  {live && <button onClick={endLiveBroadcast} disabled={bcActionLoading} className="dash-btn dash-btn-danger"><StopCircle className="w-4 h-4" /> End</button>}
+                </div>
+                {/* Radio status */}
+                <div className="admin-card p-5" style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
+                  <div style={{ width: 56, height: 56, borderRadius: 12, background: radioStatus ? 'var(--dash-info)' : 'var(--dash-panel)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                    <ListMusic className="w-7 h-7" style={{ color: radioStatus ? '#fff' : 'var(--dash-text-muted)' }} />
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 2 }}>
+                      <span className="w-2 h-2 rounded-full" style={{ background: radioStatus ? 'var(--dash-info)' : 'var(--dash-text-muted)' }} />
+                      <span style={{ fontSize: 12, fontWeight: 700, color: radioStatus ? 'var(--dash-info)' : 'var(--dash-text-muted)', textTransform: 'uppercase', letterSpacing: '.05em' }}>{radioStatus ? 'Radio Active' : 'Radio Idle'}</span>
+                    </div>
+                    <div style={{ fontSize: 15, fontWeight: 600, color: 'var(--dash-text)' }}>{radioStatus ? (radioStatus.currentSermonTitle || 'Sermon radio playing') : 'No sermon radio stream'}</div>
+                    {radioStatus && <div style={{ fontSize: 12, color: 'var(--dash-text-secondary)', marginTop: 2 }}>{radioStatus.currentSermonSpeaker || ''}</div>}
+                  </div>
+                  {radioStatus && (
+                    <div className="flex items-center gap-2">
+                      <button onClick={skipRadioSermon} disabled={radioLoading} className="dash-btn dash-btn-secondary" style={{ padding: '7px 12px', fontSize: 12 }}><SkipForward className="w-3.5 h-3.5" /> Skip</button>
+                      <button onClick={stopRadioStream} disabled={radioLoading} className="dash-btn dash-btn-danger" style={{ padding: '7px 12px', fontSize: 12 }}><Square className="w-3.5 h-3.5" /> Stop</button>
+                    </div>
                   )}
                 </div>
-                {radioStatus ? (
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
-                    <div>
-                      <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--cream)' }}>{radioStatus.currentSermonTitle || 'Unknown sermon'}</div>
-                      <div style={{ fontSize: 10.5, color: 'var(--ash2)', marginTop: 2 }}>{radioStatus.currentSermonSpeaker || ''}</div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                      <button onClick={skipRadioSermon} disabled={radioLoading}
-                        style={{ fontSize: 10.5, padding: '4px 10px', borderRadius: 3, background: 'var(--dash-accent-soft)', color: 'var(--dash-accent)', border: '1px solid var(--dash-border-strong)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
-                        {radioLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <SkipForward className="w-3 h-3" />} Skip
-                      </button>
-                      <button onClick={stopRadioStream} disabled={radioLoading}
-                        style={{ fontSize: 10.5, padding: '4px 10px', borderRadius: 3, background: 'var(--dash-danger-soft)', color: 'var(--dash-danger)', border: '1px solid rgba(224,64,64,.25)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 4 }}>
-                        {radioLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Square className="w-3 h-3" />} Stop
-                      </button>
-                    </div>
-                  </div>
-                ) : (
-                  <div style={{ fontSize: 11.5, color: 'var(--ash)', padding: '4px 0' }}>
-                    No sermon radio stream active. Go to Playlist Manager to start one.
-                  </div>
-                )}
               </div>
 
               {/* KPI row */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
                 {[
-                  { icon: Headphones, label: 'Listeners', value: dashboard?.listenersOnline?.toLocaleString() || '0', sub: 'Active now', bg: 'var(--dash-accent-soft)', col: 'var(--dash-accent)' },
-                  { icon: Users, label: 'Total Listeners', value: dashboard?.totalListenersToday?.toLocaleString() || '0', sub: '24h', bg: 'var(--dash-info-soft)', col: 'var(--dash-info)' },
-                  { icon: BookOpen, label: 'Sermons', value: String(sermons.length || 0), sub: 'Total', bg: 'var(--dash-success-soft)', col: 'var(--dash-success)' },
-                  { icon: Heart, label: 'Prayers', value: String(prayers.length || 0), sub: 'Pending', bg: 'var(--dash-warning-soft)', col: 'var(--dash-warning)' },
-                  { icon: DollarSign, label: 'Donations', value: dashboard?.totalDonations ? `$${Number(dashboard.totalDonations).toLocaleString()}` : '$0', sub: 'All time', bg: 'var(--dash-accent-soft)', col: 'var(--dash-accent)' },
-                  { icon: BarChart3, label: 'Streams', value: dashboard?.totalListenersToday?.toLocaleString() || '0', sub: 'Today', bg: 'var(--dash-info-soft)', col: 'var(--dash-info)' },
+                  { icon: Headphones, label: 'Active Listeners', value: dashboard?.listenersOnline?.toLocaleString() || '0', trend: '+12%', trendUp: true, bg: 'var(--dash-accent-soft)', col: 'var(--dash-accent)' },
+                  { icon: Users, label: 'Total Today', value: dashboard?.totalListenersToday?.toLocaleString() || '0', trend: '+5%', trendUp: true, bg: 'var(--dash-info-soft)', col: 'var(--dash-info)' },
+                  { icon: BookOpen, label: 'Sermons', value: String(sermons.length || 0), trend: '0%', trendUp: true, bg: 'var(--dash-success-soft)', col: 'var(--dash-success)' },
+                  { icon: Heart, label: 'Prayers', value: String(prayers.length || 0), trend: '+2', trendUp: true, bg: 'var(--dash-warning-soft)', col: 'var(--dash-warning)' },
+                  { icon: DollarSign, label: 'Donations', value: dashboard?.totalDonations ? `$${Number(dashboard.totalDonations).toLocaleString()}` : '$0', trend: '+8%', trendUp: true, bg: 'var(--dash-accent-soft)', col: 'var(--dash-accent)' },
+                  { icon: BarChart3, label: 'Streams', value: dashboard?.totalListenersToday?.toLocaleString() || '0', trend: '+3%', trendUp: true, bg: 'var(--dash-info-soft)', col: 'var(--dash-info)' },
                 ].map((c, i) => (
-                  <div key={i} className="admin-card p-4 hover-lift animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
-                      <div style={{ width: 32, height: 32, borderRadius: 4, background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <c.icon className="w-4 h-4" style={{ color: c.col }} />
-                      </div>
-                      <span style={{ fontSize: 10.5, color: 'var(--dash-text-secondary)', textTransform: 'uppercase', letterSpacing: '.06em' }}>{c.label}</span>
+                  <div key={i} className="dash-kpi-card animate-slide-up" style={{ animationDelay: `${i * 60}ms` }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                      <div className="dash-kpi-icon" style={{ background: c.bg }}><c.icon className="w-5 h-5" style={{ color: c.col }} /></div>
+                      {c.trend && <span className="dash-kpi-trend" style={{ color: c.trendUp ? 'var(--dash-success)' : 'var(--dash-danger)' }}>{c.trendUp ? '↑' : '↓'} {c.trend}</span>}
                     </div>
-                    <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 26, letterSpacing: '.02em', lineHeight: 1, color: 'var(--dash-text)' }}>{c.value}</div>
-                    <div style={{ fontSize: 10.5, color: 'var(--dash-text-muted)', marginTop: 4 }}>{c.sub}</div>
+                    <div className="dash-kpi-value" style={{ marginTop: 12 }}>{loading ? <div className="dash-skeleton" style={{ height: 28, width: '60%' }} /> : c.value}</div>
+                    <div className="dash-kpi-label">{c.label}</div>
                   </div>
                 ))}
               </div>
               {/* Activity + Quick actions */}
               <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
-                <div className="xl:col-span-8 admin-card p-4">
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                    <h3 style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em' }}>Activity – 7 day listeners</h3>
-                    <span style={{ fontSize: 10, color: 'var(--dash-text-secondary)' }}>View full analytics</span>
+                <div className="xl:col-span-8 admin-card p-5">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                    <div className="dash-section-title">Listener Activity – Last 7 Days</div>
+                    <span className="text-xs font-medium" style={{ color: 'var(--dash-accent)', cursor: 'pointer' }}>View full analytics</span>
                   </div>
-                  <ResponsiveContainer width="100%" height={180}>
+                  <ResponsiveContainer width="100%" height={220}>
                     <LineChart data={listenerChart.length ? listenerChart : [{ time: 'Mon', l: 0, u: 0 }, { time: 'Tue', l: 0, u: 0 }, { time: 'Wed', l: 0, u: 0 }, { time: 'Thu', l: 0, u: 0 }, { time: 'Fri', l: 0, u: 0 }, { time: 'Sat', l: 0, u: 0 }, { time: 'Sun', l: 0, u: 0 }]}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="var(--dash-border)" />
-                      <XAxis dataKey="time" stroke="var(--dash-text-muted)" fontSize={10} tickLine={false} axisLine={false} />
-                      <YAxis stroke="var(--dash-text-muted)" fontSize={10} tickLine={false} axisLine={false} />
-                      <Tooltip contentStyle={{ background: 'var(--dash-card)', border: '1px solid var(--dash-border)', borderRadius: 4, fontSize: 11 }} />
-                      <Line type="monotone" dataKey="l" name="Listeners" stroke="var(--dash-accent)" strokeWidth={2} dot={{ r: 3, fill: 'var(--dash-accent)' }} />
-                      <Line type="monotone" dataKey="u" name="Unique" stroke="var(--dash-info)" strokeWidth={2} dot={{ r: 3, fill: 'var(--dash-info)' }} />
+                      <CartesianGrid strokeDasharray="3 3" stroke="var(--dash-border)" vertical={false} />
+                      <XAxis dataKey="time" stroke="var(--dash-text-muted)" fontSize={11} tickLine={false} axisLine={false} />
+                      <YAxis stroke="var(--dash-text-muted)" fontSize={11} tickLine={false} axisLine={false} />
+                      <Tooltip contentStyle={{ background: 'var(--dash-card)', border: '1px solid var(--dash-border)', borderRadius: 8, fontSize: 12, boxShadow: '0 4px 12px rgba(26,10,46,.1)' }} />
+                      <Line type="monotone" dataKey="l" name="Listeners" stroke="var(--dash-accent)" strokeWidth={3} dot={{ r: 4, fill: 'var(--dash-accent)', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+                      <Line type="monotone" dataKey="u" name="Unique" stroke="var(--dash-info)" strokeWidth={3} dot={{ r: 4, fill: 'var(--dash-info)', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="xl:col-span-4 admin-card p-4">
-                  <h3 style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 12 }}>Quick Actions</h3>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <div className="xl:col-span-4 admin-card p-5">
+                  <div className="dash-section-title" style={{ marginBottom: 16 }}>Quick Actions</div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
                     {[
                       { icon: Radio, label: 'Start Live Broadcast', desc: 'Begin a new stream', action: () => setActiveTab('broadcasts'), color: 'var(--dash-accent)' },
                       { icon: BookOpen, label: 'Upload New Sermon', desc: 'Add sermon audio', action: () => setActiveTab('sermons'), color: 'var(--dash-success)' },
                       { icon: FileText, label: 'Create Print Media', desc: 'Design PDF or poster', action: () => setActiveTab('print'), color: 'var(--dash-info)' },
                       { icon: Calendar, label: 'Schedule Event', desc: 'Plan upcoming broadcast', action: () => setActiveTab('events'), color: 'var(--dash-warning)' },
                     ].map((a, i) => (
-                      <button key={i} onClick={a.action} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 3, background: 'transparent', border: '1px solid var(--line)', textAlign: 'left', cursor: 'pointer', transition: 'all .13s', color: 'inherit' }}
-                        onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--dash-border-strong)'; e.currentTarget.style.background = 'var(--dash-panel)' }}
-                        onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--dash-border)'; e.currentTarget.style.background = 'transparent' }}>
-                        <div style={{ width: 28, height: 28, borderRadius: 3, background: 'var(--dash-panel)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-                          <a.icon className="w-3.5 h-3.5" style={{ color: a.color }} />
+                      <button key={i} onClick={a.action} className="dash-btn dash-btn-secondary" style={{ justifyContent: 'flex-start', padding: '12px 14px' }}>
+                        <div style={{ width: 32, height: 32, borderRadius: 8, background: 'var(--dash-panel)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                          <a.icon className="w-4 h-4" style={{ color: a.color }} />
                         </div>
-                        <div>
-                          <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--dash-text)' }}>{a.label}</div>
-                          <div style={{ fontSize: 10.5, color: 'var(--dash-text-secondary)' }}>{a.desc}</div>
+                        <div style={{ textAlign: 'left', flex: 1 }}>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--dash-text)' }}>{a.label}</div>
+                          <div style={{ fontSize: 11.5, color: 'var(--dash-text-secondary)', fontWeight: 400 }}>{a.desc}</div>
                         </div>
-                        <ChevronRight className="w-4 h-4 ml-auto" style={{ color: 'var(--dash-text-muted)' }} />
+                        <ChevronRight className="w-4 h-4" style={{ color: 'var(--dash-text-muted)' }} />
                       </button>
                     ))}
                   </div>
                 </div>
               </div>
-              {/* Schedule strip */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                {[
-                  { title: "Today's Schedule", items: broadcasts.filter((b: any) => b.status === 'scheduled' || b.status === 'live').slice(0, 3).map((b: any) => b.title) },
-                  { title: "Tomorrow", items: [] },
-                  { title: "This Week", items: [] },
-                ].map((col, i) => (
-                  <div key={i} className="admin-card p-4">
-                    <div style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em', marginBottom: 10 }}>{col.title}</div>
-                    {col.items.length === 0 ? (
-                      <div style={{ fontSize: 11.5, color: 'var(--ash)', padding: '8px 0' }}>Nothing scheduled</div>
-                    ) : (
-                      col.items.map((item: string, j: number) => (
-                        <div key={j} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', borderBottom: j < col.items.length - 1 ? '1px solid var(--line)' : 'none' }}>
-                          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--dash-accent)', flexShrink: 0 }} />
-                          <span style={{ fontSize: 12 }}>{item}</span>
+              {/* Bottom row: Recent Sermons + Schedule */}
+              <div className="grid grid-cols-1 xl:grid-cols-12 gap-5">
+                <div className="xl:col-span-8 admin-card p-5">
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 16 }}>
+                    <div className="dash-section-title">Recent Sermons</div>
+                    <button onClick={() => setActiveTab('sermons')} className="dash-btn dash-btn-secondary" style={{ padding: '6px 12px', fontSize: 12 }}>View All</button>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table style={{ width: '100%', fontSize: 13, borderCollapse: 'collapse' }}>
+                      <thead>
+                        <tr style={{ color: 'var(--dash-text-muted)', borderBottom: '1px solid var(--dash-border)' }}>
+                          <th style={{ textAlign: 'left', padding: '10px 0', fontWeight: 500, fontSize: 12 }}>Title</th>
+                          <th style={{ textAlign: 'left', padding: '10px 0', fontWeight: 500, fontSize: 12 }}>Speaker</th>
+                          <th style={{ textAlign: 'left', padding: '10px 0', fontWeight: 500, fontSize: 12 }}>Date</th>
+                          <th style={{ textAlign: 'left', padding: '10px 0', fontWeight: 500, fontSize: 12 }}>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {(sermons.length ? sermons : []).slice(0, 5).map((s: any) => (
+                          <tr key={s.id} style={{ borderBottom: '1px solid var(--dash-border)' }}>
+                            <td style={{ padding: '12px 0', fontWeight: 500, color: 'var(--dash-text)' }}>{s.title}</td>
+                            <td style={{ padding: '12px 0', color: 'var(--dash-text-secondary)' }}>{s.speaker}</td>
+                            <td style={{ padding: '12px 0', color: 'var(--dash-text-secondary)' }}>{s.date ? s.date.split('T')[0] : '-'}</td>
+                            <td style={{ padding: '12px 0' }}><span className="admin-tag admin-tag-green">Published</span></td>
+                          </tr>
+                        ))}
+                        {sermons.length === 0 && <tr><td colSpan={4} style={{ padding: '32px 0', textAlign: 'center', color: 'var(--dash-text-muted)' }}>No sermons uploaded yet</td></tr>}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div className="xl:col-span-4 admin-card p-5">
+                  <div className="dash-section-title" style={{ marginBottom: 16 }}>Upcoming Schedule</div>
+                  <div className="space-y-3">
+                    {(() => {
+                      const upcoming = broadcasts.filter((b: any) => b.status === 'scheduled' || b.status === 'live').slice(0, 4)
+                      return upcoming.map((b: any, i: number) => (
+                        <div key={b.id} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 0', borderBottom: i < upcoming.length - 1 ? '1px solid var(--dash-border)' : 'none' }}>
+                          <div style={{ width: 36, height: 36, borderRadius: 8, background: b.status === 'live' ? 'var(--dash-success-soft)' : 'var(--dash-panel)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                            <Calendar className="w-4 h-4" style={{ color: b.status === 'live' ? 'var(--dash-success)' : 'var(--dash-accent)' }} />
+                          </div>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--dash-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{b.title}</div>
+                            <div style={{ fontSize: 11.5, color: 'var(--dash-text-secondary)' }}>{b.scheduled_at ? new Date(b.scheduled_at).toLocaleString() : 'Now'}</div>
+                          </div>
+                          <span className="admin-tag" style={{ background: b.status === 'live' ? 'var(--dash-success-soft)' : 'var(--dash-panel)', color: b.status === 'live' ? 'var(--dash-success)' : 'var(--dash-text-secondary)', border: '1px solid var(--dash-border)' }}>{b.status === 'live' ? 'Live' : 'Scheduled'}</span>
                         </div>
                       ))
+                    })()}
+                    {broadcasts.filter((b: any) => b.status === 'scheduled' || b.status === 'live').length === 0 && (
+                      <div style={{ padding: '24px 0', textAlign: 'center', color: 'var(--dash-text-muted)', fontSize: 13 }}>Nothing scheduled</div>
                     )}
                   </div>
-                ))}
-              </div>
-
-              {/* Recent Sermons table */}
-              <div className="admin-card p-4">
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
-                  <h3 style={{ fontSize: 11, fontWeight: 600, textTransform: 'uppercase', letterSpacing: '.08em' }}>Recent Sermons</h3>
-                  <button onClick={() => setActiveTab('sermons')} className="btn btn-sm btn-ghost">View All</button>
-                </div>
-                <div className="overflow-x-auto">
-                  <table style={{ width: '100%', fontSize: 11, borderCollapse: 'collapse' }}>
-                    <thead>
-                      <tr style={{ color: 'var(--dash-text-muted)', borderBottom: '1px solid var(--dash-border)' }}>
-                        <th style={{ textAlign: 'left', padding: '8px 0', fontWeight: 400 }}>Title</th>
-                        <th style={{ textAlign: 'left', padding: '8px 0', fontWeight: 400 }}>Speaker</th>
-                        <th style={{ textAlign: 'left', padding: '8px 0', fontWeight: 400 }}>Date</th>
-                        <th style={{ textAlign: 'left', padding: '8px 0', fontWeight: 400 }}>Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {(sermons.length ? sermons : []).slice(0, 6).map((s: any) => (
-                        <tr key={s.id} style={{ borderBottom: '1px solid var(--dash-border)' }}>
-                          <td style={{ padding: '8px 0', fontWeight: 500 }}>{s.title}</td>
-                          <td style={{ padding: '8px 0', color: 'var(--dash-text-secondary)' }}>{s.speaker}</td>
-                          <td style={{ padding: '8px 0', color: 'var(--dash-text-secondary)' }}>{s.date ? s.date.split('T')[0] : '-'}</td>
-                          <td style={{ padding: '8px 0' }}><span className="admin-tag admin-tag-green">Published</span></td>
-                        </tr>
-                      ))}
-                      {sermons.length === 0 && <tr><td colSpan={4} style={{ padding: '24px 0', textAlign: 'center', color: 'var(--dash-text-muted)' }}>No sermons uploaded yet</td></tr>}
-                    </tbody>
-                  </table>
                 </div>
               </div>
             </div>

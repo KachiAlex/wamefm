@@ -198,10 +198,47 @@
   .dashboard-content .admin-tag-live { background: var(--dash-success-soft); color: var(--dash-success); border: 1px solid rgba(16, 185, 129, .25); }
   .dashboard-content .admin-tag-ash { background: rgba(107, 76, 154, .08); color: var(--dash-text-secondary); border: 1px solid var(--dash-border); }
   .dashboard-content .admin-tag-blue { background: var(--dash-info-soft); color: var(--dash-info); border: 1px solid rgba(59, 130, 246, .25); }
+
+  /* Production dashboard helpers */
+  .dash-section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: var(--dash-text-secondary); }
+  .dash-kpi-card {
+    background: var(--dash-card);
+    border: 1px solid var(--dash-border);
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 1px 3px rgba(26, 10, 46, .05), 0 1px 2px rgba(26, 10, 46, .03);
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .dash-kpi-card:hover { transform: translateY(-2px); box-shadow: 0 8px 16px rgba(26, 10, 46, .08); }
+  .dash-kpi-icon {
+    width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+  }
+  .dash-kpi-value { font-family: 'Bebas Neue', sans-serif; font-size: 30px; letter-spacing: .02em; line-height: 1; color: var(--dash-text); }
+  .dash-kpi-label { font-size: 12px; color: var(--dash-text-muted); text-transform: uppercase; letter-spacing: .04em; margin-top: 8px; }
+  .dash-kpi-trend { font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; gap: 3px; }
+  .dash-skeleton {
+    background: linear-gradient(90deg, var(--dash-border) 0%, var(--dash-panel) 50%, var(--dash-border) 100%);
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 6px;
+  }
+  .dash-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 600;
+    border: none; cursor: pointer; transition: all .13s; white-space: nowrap;
+  }
+  .dash-btn-primary { background: var(--dash-accent); color: #fff; }
+  .dash-btn-primary:hover { background: var(--dash-accent-hover); }
+  .dash-btn-secondary { background: var(--dash-card); color: var(--dash-text); border: 1px solid var(--dash-border); }
+  .dash-btn-secondary:hover { background: var(--dash-panel); border-color: var(--dash-border-strong); }
+  .dash-btn-danger { background: var(--dash-danger-soft); color: var(--dash-danger); border: 1px solid rgba(224, 64, 64, .2); }
+  .dash-btn-danger:hover { background: rgba(224, 64, 64, .18); }
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 @keyframes slideUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.animate-slide-up { animation: slideUp .35s ease forwards; }
+@keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
 @keyframes pulse { 0%,100%{ opacity:1; box-shadow:0 0 0 0 rgba(224,90,26,.5); } 50%{ opacity:.6; box-shadow:0 0 0 6px rgba(224,90,26,0); } }
 @keyframes expand { 0%{ transform:scale(.8); opacity:.5; } 100%{ transform:scale(1.1); opacity:0; } }
 @keyframes wv { 0%,100%{ transform:scaleY(1); } 50%{ transform:scaleY(.35); } }
@@ -209,7 +246,6 @@
 @keyframes ringpulse { 0%{ transform:scale(.9); opacity:var(--o,.5); } 100%{ transform:scale(1.05); opacity:0; } }
 @keyframes spin { to { transform: rotate(360deg); } }
 @keyframes barjump { 0%{ height:var(--lo,20%); } 100%{ height:var(--hi,90%); } }
-@keyframes shimmer { 0%{ opacity:.55; } 50%{ opacity:.35; } 100%{ opacity:.55; } }
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
