@@ -351,13 +351,15 @@ async function _doInitDb() {
     if (!sched) {
         await dbQuery(`INSERT INTO schedule (id, title, day_of_week, time, type) VALUES ($1,$2,$3,$4,$5),($6,$7,$8,$9,$10),($11,$12,$13,$14,$15)`, [uuidv4(), 'Sunday Gathering', 0, '10:00', 'service', uuidv4(), 'Midweek Study', 3, '19:00', 'study', uuidv4(), 'Prayer Meeting', 5, '18:00', 'prayer']);
     }
-    // Reset the default admin account so credentials always match the current code
-    try {
-        await dbQuery('DELETE FROM users WHERE id=$1 OR email=$2', ['admin-1', 'admin@wamefm.com']);
-    }
-    catch { }
+    // Ensure the default admin account exists with known credentials
     const hash = await bcrypt.hash('admin123', 10);
-    await dbQuery(`INSERT INTO users (id, email, password_hash, name, role) VALUES ($1,$2,$3,$4,$5)`, ['admin-1', 'admin@wamefm.com', hash, 'Admin User', 'admin']);
+    const existingAdmin = await dbGet('SELECT * FROM users WHERE role=$1 LIMIT 1', ['admin']);
+    if (existingAdmin) {
+        await dbQuery('UPDATE users SET email=$1, password_hash=$2, name=$3 WHERE id=$4', ['admin@wamefm.com', hash, 'Admin User', existingAdmin.id]);
+    }
+    else {
+        await dbQuery(`INSERT INTO users (id, email, password_hash, name, role) VALUES ($1,$2,$3,$4,$5)`, ['admin-1', 'admin@wamefm.com', hash, 'Admin User', 'admin']);
+    }
 }
 async function initDb() {
     if (_dbInit || !sql)
