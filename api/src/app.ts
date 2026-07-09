@@ -84,7 +84,7 @@ app.use((req, res, next) => {
 })
 
 // ── Database ───────────────────────────────────────────────────
-const dbUrl = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_zQGi43UNZqYm@ep-square-river-atpmxnr4-pooler.c-9.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
+const dbUrl = process.env.DATABASE_URL || 'DATABASE_URL_REMOVED'
 const sql = dbUrl ? neon(dbUrl) : null
 
 async function dbQuery(query: string, params?: any[]) {
@@ -224,6 +224,11 @@ async function _doInitDb() {
     id TEXT PRIMARY KEY, user_id TEXT NOT NULL,
     credential_id TEXT NOT NULL UNIQUE, public_key TEXT NOT NULL,
     counter INTEGER DEFAULT 0, device_name TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+  )`)
+  await dbQuery(`CREATE TABLE IF NOT EXISTS refresh_tokens (
+    id TEXT PRIMARY KEY, user_id TEXT NOT NULL,
+    token_hash TEXT NOT NULL, expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`)
 
@@ -475,6 +480,42 @@ async function broadcastNotification(type: string, title: string, body: string, 
   return { id, push, email, fcm }
 }
 
+// ── Token helpers ───────────────────────────────────────────────
+const JWT_SECRET = process.env.JWT_SECRET || 'dev'
+const REFRESH_EXPIRY_DAYS = 30
+
+function generateTokens(user: { id: string; email: string; name: string; role: string }) {
+  const accessToken = jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role }, JWT_SECRET, { expiresIn: '7d' })
+  const refreshToken = jwt.sign({ id: user.id, type: 'refresh' }, JWT_SECRET, { expiresIn: `${REFRESH_EXPIRY_DAYS}d` })
+  return { accessToken, refreshToken }
+}
+
+async function saveRefreshToken(userId: string, refreshToken: string) {
+  const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex')
+  const id = uuidv4()
+  const expiresAt = new Date(Date.now() + REFRESH_EXPIRY_DAYS * 24 * 60 * 60 * 1000).toISOString()
+  await dbQuery(`INSERT INTO refresh_tokens (id, user_id, token_hash, expires_at) VALUES ($1,$2,$3,$4)`, [id, userId, tokenHash, expiresAt])
+}
+
+async function verifyRefreshToken(refreshToken: string) {
+  try {
+    const payload = jwt.verify(refreshToken, JWT_SECRET) as any
+    if (payload.type !== 'refresh' || !payload.id) return null
+    const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex')
+    const row = await dbGet(`SELECT rt.*, u.email, u.name, u.role
+      FROM refresh_tokens rt
+      JOIN users u ON u.id = rt.user_id
+      WHERE rt.token_hash=$1 AND rt.expires_at > NOW()`, [tokenHash])
+    if (!row) return null
+    return { id: row.user_id, email: row.email, name: row.name, role: row.role }
+  } catch { return null }
+}
+
+async function revokeRefreshToken(refreshToken: string) {
+  const tokenHash = crypto.createHash('sha256').update(refreshToken).digest('hex')
+  await dbQuery('DELETE FROM refresh_tokens WHERE token_hash=$1', [tokenHash])
+}
+
 // ── Auth routes ────────────────────────────────────────────────
 app.post('/auth/register', async (req, res) => {
   try {
@@ -487,8 +528,10 @@ app.post('/auth/register', async (req, res) => {
     const id = uuidv4()
     await dbQuery(`INSERT INTO users (id, email, password_hash, name, role) VALUES ($1,$2,$3,$4,$5)`,
       [id, email, hash, name, 'listener'])
-    const token = jwt.sign({ id, email, name, role: 'listener' }, process.env.JWT_SECRET || 'dev', { expiresIn: '7d' })
-    res.json({ token, user: { id, email, name, role: 'listener' } })
+    const user = { id, email, name, role: 'listener' }
+    const { accessToken, refreshToken } = generateTokens(user)
+    await saveRefreshToken(id, refreshToken)
+    res.json({ accessToken, refreshToken, user })
   } catch (e: any) { res.status(500).json({ error: e.message }) }
 })
 
@@ -515,9 +558,32 @@ app.post('/auth/login', async (req, res) => {
     if (!user || !(await bcrypt.compare(password, user.password_hash))) {
       res.status(401).json({ error: 'Invalid credentials' }); return
     }
-    const token = jwt.sign({ id: user.id, email: user.email, name: user.name, role: user.role },
-      process.env.JWT_SECRET || 'dev', { expiresIn: '7d' })
-    res.json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } })
+    const userDto = { id: user.id, email: user.email, name: user.name, role: user.role }
+    const { accessToken, refreshToken } = generateTokens(userDto)
+    await saveRefreshToken(user.id, refreshToken)
+    res.json({ accessToken, refreshToken, user: userDto })
+  } catch (e: any) { res.status(500).json({ error: e.message }) }
+})
+
+app.post('/auth/refresh', async (req, res) => {
+  try {
+    await initDb()
+    const { refreshToken } = req.body
+    if (!refreshToken) { res.status(400).json({ error: 'Missing refresh token' }); return }
+    const user = await verifyRefreshToken(refreshToken)
+    if (!user) { res.status(401).json({ error: 'Invalid refresh token' }); return }
+    await revokeRefreshToken(refreshToken)
+    const { accessToken, refreshToken: newRefreshToken } = generateTokens(user)
+    await saveRefreshToken(user.id, newRefreshToken)
+    res.json({ accessToken, refreshToken: newRefreshToken })
+  } catch (e: any) { res.status(500).json({ error: e.message }) }
+})
+
+app.post('/auth/logout', async (req, res) => {
+  try {
+    const { refreshToken } = req.body
+    if (refreshToken) await revokeRefreshToken(refreshToken)
+    res.json({ success: true })
   } catch (e: any) { res.status(500).json({ error: e.message }) }
 })
 
@@ -1881,6 +1947,107 @@ app.get('/sermons/radio/current', async (_req, res) => {
       } : null,
       playlist: { id: playlist.id, title: playlist.title, startTime: playlist.start_time }
     })
+  } catch (e: any) { res.status(500).json({ error: e.message }) }
+})
+
+function getCurrentRadioItem(playlist: any, items: any[]) {
+  if (!playlist || !items || items.length === 0) return null
+  const now = new Date()
+  const startTime = new Date(playlist.start_time).getTime()
+  const elapsedMs = now.getTime() - startTime
+  const elapsedMin = elapsedMs / (1000 * 60)
+  const totalDuration = items.reduce((sum: number, it: any) => sum + (it.duration_minutes || 30), 0)
+  if (totalDuration <= 0) return null
+  const loopedMin = elapsedMin % totalDuration
+  let cumulativeMin = 0
+  for (const item of items) {
+    const dur = item.duration_minutes || 30
+    if (loopedMin >= cumulativeMin && loopedMin < cumulativeMin + dur) {
+      return { item, offsetSeconds: Math.floor((loopedMin - cumulativeMin) * 60) }
+    }
+    cumulativeMin += dur
+  }
+  return null
+}
+
+async function getActiveRadioPlaylist() {
+  const now = new Date().toISOString()
+  return dbGet(
+    `SELECT * FROM sermon_playlists WHERE is_active=TRUE AND start_time <= $1 AND (end_time IS NULL OR end_time >= $1) ORDER BY start_time DESC LIMIT 1`,
+    [now]
+  )
+}
+
+app.get('/radio/status', async (_req, res) => {
+  try {
+    await initDb()
+    const playlist = await getActiveRadioPlaylist()
+    if (!playlist) { res.json({ status: 'off_air' }); return }
+    const items = await dbQuery(
+      `SELECT sp.id as item_id, sp.sermon_id, sp.order_index, sp.duration_minutes,
+              s.title, s.speaker, s.audio_url, s.thumbnail_url, s.description, s.scripture_reference
+       FROM sermon_playlist_items sp
+       JOIN sermons s ON s.id = sp.sermon_id
+       WHERE sp.playlist_id=$1
+       ORDER BY sp.order_index ASC`,
+      [playlist.id]
+    )
+    const current = getCurrentRadioItem(playlist, items)
+    res.json({
+      status: current ? 'on_air' : 'off_air',
+      current: current ? {
+        itemId: current.item.item_id,
+        sermonId: current.item.sermon_id,
+        title: current.item.title,
+        speaker: current.item.speaker,
+        audioUrl: current.item.audio_url,
+        thumbnailUrl: current.item.thumbnail_url,
+        offsetSeconds: current.offsetSeconds
+      } : null,
+      playlist: { id: playlist.id, title: playlist.title }
+    })
+  } catch (e: any) { res.status(500).json({ error: e.message }) }
+})
+
+app.post('/radio/skip', auth, requireRole('admin'), async (_req, res) => {
+  try {
+    await initDb()
+    const playlist = await getActiveRadioPlaylist()
+    if (!playlist) { res.status(400).json({ error: 'No active radio playlist' }); return }
+    const items = await dbQuery(
+      `SELECT id, duration_minutes FROM sermon_playlist_items WHERE playlist_id=$1 ORDER BY order_index ASC`,
+      [playlist.id]
+    )
+    if (!items || items.length === 0) { res.status(400).json({ error: 'Playlist is empty' }); return }
+    const now = new Date()
+    const startTime = new Date(playlist.start_time).getTime()
+    const elapsedMin = (now.getTime() - startTime) / (1000 * 60)
+    const totalDuration = items.reduce((sum: number, it: any) => sum + (it.duration_minutes || 30), 0)
+    const currentLoopMin = elapsedMin % totalDuration
+    // Find current item index
+    let cumulativeMin = 0
+    let currentIndex = 0
+    for (let i = 0; i < items.length; i++) {
+      const dur = items[i].duration_minutes || 30
+      if (currentLoopMin >= cumulativeMin && currentLoopMin < cumulativeMin + dur) {
+        currentIndex = i
+        break
+      }
+      cumulativeMin += dur
+    }
+    const nextIndex = (currentIndex + 1) % items.length
+    const skippedDuration = items.slice(0, nextIndex).reduce((sum: number, it: any) => sum + (it.duration_minutes || 30), 0)
+    const newStartTime = new Date(now.getTime() - skippedDuration * 60 * 1000 + (currentLoopMin % (items[currentIndex].duration_minutes || 30)) * 60 * 1000)
+    await dbQuery('UPDATE sermon_playlists SET start_time=$1 WHERE id=$2', [newStartTime.toISOString(), playlist.id])
+    res.json({ success: true, skippedToIndex: nextIndex })
+  } catch (e: any) { res.status(500).json({ error: e.message }) }
+})
+
+app.post('/radio/stop', auth, requireRole('admin'), async (_req, res) => {
+  try {
+    await initDb()
+    await dbQuery(`UPDATE sermon_playlists SET is_active=FALSE, end_time=$1 WHERE is_active=TRUE`, [new Date().toISOString()])
+    res.json({ success: true })
   } catch (e: any) { res.status(500).json({ error: e.message }) }
 })
 
