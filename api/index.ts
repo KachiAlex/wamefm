@@ -24,7 +24,7 @@ const cloudConfig = parseCloudinaryUrl()
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (_req, file, cb) => {
+  fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowed = ['audio/mpeg', 'audio/mp3', 'audio/wav', 'audio/x-wav', 'audio/ogg', 'audio/aac', 'audio/mp4', 'audio/x-m4a', 'audio/flac', 'audio/webm']
     cb(null, allowed.includes(file.mimetype))
   }
@@ -33,7 +33,7 @@ const upload = multer({
 const uploadRecording = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 500 * 1024 * 1024 }, // 500 MB
-  fileFilter: (_req, file, cb) => {
+  fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowed = ['audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg', 'audio/mp3', 'video/webm']
     cb(null, allowed.includes(file.mimetype))
   }
@@ -42,7 +42,7 @@ const uploadRecording = multer({
 const uploadImage = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
-  fileFilter: (_req, file, cb) => {
+  fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowed = ['image/jpeg', 'image/png', 'image/webp', 'image/gif']
     cb(null, allowed.includes(file.mimetype))
   }
@@ -51,7 +51,7 @@ const uploadImage = multer({
 const uploadPdf = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 20 * 1024 * 1024 },
-  fileFilter: (_req, file, cb) => {
+  fileFilter: (_req: Request, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
     const allowed = ['application/pdf']
     cb(null, allowed.includes(file.mimetype))
   }
@@ -332,7 +332,11 @@ async function initDb() {
 }
 
 // ── Auth middleware ────────────────────────────────────────────
-interface AuthReq extends Request { user?: any }
+interface AuthReq extends Request {
+  user?: any
+  file?: Express.Multer.File
+  files?: { [fieldname: string]: Express.Multer.File[] } | Express.Multer.File[]
+}
 
 function auth(req: AuthReq, res: Response, next: NextFunction) {
   const token = req.headers.authorization?.replace('Bearer ', '')
