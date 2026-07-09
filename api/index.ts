@@ -1,5 +1,4 @@
-import { Request, Response } from 'express'
-
-export default function handler(req: Request, res: Response) {
-  res.json({ ok: true, url: req.url, path: req.path })
+export default async function handler(req: any, res: any) {
+  const { default: app } = await import('./app.js')
+  return app(req, res)
 }
