@@ -84,7 +84,7 @@ app.use((req, res, next) => {
 })
 
 // ── Database ───────────────────────────────────────────────────
-const dbUrl = process.env.DATABASE_URL || ''
+const dbUrl = process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_zQGi43UNZqYm@ep-square-river-atpmxnr4-pooler.c-9.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require'
 const sql = dbUrl ? neon(dbUrl) : null
 
 async function dbQuery(query: string, params?: any[]) {
