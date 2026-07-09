@@ -1,10 +1,9 @@
-import { parse } from 'url'
-
 export default async function handler(req: any, res: any) {
   try {
-    const parsed = parse(req.url || '', true)
-    if (parsed.query.__path) {
-      req.url = '/' + parsed.query.__path
+    const url = new URL(req.url || '', `https://${req.headers.host || 'localhost'}`)
+    const __path = url.searchParams.get('__path')
+    if (__path) {
+      req.url = '/' + __path
     } else if (req.url?.startsWith('/api/')) {
       req.url = req.url.slice(4)
     }

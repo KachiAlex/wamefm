@@ -226,15 +226,13 @@ async function _doInitDb() {
     counter INTEGER DEFAULT 0, device_name TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`)
+  // Recreate refresh_tokens if it exists with an old/incorrect schema
+  try { await dbQuery('DROP TABLE IF EXISTS refresh_tokens') } catch {}
   await dbQuery(`CREATE TABLE IF NOT EXISTS refresh_tokens (
     id TEXT PRIMARY KEY, user_id TEXT NOT NULL,
     token_hash TEXT NOT NULL, expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`)
-  try { await dbQuery(`ALTER TABLE refresh_tokens ADD COLUMN IF NOT EXISTS user_id TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE refresh_tokens ADD COLUMN IF NOT EXISTS token_hash TEXT`) } catch {}
-  try { await dbQuery(`ALTER TABLE refresh_tokens ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP`) } catch {}
-  try { await dbQuery(`ALTER TABLE refresh_tokens ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`) } catch {}
 
   // Notification tables
   await dbQuery(`CREATE TABLE IF NOT EXISTS fcm_tokens (
