@@ -1,7 +1,7 @@
 {
   "type": "module",
   "scripts": {
-    "build": "tsc && npx shx cp dist/index.js index.js"
+    "build": "tsc"
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.1.0",
