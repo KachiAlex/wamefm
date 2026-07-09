@@ -248,6 +248,22 @@ async function _doInitDb() {
     token_hash TEXT NOT NULL, expires_at TIMESTAMP NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
   )`);
+    try {
+        await dbQuery(`ALTER TABLE refresh_tokens ADD COLUMN IF NOT EXISTS user_id TEXT`);
+    }
+    catch { }
+    try {
+        await dbQuery(`ALTER TABLE refresh_tokens ADD COLUMN IF NOT EXISTS token_hash TEXT`);
+    }
+    catch { }
+    try {
+        await dbQuery(`ALTER TABLE refresh_tokens ADD COLUMN IF NOT EXISTS expires_at TIMESTAMP`);
+    }
+    catch { }
+    try {
+        await dbQuery(`ALTER TABLE refresh_tokens ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP`);
+    }
+    catch { }
     // Notification tables
     await dbQuery(`CREATE TABLE IF NOT EXISTS fcm_tokens (
     token TEXT PRIMARY KEY,
