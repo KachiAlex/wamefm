@@ -8,7 +8,7 @@ api/package-lock.json
 # Build outputs
 dist/
 build/
-api/index.js.map
+api/app.js.map
 api/dist/
 
 # Environment files
