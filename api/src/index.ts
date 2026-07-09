@@ -310,12 +310,13 @@ async function _doInitDb() {
       [uuidv4(), 'Sunday Gathering', 0, '10:00', 'service', uuidv4(), 'Midweek Study', 3, '19:00', 'study', uuidv4(), 'Prayer Meeting', 5, '18:00', 'prayer'])
   }
 
-  const admin = await dbGet('SELECT * FROM users WHERE role=$1', ['admin'])
-  if (!admin) {
-    const hash = await bcrypt.hash('admin123', 10)
-    await dbQuery(`INSERT INTO users (id, email, password_hash, name, role) VALUES ($1,$2,$3,$4,$5)`,
-      ['admin-1', 'admin@wamefm.com', hash, 'Admin User', 'admin'])
-  }
+  // Reset the default admin account so credentials always match the current code
+  try {
+    await dbQuery('DELETE FROM users WHERE id=$1 OR email=$2', ['admin-1', 'admin@wamefm.com'])
+  } catch {}
+  const hash = await bcrypt.hash('admin123', 10)
+  await dbQuery(`INSERT INTO users (id, email, password_hash, name, role) VALUES ($1,$2,$3,$4,$5)`,
+    ['admin-1', 'admin@wamefm.com', hash, 'Admin User', 'admin'])
 }
 
 async function initDb() {
