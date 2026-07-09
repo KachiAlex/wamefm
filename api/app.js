@@ -353,9 +353,9 @@ async function _doInitDb() {
     }
     // Ensure the default admin account exists with known credentials
     const hash = await bcrypt.hash('admin123', 10);
-    const existingAdmin = await dbGet('SELECT * FROM users WHERE role=$1 LIMIT 1', ['admin']);
-    if (existingAdmin) {
-        await dbQuery('UPDATE users SET email=$1, password_hash=$2, name=$3 WHERE id=$4', ['admin@wamefm.com', hash, 'Admin User', existingAdmin.id]);
+    const existing = await dbGet('SELECT * FROM users WHERE email=$1', ['admin@wamefm.com']);
+    if (existing) {
+        await dbQuery('UPDATE users SET password_hash=$1, name=$2, role=$3 WHERE id=$4', [hash, 'Admin User', 'admin', existing.id]);
     }
     else {
         await dbQuery(`INSERT INTO users (id, email, password_hash, name, role) VALUES ($1,$2,$3,$4,$5)`, ['admin-1', 'admin@wamefm.com', hash, 'Admin User', 'admin']);
