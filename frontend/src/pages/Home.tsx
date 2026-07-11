@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { usePageTitle } from '../hooks/usePageTitle'
 import { useAudioPlayer, type Track } from '../contexts/AudioPlayerContext'
 import { useAuth } from '../contexts/AuthContext'
@@ -230,6 +230,8 @@ function NowPlayingStrip({
   broadcast: { id?: string; title?: string; speaker?: string } | null | undefined
   nowPlaying: { title: string; speaker: string; itemId: string; audioUrl: string; thumbnailUrl?: string; scriptureReference?: string; offsetSeconds?: number } | null | undefined
 }) {
+  const navigate = useNavigate()
+  const stripLiveUrl = isLive && broadcast?.id ? `/live/${broadcast.id}` : '/live'
   const { currentTrack, isPlaying, togglePlay, playTrack, progress, duration, volume, setVolume, prev, next } = useAudioPlayer()
   const active = Boolean(nowPlaying?.itemId && currentTrack?.id === nowPlaying.itemId && isPlaying)
   const pct = duration ? Math.min(100, Math.max(0, (progress / duration) * 100)) : 0
@@ -240,11 +242,15 @@ function NowPlayingStrip({
     : `${nowPlaying?.speaker || 'Embassy Radio'}${nowPlaying?.scriptureReference ? ` · ${nowPlaying.scriptureReference}` : ''}`
 
   return (
-    <div className="relative z-10 border-t border-[var(--line2)] bg-[rgba(15,4,0,0.85)] backdrop-blur-md">
+    <div
+      className={`relative z-10 border-t border-[var(--line2)] bg-[rgba(15,4,0,0.85)] backdrop-blur-md ${isLive ? 'cursor-pointer' : ''}`}
+      onClick={isLive ? () => navigate(stripLiveUrl) : undefined}
+    >
       <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center gap-4 md:gap-6">
         {isLive ? (
           <Link
-            to={broadcast?.id ? `/live/${broadcast.id}` : '/live'}
+            to={stripLiveUrl}
+            onClick={(e) => e.stopPropagation()}
             className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-sm text-[11px] font-bold uppercase tracking-wider text-white bg-red-500 hover:scale-[1.02] transition-transform"
           >
             <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
@@ -277,7 +283,7 @@ function NowPlayingStrip({
 
         <div className="flex items-center gap-2 shrink-0">
           <button
-            onClick={prev}
+            onClick={(e) => { e.stopPropagation(); prev() }}
             className="p-2 text-[var(--ash2)] hover:text-white transition-colors"
             aria-label="Previous track"
           >
@@ -287,7 +293,8 @@ function NowPlayingStrip({
             </svg>
           </button>
           <button
-            onClick={() => {
+            onClick={(e) => {
+              e.stopPropagation()
               if (nowPlaying) {
                 if (currentTrack?.id === nowPlaying.itemId) togglePlay()
                 else
@@ -309,7 +316,7 @@ function NowPlayingStrip({
             {active ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
           </button>
           <button
-            onClick={next}
+            onClick={(e) => { e.stopPropagation(); next() }}
             className="p-2 text-[var(--ash2)] hover:text-white transition-colors"
             aria-label="Next track"
           >
@@ -320,7 +327,7 @@ function NowPlayingStrip({
           </button>
         </div>
 
-        <div className="hidden md:flex items-center gap-2 shrink-0 text-[var(--ash)]">
+        <div className="hidden md:flex items-center gap-2 shrink-0 text-[var(--ash)]" onClick={(e) => e.stopPropagation()}>
           <Headphones className="w-4 h-4" />
           <input
             type="range"
@@ -349,7 +356,9 @@ export default function Home() {
   const { data: scheduleItems = [], isLoading: scheduleLoading } = usePublicRadioSchedules()
   const { data: events = [], isLoading: eventsLoading } = useEvents()
   const { playQueue } = useAudioPlayer()
+  const navigate = useNavigate()
   const isLive = broadcast?.status === 'live'
+  const liveUrl = isLive && broadcast?.id ? `/live/${broadcast.id}` : '/live'
   const [dismissedPush, setDismissedPush] = useState(() => localStorage.getItem('push_dismissed') === '1')
   const showPushBanner = user && pushSupported && !pushEnabled && !dismissedPush
   const nowPlaying = radioData?.current
@@ -409,10 +418,14 @@ export default function Home() {
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-16 md:py-24">
           <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
-            <div className="text-center md:text-left">
+            <div
+              className={`text-center md:text-left ${isLive ? 'cursor-pointer' : ''}`}
+              onClick={isLive ? () => navigate(liveUrl) : undefined}
+            >
               {isLive ? (
                 <Link
-                  to={broadcast?.id ? `/live/${broadcast.id}` : '/live'}
+                  to={liveUrl}
+                  onClick={(e) => e.stopPropagation()}
                   className="inline-flex items-center gap-2.5 mb-6 px-4 py-2 rounded-sm border border-red-400/30 border-l-[3px] border-l-red-500 bg-red-500/10 text-red-200 text-[11px] font-semibold uppercase tracking-widest hover:scale-[1.02] transition-transform hover:underline underline-offset-2"
                 >
                   <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_6px_#ef4444] animate-pulse" />
@@ -443,13 +456,14 @@ export default function Home() {
               </p>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                 <Link
-                  to={isLive && broadcast ? `/live/${broadcast.id}` : '/live'}
+                  to={liveUrl}
+                  onClick={(e) => e.stopPropagation()}
                   className="btn btn-flame inline-flex items-center gap-2 text-sm md:text-base px-6 py-3"
                 >
                   <Play className="w-4 h-4 fill-current" />
                   {isLive ? 'Watch Live' : 'Listen Live'}
                 </Link>
-                <Link to="/archive" className="btn btn-out text-sm md:text-base px-6 py-3">
+                <Link to="/archive" onClick={(e) => e.stopPropagation()} className="btn btn-out text-sm md:text-base px-6 py-3">
                   Browse Sermons
                 </Link>
               </div>
