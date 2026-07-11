@@ -227,7 +227,7 @@ function NowPlayingStrip({
   nowPlaying,
 }: {
   isLive: boolean
-  broadcast: { title?: string; speaker?: string } | null | undefined
+  broadcast: { id?: string; title?: string; speaker?: string } | null | undefined
   nowPlaying: { title: string; speaker: string; itemId: string; audioUrl: string; thumbnailUrl?: string; scriptureReference?: string; offsetSeconds?: number } | null | undefined
 }) {
   const { currentTrack, isPlaying, togglePlay, playTrack, progress, duration, volume, setVolume, prev, next } = useAudioPlayer()
@@ -242,14 +242,20 @@ function NowPlayingStrip({
   return (
     <div className="relative z-10 border-t border-[var(--line2)] bg-[rgba(15,4,0,0.85)] backdrop-blur-md">
       <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center gap-4 md:gap-6">
-        <div
-          className={`shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-sm text-[11px] font-bold uppercase tracking-wider text-white ${
-            isLive ? 'bg-red-500' : 'bg-[var(--flame)]'
-          }`}
-        >
-          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
-          {isLive ? 'Live Broadcast' : 'Now Playing'}
-        </div>
+        {isLive ? (
+          <Link
+            to={broadcast?.id ? `/live/${broadcast.id}` : '/live'}
+            className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-sm text-[11px] font-bold uppercase tracking-wider text-white bg-red-500 hover:scale-[1.02] transition-transform"
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            Live Broadcast
+          </Link>
+        ) : (
+          <div className="shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-sm text-[11px] font-bold uppercase tracking-wider text-white bg-[var(--flame)]">
+            <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+            Now Playing
+          </div>
+        )}
 
         <div className="flex-1 min-w-0">
           <div className="text-sm md:text-base font-semibold text-white truncate">{title}</div>
@@ -406,8 +412,8 @@ export default function Home() {
             <div className="text-center md:text-left">
               {isLive ? (
                 <Link
-                  to={`/live/${broadcast?.id}`}
-                  className="inline-flex items-center gap-2.5 mb-6 px-4 py-2 rounded-sm border border-red-400/30 border-l-[3px] border-l-red-500 bg-red-500/10 text-red-200 text-[11px] font-semibold uppercase tracking-widest hover:scale-[1.02] transition-transform"
+                  to={broadcast?.id ? `/live/${broadcast.id}` : '/live'}
+                  className="inline-flex items-center gap-2.5 mb-6 px-4 py-2 rounded-sm border border-red-400/30 border-l-[3px] border-l-red-500 bg-red-500/10 text-red-200 text-[11px] font-semibold uppercase tracking-widest hover:scale-[1.02] transition-transform hover:underline underline-offset-2"
                 >
                   <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_6px_#ef4444] animate-pulse" />
                   <Video className="w-3.5 h-3.5" />
@@ -508,11 +514,12 @@ export default function Home() {
                 const min = start.toLocaleTimeString('en-US', { minute: '2-digit' })
                 const dur = end ? Math.round((end.getTime() - start.getTime()) / 60000) : null
                 return (
-                  <div
+                  <Link
                     key={s.id}
-                    className={`flex gap-4 p-4 rounded-md border transition-colors cursor-pointer ${
+                    to="/live"
+                    className={`flex gap-4 p-4 rounded-md border transition-colors ${
                       isNow
-                        ? 'bg-[var(--mahog)] border-[var(--flame)]'
+                        ? 'bg-[var(--mahog)] border-[var(--flame)] hover:border-[var(--sunrise)]'
                         : 'bg-[var(--coal)] border-[var(--line)] hover:border-[var(--flame)]'
                     }`}
                   >
@@ -530,7 +537,7 @@ export default function Home() {
                       <div className="font-semibold text-white text-sm">{s.playlist_title || 'Broadcast'}</div>
                       <div className="text-xs text-[var(--ash)]">{dur ? `${dur} min` : 'Until finished'}</div>
                     </div>
-                  </div>
+                  </Link>
                 )
               })
             )}

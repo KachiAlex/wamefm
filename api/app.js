@@ -1450,12 +1450,11 @@ app.post('/stream/:id/join', async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
-// ── Relay stream (continuous HTTP stream for <audio> background playback) ──────────────────────────────────────
+// ── Relay stream helpers ─────────────────────────────────────
 // NOTE: Vercel serverless functions have execution time limits (10s hobby / 60s pro).
 // For a real live broadcast, deploy the backend Express app on a persistent host.
-// This endpoint exists so the URL structure is consistent if you proxy /relay to a persistent backend.
-app.get('/relay/:broadcastId/stream', async (req, res) => {
-    const { broadcastId } = req.params;
+// These endpoints exist so the URL structure is consistent if you proxy /relay to a persistent backend.
+async function relayStream(broadcastId, req, res) {
     try {
         await initDb();
         const broadcast = await dbGet('SELECT status FROM broadcasts WHERE id = $1', [broadcastId]);
@@ -1510,6 +1509,13 @@ app.get('/relay/:broadcastId/stream', async (req, res) => {
         else
             res.end();
     }
+}
+app.get('/relay/:broadcastId/stream', async (req, res) => {
+    await relayStream(req.params.broadcastId, req, res);
+});
+// Live audio stream used by the frontend player (non-HLS fallback)
+app.get('/stream/:id/live', async (req, res) => {
+    await relayStream(req.params.id, req, res);
 });
 app.get('/relay/:broadcastId/status', async (req, res) => {
     try {
