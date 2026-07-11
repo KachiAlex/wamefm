@@ -418,7 +418,7 @@ export default function SermonPlaylistManager({ onRefresh }: { onRefresh?: () =>
                             </p>
                           </div>
                           {item.content_type === 'music' && item.audio_url && (
-                            <button onClick={() => togglePlay(item.audio_url, item.id)}
+                            <button onClick={() => togglePlay(item.audio_url!, item.id)}
                               className="p-1.5 rounded-lg transition-colors shrink-0"
                               style={{ background: 'var(--ink)', border: '1px solid var(--line)', color: playingId === item.id ? 'var(--gold)' : 'var(--dim)' }}
                               title={playingId === item.id ? 'Pause' : 'Play'}>

@@ -1,5 +1,5 @@
 ﻿import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
-import { api } from '../lib/api'
+import { API_BASE, api } from '../lib/api'
 
 interface NotificationContextType {
   pushEnabled: boolean
