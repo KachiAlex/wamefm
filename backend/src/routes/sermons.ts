@@ -126,7 +126,17 @@ router.get('/radio/current', async (_req, res) => {
       const latest = await db.get('SELECT * FROM sermons ORDER BY date DESC LIMIT 1')
       const stream = getRadioStatus()
       res.json({
-        current: latest ? { title: latest.title, speaker: latest.speaker, audioUrl: latest.audio_url, thumbnailUrl: latest.thumbnail_url, scriptureReference: latest.scripture_reference, offsetSeconds: 0 } : null,
+        current: latest ? {
+          itemId: latest.id,
+          sermonId: latest.id,
+          title: latest.title,
+          speaker: latest.speaker,
+          audioUrl: latest.audio_url,
+          thumbnailUrl: latest.thumbnail_url,
+          description: latest.description,
+          scriptureReference: latest.scripture_reference,
+          offsetSeconds: 0,
+        } : null,
         playlist: null,
         isStreaming: !!stream,
         streamKey: stream?.streamKey || 'sermon-radio',

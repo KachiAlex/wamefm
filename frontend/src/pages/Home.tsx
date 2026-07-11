@@ -1,18 +1,40 @@
 import { Link } from 'react-router-dom'
 import { usePageTitle } from '../hooks/usePageTitle'
-import { useAudioPlayer } from '../contexts/AudioPlayerContext'
+import { useAudioPlayer, type Track } from '../contexts/AudioPlayerContext'
 import { useAuth } from '../contexts/AuthContext'
 import { useNotifications } from '../contexts/NotificationContext'
 import {
-  useActiveBroadcast, useFeaturedSermons, usePrintMedia,
-  useRadioCurrent, usePublicRadioSchedules, getOptimizedImageUrl
+  useActiveBroadcast,
+  useFeaturedSermons,
+  usePrintMedia,
+  useRadioCurrent,
+  usePublicRadioSchedules,
+  getOptimizedImageUrl,
+  useEvents,
 } from '../lib/api'
-import type { Sermon } from '../lib/api'
+import type { Sermon, PrintMedia, EventItem } from '../lib/api'
 import StructuredData from '../components/StructuredData'
-import { Play, Pause, BookOpen, Download, FileText, Bell, X, Radio, Video } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+import { Play, Pause, BookOpen, FileText, Bell, X, Radio, Video, Calendar, ArrowRight, Headphones, Download } from 'lucide-react'
 
-/* ── Logo ── */
+function formatDuration(seconds?: number | null): string {
+  if (!seconds || seconds <= 0) return '—'
+  const m = Math.floor(seconds / 60)
+  const s = Math.floor(seconds % 60)
+  return `${m}:${String(s).padStart(2, '0')}`
+}
+
+function formatDateTime(iso?: string): string {
+  if (!iso) return ''
+  return new Date(iso).toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+  })
+}
+
 function SignalLogo({ size = 100 }: { size?: number }) {
   return (
     <img
@@ -20,121 +42,295 @@ function SignalLogo({ size = 100 }: { size?: number }) {
       alt="Embassy Radio"
       width={size}
       height={size}
-      style={{ borderRadius: '50%', objectFit: 'cover' }}
+      className="rounded-full object-cover"
       loading="eager"
       decoding="async"
     />
   )
 }
 
-/* ── Spectrum bars (active music visualizer) ── */
-function SpectrumBars() {
-  const COUNT = 80
-  const [heights, setHeights] = useState<number[]>(() =>
-    Array.from({ length: COUNT }, () => Math.random() * 20 + 6)
-  )
-
-  useEffect(() => {
-    const targets = Array.from({ length: COUNT }, () => Math.random() * 80 + 10)
-    const speeds = Array.from({ length: COUNT }, () => Math.random() * 0.15 + 0.04)
-
-    const id = setInterval(() => {
-      setHeights(prev => {
-        const next = prev.map((h, i) => {
-          // Pick a new target occasionally
-          if (Math.random() < 0.08) {
-            targets[i] = Math.random() * 85 + 6
-          }
-          // Smoothly interpolate toward target
-          const diff = targets[i] - h
-          return h + diff * speeds[i]
-        })
-        return next
-      })
-    }, 60)
-
-    return () => clearInterval(id)
-  }, [])
-
+function SectionHeader({
+  eyebrow,
+  title,
+  subtitle,
+  children,
+}: {
+  eyebrow: string
+  title: string
+  subtitle: string
+  children?: React.ReactNode
+}) {
   return (
-    <div style={{ position: 'relative', zIndex: 1, padding: '28px 0 0', overflow: 'hidden' }}>
-      <div style={{
-        fontSize: 10, letterSpacing: '.16em', textTransform: 'uppercase',
-        color: 'var(--ash)', marginBottom: 10, display: 'flex', alignItems: 'center', gap: 8
-      }}>
-        <span>Live frequency</span>
-        <span style={{ flex: 1, height: 1, background: 'var(--line)' }} />
+    <div className="mb-8 md:mb-10 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+      <div className="max-w-xl">
+        <div className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--sunrise)] mb-2">
+          {eyebrow}
+        </div>
+        <h2 className="font-bebas text-4xl md:text-5xl lg:text-6xl text-white leading-none">{title}</h2>
+        <p className="mt-3 text-[var(--fog2)] text-sm md:text-base leading-relaxed">{subtitle}</p>
       </div>
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 3, height: 56, width: '100%' }}>
-        {heights.map((h, i) => (
-          <span key={i} style={{
-            flex: 1, borderRadius: '1px 1px 0 0',
-            background: 'linear-gradient(to top,var(--flame2),var(--sunrise))',
-            opacity: .8, minHeight: 3,
-            height: `${Math.max(3, h)}%`,
-            transition: 'height 60ms linear'
-          }} />
-        ))}
-      </div>
+      {children && <div className="shrink-0">{children}</div>}
     </div>
   )
 }
 
-/* ── Sermon list item ── */
-function SermonListItem({ s, index, onPlay }: { s: Sermon; index: number; onPlay: () => void }) {
-  const { currentTrack, isPlaying, togglePlay } = useAudioPlayer()
-  const isCurrent = currentTrack?.id === s.id
-  const active = isCurrent && isPlaying
+function SermonCard({ s }: { s: Sermon }) {
+  const { playTrack, currentTrack, isPlaying, togglePlay } = useAudioPlayer()
+  const active = currentTrack?.id === s.id && isPlaying
 
   return (
-    <div style={{
-      display: 'flex', alignItems: 'center', gap: 14, background: 'var(--coal)',
-      border: '1px solid var(--line)', borderRadius: 4, padding: '13px 16px',
-      transition: 'border-color .15s, background .15s', cursor: 'pointer'
-    }}
-    className="hover-lift"
-    onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--flame)'; e.currentTarget.style.background = 'var(--mahog)' }}
-    onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--line)'; e.currentTarget.style.background = 'var(--coal)' }}>
-      {/* Thumbnail */}
-      {s.thumbnail_url ? (
-        <img
-          src={getOptimizedImageUrl(s.thumbnail_url, 104)}
-          alt={s.title}
-          style={{ width: 52, height: 52, borderRadius: 4, objectFit: 'cover', flexShrink: 0 }}
-          loading="lazy"
-        />
-      ) : (
-        <div style={{ width: 52, height: 52, borderRadius: 4, background: 'var(--panel2)', flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <BookOpen style={{ width: 20, height: 20, color: 'var(--ash)', opacity: 0.5 }} />
-        </div>
-      )}
-      <div style={{
-        fontFamily: "'Bebas Neue',sans-serif", fontSize: 22,
-        color: isCurrent ? 'var(--flame)' : 'var(--ash)', minWidth: 28, textAlign: 'center'
-      }}>
-        {active ? '▶' : index + 1}
+    <div className="group relative bg-[var(--coal)] border border-[var(--line)] rounded-md overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:border-[var(--sunrise)]">
+      <div className="relative aspect-square bg-[var(--panel)] overflow-hidden">
+        {s.thumbnail_url ? (
+          <img
+            src={getOptimizedImageUrl(s.thumbnail_url, 400)}
+            alt={s.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center">
+            <BookOpen className="w-10 h-10 text-[var(--ash)] opacity-30" />
+          </div>
+        )}
+        <button
+          onClick={() =>
+            active
+              ? togglePlay()
+              : playTrack({
+                  id: s.id,
+                  title: s.title,
+                  speaker: s.speaker || 'Pastor',
+                  audioUrl: s.audio_url || '',
+                  thumbnail: s.thumbnail_url,
+                  trackType: 'sermon',
+                })
+          }
+          className="absolute bottom-3 right-3 w-11 h-11 rounded-full bg-[var(--flame)] text-white flex items-center justify-center shadow-lg opacity-90 group-hover:opacity-100 transition-all hover:scale-105"
+          aria-label={active ? 'Pause sermon' : 'Play sermon'}
+        >
+          {active ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
+        </button>
       </div>
-      <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontSize: 10, textTransform: 'uppercase', letterSpacing: '.1em', color: 'var(--flame)', marginBottom: 2 }}>
+      <div className="p-4">
+        <div className="text-[10px] font-semibold uppercase tracking-widest text-[var(--flame)] mb-1 truncate">
           {s.series || 'Sermon'}
         </div>
-        <div style={{ fontWeight: 600, fontSize: 14, color: 'var(--white)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-          {s.title}
+        <h3 className="font-bebas text-lg text-white truncate leading-tight">{s.title}</h3>
+        <div className="mt-1 flex items-center justify-between text-xs text-[var(--ash2)]">
+          <span className="truncate max-w-[70%]">{s.speaker || 'Embassy Radio'}</span>
+          <span className="font-mono">{formatDuration(s.duration)}</span>
         </div>
-        <div style={{ fontSize: 12, color: 'var(--ash)' }}>{s.speaker}</div>
       </div>
-      <div style={{ fontFamily: "'IBM Plex Mono',monospace", fontSize: 12, color: 'var(--ash)' }}>
-        {s.duration ? `${Math.floor(s.duration / 60)}:${String(s.duration % 60).padStart(2, '0')}` : '—'}
-      </div>
-      <button onClick={(e) => { e.stopPropagation(); active ? togglePlay() : onPlay() }}
-        className="btn btn-ghost btn-sm"
-        style={{ padding: '4px 10px', fontSize: 11 }}>
-        {active ? 'Pause' : 'Play'}
-      </button>
     </div>
   )
 }
 
+function PrintCard({ item }: { item: PrintMedia }) {
+  return (
+    <div className="group bg-[var(--coal)] border border-[var(--line)] rounded-md overflow-hidden transition-all duration-200 hover:-translate-y-1 hover:border-[var(--sunrise)]">
+      {item.thumbnail_url ? (
+        <div className="h-40 overflow-hidden bg-[var(--panel)]">
+          <img
+            src={item.thumbnail_url}
+            alt={item.title}
+            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
+        </div>
+      ) : (
+        <div className="h-40 bg-[var(--panel)] flex items-center justify-center">
+          <FileText className="w-10 h-10 text-[var(--ash)] opacity-30" />
+        </div>
+      )}
+      <div className="p-4">
+        <h3 className="font-bebas text-lg text-white leading-tight truncate">{item.title}</h3>
+        {item.description && (
+          <p className="mt-1 text-xs text-[var(--ash2)] line-clamp-2">{item.description}</p>
+        )}
+        <div className="mt-3 flex items-center justify-between">
+          <span className="text-[10px] uppercase tracking-wider text-[var(--ash)]">
+            {item.published_date
+              ? new Date(item.published_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+              : 'Resource'}
+          </span>
+          {item.pdf_url && (
+            <a
+              href={item.pdf_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn btn-sm btn-ghost"
+              download
+            >
+              <Download className="w-3.5 h-3.5 mr-1" />
+              Get
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function EventCard({ event }: { event: EventItem }) {
+  return (
+    <div className="group bg-[var(--coal)] border border-[var(--line)] rounded-md p-5 transition-all duration-200 hover:border-[var(--sunrise)] hover:-translate-y-1">
+      <div className="flex items-start gap-4">
+        <div className="shrink-0 w-14 h-14 rounded-md bg-[var(--mahog)] border border-[var(--line)] flex flex-col items-center justify-center text-[var(--sunrise)]">
+          <span className="text-[10px] uppercase tracking-wider">
+            {event.date ? new Date(event.date).toLocaleDateString('en-US', { month: 'short' }) : 'TBC'}
+          </span>
+          <span className="font-bebas text-2xl leading-none">
+            {event.date ? new Date(event.date).getDate() : '—'}
+          </span>
+        </div>
+        <div className="min-w-0">
+          <h3 className="font-bebas text-xl text-white leading-tight truncate">{event.title}</h3>
+          {event.location && (
+            <div className="mt-1 flex items-center gap-1.5 text-xs text-[var(--ash2)]">
+              <MapPinIcon className="w-3.5 h-3.5" />
+              <span className="truncate">{event.location}</span>
+            </div>
+          )}
+          <div className="mt-1 flex items-center gap-1.5 text-xs text-[var(--ash2)]">
+            <ClockIcon className="w-3.5 h-3.5" />
+            <span>{event.date ? formatDateTime(`${event.date}T${event.time || '00:00'}`) : 'TBC'}</span>
+          </div>
+        </div>
+      </div>
+      {event.description && <p className="mt-3 text-sm text-[var(--fog2)] line-clamp-2">{event.description}</p>}
+    </div>
+  )
+}
+
+function MapPinIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z" />
+      <circle cx="12" cy="10" r="3" />
+    </svg>
+  )
+}
+
+function ClockIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12 6 12 12 16 14" />
+    </svg>
+  )
+}
+
+function NowPlayingStrip({
+  isLive,
+  broadcast,
+  nowPlaying,
+}: {
+  isLive: boolean
+  broadcast: { title?: string; speaker?: string } | null | undefined
+  nowPlaying: { title: string; speaker: string; itemId: string; audioUrl: string; thumbnailUrl?: string; scriptureReference?: string; offsetSeconds?: number } | null | undefined
+}) {
+  const { currentTrack, isPlaying, togglePlay, playTrack, progress, duration, volume, setVolume, prev, next } = useAudioPlayer()
+  const active = Boolean(nowPlaying?.itemId && currentTrack?.id === nowPlaying.itemId && isPlaying)
+  const pct = duration ? Math.min(100, Math.max(0, (progress / duration) * 100)) : 0
+
+  const title = isLive ? broadcast?.title || 'Live Broadcast' : nowPlaying?.title || 'Grace That Never Fails'
+  const subtitle = isLive
+    ? broadcast?.speaker || 'On air now'
+    : `${nowPlaying?.speaker || 'Embassy Radio'}${nowPlaying?.scriptureReference ? ` · ${nowPlaying.scriptureReference}` : ''}`
+
+  return (
+    <div className="relative z-10 border-t border-[var(--line2)] bg-[rgba(15,4,0,0.85)] backdrop-blur-md">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex flex-wrap items-center gap-4 md:gap-6">
+        <div
+          className={`shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-sm text-[11px] font-bold uppercase tracking-wider text-white ${
+            isLive ? 'bg-red-500' : 'bg-[var(--flame)]'
+          }`}
+        >
+          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+          {isLive ? 'Live Broadcast' : 'Now Playing'}
+        </div>
+
+        <div className="flex-1 min-w-0">
+          <div className="text-sm md:text-base font-semibold text-white truncate">{title}</div>
+          <div className="text-xs text-[var(--ash2)] truncate">{subtitle}</div>
+        </div>
+
+        <div className="w-full md:w-72 shrink-0">
+          <div className="h-1 bg-[var(--panel2)] rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-[var(--flame)] to-[var(--sunrise)] rounded-full transition-all duration-300"
+              style={{ width: `${pct}%` }}
+            />
+          </div>
+          <div className="mt-1 flex justify-between text-[10px] font-mono text-[var(--ash)]">
+            <span>{formatDuration(progress)}</span>
+            <span>{formatDuration(duration)}</span>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={prev}
+            className="p-2 text-[var(--ash2)] hover:text-white transition-colors"
+            aria-label="Previous track"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <polygon points="19 20 9 12 19 4 19 20" />
+              <line x1="5" y1="19" x2="5" y2="5" />
+            </svg>
+          </button>
+          <button
+            onClick={() => {
+              if (nowPlaying) {
+                if (currentTrack?.id === nowPlaying.itemId) togglePlay()
+                else
+                  playTrack({
+                    id: nowPlaying.itemId,
+                    title: nowPlaying.title,
+                    speaker: nowPlaying.speaker,
+                    audioUrl: nowPlaying.audioUrl,
+                    thumbnail: nowPlaying.thumbnailUrl,
+                    trackType: 'sermon',
+                    offsetSeconds: nowPlaying.offsetSeconds,
+                  })
+              }
+            }}
+            disabled={!nowPlaying && !isLive}
+            className="w-10 h-10 rounded-full bg-[var(--flame)] text-white flex items-center justify-center disabled:opacity-40 hover:scale-105 transition-transform"
+            aria-label={active ? 'Pause' : 'Play'}
+          >
+            {active ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5 ml-0.5" />}
+          </button>
+          <button
+            onClick={next}
+            className="p-2 text-[var(--ash2)] hover:text-white transition-colors"
+            aria-label="Next track"
+          >
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+              <polygon points="5 4 15 12 5 20 5 4" />
+              <line x1="19" y1="5" x2="19" y2="19" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="hidden md:flex items-center gap-2 shrink-0 text-[var(--ash)]">
+          <Headphones className="w-4 h-4" />
+          <input
+            type="range"
+            min={0}
+            max={1}
+            step={0.05}
+            value={volume}
+            onChange={(e) => setVolume(parseFloat(e.target.value))}
+            className="w-20 h-1 accent-[var(--flame)] cursor-pointer"
+            aria-label="Volume"
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export default function Home() {
   usePageTitle('The Whole Word to the Whole World')
@@ -145,536 +341,350 @@ export default function Home() {
   const { data: printItems = [], isLoading: printLoading } = usePrintMedia()
   const { data: radioData } = useRadioCurrent()
   const { data: scheduleItems = [], isLoading: scheduleLoading } = usePublicRadioSchedules()
-  const { playTrack, togglePlay, currentTrack, isPlaying } = useAudioPlayer()
+  const { data: events = [], isLoading: eventsLoading } = useEvents()
+  const { playQueue } = useAudioPlayer()
   const isLive = broadcast?.status === 'live'
   const [dismissedPush, setDismissedPush] = useState(() => localStorage.getItem('push_dismissed') === '1')
   const showPushBanner = user && pushSupported && !pushEnabled && !dismissedPush
-
-  function dismissPush() { localStorage.setItem('push_dismissed', '1'); setDismissedPush(true) }
-
   const nowPlaying = radioData?.current
-  const npActive = currentTrack && isPlaying
+
+  function dismissPush() {
+    localStorage.setItem('push_dismissed', '1')
+    setDismissedPush(true)
+  }
+
+  function handlePlayAll() {
+    const tracks: Track[] = sermons
+      .filter((s) => s.audio_url)
+      .map((s) => ({
+        id: s.id,
+        title: s.title,
+        speaker: s.speaker || 'Pastor',
+        audioUrl: s.audio_url!,
+        thumbnail: s.thumbnail_url,
+        trackType: 'sermon' as const,
+      }))
+    if (tracks.length) playQueue(tracks, 0)
+  }
 
   return (
-    <div style={{ background: 'var(--ember)', color: 'var(--cream)' }}>
-      {/* Push notification banner */}
+    <div className="min-h-screen bg-[var(--void)] text-[var(--parch)]">
       {showPushBanner && (
-        <div style={{ background: '#0B061F', borderBottom: '1px solid rgba(139,92,246,.2)', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
-          <Bell style={{ width: 16, height: 16, color: 'var(--lav)', flexShrink: 0 }} />
-          <span style={{ fontSize: 13, color: '#F2EDFF', fontWeight: 500 }}>Get notified when we go live and when new sermons drop.</span>
-          <button onClick={requestPush} disabled={loadingPush}
-            style={{ fontSize: 12, fontWeight: 700, padding: '6px 16px', borderRadius: 6, background: 'var(--violet)', color: '#fff', border: 'none', cursor: 'pointer', opacity: loadingPush ? .6 : 1, boxShadow: '0 4px 14px rgba(139,92,246,.25)' }}>
+        <div className="bg-[#0B061F] border-b border-[rgba(139,92,246,0.2)] px-6 py-3 flex flex-wrap items-center justify-center gap-3">
+          <Bell className="w-4 h-4 text-[var(--lav)] shrink-0" />
+          <span className="text-sm font-medium text-[#F2EDFF]">Get notified when we go live and when new sermons drop.</span>
+          <button
+            onClick={requestPush}
+            disabled={loadingPush}
+            className="text-xs font-bold px-4 py-1.5 rounded-md bg-[var(--violet)] text-white shadow-[0_4px_14px_rgba(139,92,246,0.25)] disabled:opacity-60"
+          >
             {loadingPush ? 'Enabling…' : 'Enable Notifications'}
           </button>
-          <button onClick={dismissPush} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fog)', padding: 4 }}>
-            <X style={{ width: 14, height: 14 }} />
+          <button onClick={dismissPush} className="p-1 text-[var(--fog)] hover:text-white" aria-label="Dismiss">
+            <X className="w-3.5 h-3.5" />
           </button>
         </div>
       )}
       <StructuredData />
 
-      {/* ══ HERO ══ */}
-      <section style={{
-        position: 'relative', minHeight: '100vh', display: 'flex', flexDirection: 'column',
-        justifyContent: 'center', overflow: 'hidden', paddingTop: 64,
-        backgroundImage: 'linear-gradient(to bottom, rgba(15,4,0,.94) 0%, rgba(15,4,0,.88) 30%, rgba(15,4,0,.93) 70%, rgba(15,4,0,.98) 100%), url(https://images.unsplash.com/photo-1487089427585-85563b1049f3?w=1600&q=80)',
-        backgroundSize: 'cover', backgroundPosition: 'center'
-      }}>
-        {/* Stage glow — warm light from above */}
-        <div style={{
-          position: 'absolute', top: -180, left: '50%', transform: 'translateX(-50%)',
-          width: 1100, height: 900,
-          background: 'radial-gradient(ellipse at 50% 0%, rgba(224,90,26,.22) 0%, rgba(245,166,35,.06) 40%, transparent 70%)',
-          pointerEvents: 'none', zIndex: 0
-        }} />
+      {/* Hero */}
+      <section
+        className="relative min-h-[calc(100vh-64px)] flex flex-col justify-center overflow-hidden"
+        style={{
+          background:
+            'radial-gradient(ellipse at 50% 0%, rgba(224,90,26,0.18) 0%, rgba(245,166,35,0.06) 40%, transparent 70%), radial-gradient(ellipse at 80% 80%, rgba(245,158,11,0.08) 0%, transparent 40%), var(--void)',
+        }}
+      >
+        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-bebas text-[clamp(120px,20vw,280px)] tracking-wider text-[var(--flame)] opacity-[0.04] whitespace-nowrap select-none">
+            EMBASSY
+          </div>
+        </div>
 
-        {/* Ghost watermark */}
-        <div style={{
-          position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)',
-          fontFamily: "'Bebas Neue',sans-serif", fontSize: 'clamp(120px,20vw,280px)',
-          letterSpacing: '.06em', whiteSpace: 'nowrap', color: 'var(--flame)', opacity: .04,
-          pointerEvents: 'none', zIndex: 0, userSelect: 'none', lineHeight: 1
-        }}>EMBASSY</div>
-
-        {/* Diagonal accent band */}
-        <div style={{
-          position: 'absolute', top: 0, right: -100,
-          width: 520, height: '100%',
-          background: 'linear-gradient(135deg, transparent 40%, rgba(224,90,26,.055) 40%, rgba(224,90,26,.055) 60%, transparent 60%)',
-          pointerEvents: 'none', zIndex: 0
-        }} />
-
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: 1240, margin: '0 auto', padding: '0 32px', width: '100%' }}>
-          <div style={{
-            display: 'grid', gridTemplateColumns: '1fr 460px', gap: 0,
-            alignItems: 'center', minHeight: 'calc(100vh - 64px - 110px)', padding: '60px 0 0'
-          }} className="hero-stage">
-
-            {/* LEFT */}
-            <div style={{ paddingRight: 40 }}>
+        <div className="relative z-10 max-w-7xl mx-auto px-6 w-full py-16 md:py-24">
+          <div className="grid md:grid-cols-2 gap-12 lg:gap-20 items-center">
+            <div className="text-center md:text-left">
               {isLive ? (
-                <Link to={`/live/${broadcast.id}`} style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 10,
-                  background: 'rgba(239,68,68,.12)', border: '1px solid rgba(239,68,68,.3)',
-                  borderLeft: '3px solid #ef4444', padding: '8px 16px', marginBottom: 32,
-                  fontSize: 11.5, fontWeight: 600, letterSpacing: '.14em', textTransform: 'uppercase',
-                  color: '#fca5a5', textDecoration: 'none', borderRadius: 2,
-                  transition: 'transform .15s'
-                }} className="hover:scale-[1.02]">
-                  <span className="ldot" style={{ background: '#ef4444', boxShadow: '0 0 6px #ef4444' }} />
-                  <Video style={{ width: 14, height: 14 }} /> Live Broadcast
+                <Link
+                  to={`/live/${broadcast?.id}`}
+                  className="inline-flex items-center gap-2.5 mb-6 px-4 py-2 rounded-sm border border-red-400/30 border-l-[3px] border-l-red-500 bg-red-500/10 text-red-200 text-[11px] font-semibold uppercase tracking-widest hover:scale-[1.02] transition-transform"
+                >
+                  <span className="w-2 h-2 rounded-full bg-red-500 shadow-[0_0_6px_#ef4444] animate-pulse" />
+                  <Video className="w-3.5 h-3.5" />
+                  Live Broadcast
                 </Link>
               ) : nowPlaying ? (
-                <Link to="/archive" style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 10,
-                  background: 'rgba(201,162,39,.1)', border: '1px solid rgba(201,162,39,.25)',
-                  borderLeft: '3px solid var(--gold)', padding: '8px 16px', marginBottom: 32,
-                  fontSize: 11.5, fontWeight: 600, letterSpacing: '.14em', textTransform: 'uppercase',
-                  color: 'var(--flame3)', textDecoration: 'none', borderRadius: 2,
-                  transition: 'transform .15s'
-                }} className="hover:scale-[1.02]">
-                  <span className="ldot" />
-                  <Radio style={{ width: 14, height: 14 }} /> Sermon Radio On Air
+                <Link
+                  to="/archive"
+                  className="inline-flex items-center gap-2.5 mb-6 px-4 py-2 rounded-sm border border-[var(--gold)]/25 border-l-[3px] border-l-[var(--gold)] bg-[var(--gold)]/10 text-[var(--flame3)] text-[11px] font-semibold uppercase tracking-widest hover:scale-[1.02] transition-transform"
+                >
+                  <span className="w-2 h-2 rounded-full bg-[var(--gold)] animate-pulse" />
+                  <Radio className="w-3.5 h-3.5" />
+                  Sermon Radio On Air
                 </Link>
               ) : (
-                <div style={{
-                  display: 'inline-flex', alignItems: 'center', gap: 10,
-                  background: 'rgba(224,90,26,.1)', border: '1px solid rgba(224,90,26,.25)',
-                  borderLeft: '3px solid var(--flame)', padding: '8px 16px', marginBottom: 32,
-                  fontSize: 11.5, fontWeight: 600, letterSpacing: '.14em', textTransform: 'uppercase',
-                  color: 'var(--flame3)'
-                }}>
-                  <span className="ldot" />
+                <div className="inline-flex items-center gap-2.5 mb-6 px-4 py-2 rounded-sm border border-[var(--flame)]/25 border-l-[3px] border-l-[var(--flame)] bg-[var(--flame)]/10 text-[var(--flame3)] text-[11px] font-semibold uppercase tracking-widest">
+                  <span className="w-2 h-2 rounded-full bg-[var(--flame)] animate-pulse" />
                   Broadcasting 24 hours · 7 days a week
                 </div>
               )}
 
-              {/* Single-line headline */}
-              <h1 style={{
-                fontFamily: "'Bebas Neue',sans-serif",
-                fontSize: 'clamp(48px,7vw,92px)',
-                lineHeight: 1, letterSpacing: '.02em',
-                color: 'var(--white)'
-              }}>
-                THE <span style={{ color: 'var(--flame)', textShadow: '0 0 60px rgba(224,90,26,.35)' }}>WHOLE</span> WORD
+              <h1 className="font-bebas text-[clamp(48px,9vw,96px)] leading-[0.9] tracking-wide text-white">
+                THE <span className="text-[var(--flame)] [text-shadow:0_0_60px_rgba(224,90,26,0.35)]">WHOLE</span> WORD
               </h1>
-
-              <p style={{
-                fontFamily: "'Playfair Display',serif", fontStyle: 'italic',
-                fontSize: 'clamp(16px,1.6vw,21px)', color: 'var(--cream2)',
-                margin: '22px 0 34px', lineHeight: 1.5, maxWidth: 440
-              }}>
-                To the whole world — live from the studio,<br />
-                every hour of every day.
+              <p className="font-serif italic text-[clamp(16px,1.8vw,22px)] text-[var(--cream2)] mt-5 mb-8 max-w-md mx-auto md:mx-0 leading-relaxed">
+                To the whole world — live from the studio, every hour of every day.
               </p>
-
-              <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap' }}>
-                <Link to={isLive && broadcast ? `/live/${broadcast.id}` : '/live'} className="btn btn-flame" style={{ fontSize: 15, padding: '14px 32px' }}>
-                  <svg viewBox="0 0 24 24" width={16} height={16} fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+              <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
+                <Link
+                  to={isLive && broadcast ? `/live/${broadcast.id}` : '/live'}
+                  className="btn btn-flame inline-flex items-center gap-2 text-sm md:text-base px-6 py-3"
+                >
+                  <Play className="w-4 h-4 fill-current" />
                   {isLive ? 'Watch Live' : 'Listen Live'}
                 </Link>
-                <Link to="/archive" className="btn btn-out" style={{ fontSize: 15, padding: '14px 32px' }}>Browse Sermons</Link>
+                <Link to="/archive" className="btn btn-out text-sm md:text-base px-6 py-3">
+                  Browse Sermons
+                </Link>
               </div>
             </div>
 
-            {/* RIGHT: emblem */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
-              <div style={{ position: 'relative', width: 340, height: 340, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {/* Concentric rings */}
-                <div style={{
-                  position: 'absolute', borderRadius: '50%', border: '1px solid var(--flame)',
-                  animation: 'ringpulse 3.5s ease-out infinite', width: 200, height: 200,
-                  animationDelay: '0s', opacity: .6, '--o': .6 } as any} />
-                <div style={{
-                  position: 'absolute', borderRadius: '50%', border: '1px solid var(--sunrise)',
-                  animation: 'ringpulse 3.5s ease-out infinite', width: 260, height: 260,
-                  animationDelay: '.9s', opacity: .35, '--o': .35 } as any} />
-                <div style={{
-                  position: 'absolute', borderRadius: '50%', border: '1px solid var(--flame)',
-                  animation: 'ringpulse 3.5s ease-out infinite', width: 320, height: 320,
-                  animationDelay: '1.8s', opacity: .18, '--o': .18 } as any} />
-                {/* Dotted orbit */}
-                <div style={{
-                  position: 'absolute', width: 240, height: 240, borderRadius: '50%',
-                  border: '1px dashed rgba(245,166,35,.25)', animation: 'spin 22s linear infinite'
-                }} />
-                {/* Emblem core */}
-                <div style={{
-                  width: 170, height: 170, borderRadius: '50%',
-                  background: 'radial-gradient(circle at 40% 35%, var(--panel2), var(--coal))',
-                  border: '2px solid var(--flame)', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  zIndex: 2, boxShadow: '0 0 60px rgba(224,90,26,.2), inset 0 1px 0 rgba(255,240,212,.06)'
-                }}>
+            <div className="hidden md:flex items-center justify-center relative">
+              <div className="relative w-80 h-80 lg:w-96 lg:h-96 flex items-center justify-center">
+                <div className="signal-ring w-52 h-52 border-[var(--flame)] opacity-60" style={{ animationDelay: '0s' }} />
+                <div className="signal-ring w-64 h-64 border-[var(--sunrise)] opacity-35" style={{ animationDelay: '0.9s' }} />
+                <div className="signal-ring w-80 h-80 border-[var(--flame)] opacity-20" style={{ animationDelay: '1.8s' }} />
+                <div className="absolute w-60 h-60 rounded-full border border-dashed border-[rgba(245,166,35,0.25)] animate-[spin_22s_linear_infinite]" />
+                <div className="w-44 h-44 rounded-full bg-[radial-gradient(circle_at_40%_35%,var(--panel2),var(--coal))] border-2 border-[var(--flame)] flex items-center justify-center z-10 shadow-[0_0_60px_rgba(224,90,26,0.2),inset_0_1px_0_rgba(255,240,212,0.06)]">
                   <SignalLogo size={110} />
                 </div>
-                {/* Floating stats */}
-                <div style={{ position: 'absolute', top: 20, right: 20, textAlign: 'center' }}>
-                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: 'var(--sunrise)', lineHeight: 1 }}>248</div>
-                  <div style={{ fontSize: 10, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--ash2)' }}>Listening now</div>
+                <div className="absolute top-4 right-4 text-center">
+                  <div className="font-bebas text-3xl text-[var(--sunrise)] leading-none">24/7</div>
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--ash2)]">Always on air</div>
                 </div>
-                <div style={{ position: 'absolute', bottom: 30, left: 10, textAlign: 'center' }}>
-                  <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 28, color: 'var(--sunrise)', lineHeight: 1 }}>24/7</div>
-                  <div style={{ fontSize: 10, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--ash2)' }}>Always on air</div>
+                <div className="absolute bottom-8 left-4 text-center">
+                  <div className="font-bebas text-3xl text-[var(--sunrise)] leading-none">World</div>
+                  <div className="text-[10px] uppercase tracking-widest text-[var(--ash2)]">Reaching the nations</div>
                 </div>
               </div>
             </div>
           </div>
-
-          {/* Spectrum bars */}
-          <SpectrumBars />
         </div>
 
-        {/* Now Playing bar */}
-        <div style={{
-          position: 'relative', zIndex: 1,
-          background: 'rgba(15,4,0,.85)', borderTop: '1px solid var(--line2)',
-          backdropFilter: 'blur(12px)', padding: '0 32px'
-        }}>
-          <div style={{ maxWidth: 1240, margin: '0 auto', display: 'flex', alignItems: 'center', gap: 20, height: 84 }}>
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: 7,
-              background: isLive ? '#ef4444' : 'var(--flame)', padding: '5px 12px', borderRadius: 2,
-              fontSize: 11, fontWeight: 700, letterSpacing: '.08em',
-              color: '#fff', flexShrink: 0
-            }}>
-              <span className="ldot" style={{ width: 6, height: 6 }} />
-              {isLive ? 'LIVE BROADCAST' : 'NOW PLAYING'}
-            </div>
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: 15, fontWeight: 600, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--white)' }}>
-                {nowPlaying?.title || broadcast?.title || 'Grace That Never Fails'}
-              </div>
-              <div style={{ fontSize: 12, color: 'var(--ash2)' }}>
-                {nowPlaying?.speaker || broadcast?.speaker || 'Reverend Austin Oviawe'}
-                {nowPlaying?.scriptureReference ? ` · ${nowPlaying.scriptureReference}` : ''}
-              </div>
-            </div>
-            {/* Progress */}
-            <div style={{ flex: 1, maxWidth: 320 }}>
-              <div style={{ height: 3, background: 'var(--panel2)', borderRadius: 2, overflow: 'hidden', marginBottom: 5 }}>
-                <div style={{ height: '100%', width: '38%', background: 'linear-gradient(to right,var(--flame),var(--sunrise))', borderRadius: 2 }} />
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 10.5, color: 'var(--ash)', fontFamily: "'IBM Plex Mono',monospace" }}>
-                <span>24:18</span><span>55:40</span>
-              </div>
-            </div>
-            {/* Controls */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
-              <button style={{ background: 'transparent', border: 'none', color: 'var(--ash2)', padding: 6, transition: 'color .15s' }}>
-                <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><polygon points="19 20 9 12 19 4 19 20"/><line x1="5" y1="19" x2="5" y2="5"/></svg>
-              </button>
-              <button style={{
-                width: 42, height: 42, borderRadius: '50%', background: 'var(--flame)', border: 'none', color: '#fff',
-                display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'background .15s'
-              }}
-              onClick={() => {
-                if (nowPlaying) {
-                  if (currentTrack?.id === nowPlaying.itemId) togglePlay()
-                  else playTrack({ id: nowPlaying.itemId, title: nowPlaying.title, speaker: nowPlaying.speaker, audioUrl: nowPlaying.audioUrl, thumbnail: nowPlaying.thumbnailUrl, trackType: 'sermon', offsetSeconds: nowPlaying.offsetSeconds })
-                }
-              }}>
-                {npActive ? <Pause style={{ width: 18, height: 18 }} /> : <Play style={{ width: 18, height: 18 }} />}
-              </button>
-              <button style={{ background: 'transparent', border: 'none', color: 'var(--ash2)', padding: 6, transition: 'color .15s' }}>
-                <svg viewBox="0 0 24 24" width={18} height={18} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><polygon points="5 4 15 12 5 20 5 4"/><line x1="19" y1="5" x2="19" y2="19"/></svg>
-              </button>
-            </div>
-            {/* Volume */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: 'var(--ash)' }}>
-              <svg viewBox="0 0 24 24" width={15} height={15} fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
-              <div style={{ width: 72, height: 3, background: 'var(--panel2)', borderRadius: 2, overflow: 'hidden' }}>
-                <div style={{ height: '100%', width: '70%', background: 'var(--ash2)', borderRadius: 2 }} />
-              </div>
-            </div>
-          </div>
-        </div>
+        <NowPlayingStrip isLive={isLive} broadcast={broadcast} nowPlaying={nowPlaying} />
       </section>
 
-      {/* ══ PROGRAM SCHEDULE ══ */}
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-        <div style={{ height: 1, background: 'var(--line)', margin: '56px 0' }} />
-      </div>
-      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 60px' }}>
-        <div style={{ marginBottom: 32 }}>
-          <div className="eyebrow">Today on air</div>
-          <h2 className="font-bebas" style={{ fontSize: 'clamp(34px,4vw,52px)', margin: '8px 0 6px' }}>Program Schedule</h2>
-          <p style={{ color: 'var(--ash2)', fontSize: 15.5, maxWidth: 540, lineHeight: 1.6 }}>
-            What's broadcasting on Embassy Radio today. Tune in or find it in the archive after.
-          </p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(280px,1fr))', gap: 16 }}>
-          {scheduleLoading ? (
-            Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} style={{ background: 'var(--coal)', border: '1px solid var(--line)', borderRadius: 4, padding: '18px 20px', display: 'flex', gap: 14, alignItems: 'flex-start' }}>
-                <div style={{ textAlign: 'center', minWidth: 48 }}>
-                  <div style={{ height: 20, width: 40, background: 'var(--panel2)', borderRadius: 3, animation: 'shimmer 1.6s infinite' }} />
-                  <div style={{ height: 12, width: 24, background: 'var(--panel2)', borderRadius: 3, marginTop: 4, animation: 'shimmer 1.6s infinite' }} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ height: 14, background: 'var(--panel2)', borderRadius: 3, width: '70%', marginBottom: 8, animation: 'shimmer 1.6s infinite' }} />
-                  <div style={{ height: 10, background: 'var(--panel2)', borderRadius: 3, width: '50%', animation: 'shimmer 1.6s infinite' }} />
-                </div>
-              </div>
-            ))
-          ) : scheduleItems.length === 0 ? (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '32px 0', color: 'var(--ash)' }}>
-              <Radio style={{ width: 32, height: 32, margin: '0 auto 8px', opacity: .4 }} />
-              <p>No upcoming broadcasts scheduled.</p>
-            </div>
-          ) : scheduleItems.map((s) => {
-            const start = new Date(s.start_time)
-            const end = s.end_time ? new Date(s.end_time) : null
-            const now = new Date()
-            const isNow = start <= now && (!end || end >= now)
-            const hr = start.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })
-            const ap = start.toLocaleTimeString('en-US', { minute: '2-digit' })
-            const dur = end ? Math.round((end.getTime() - start.getTime()) / 60000) : null
-            return (
-              <div key={s.id} style={{
-                background: isNow ? 'var(--mahog)' : 'var(--coal)',
-                border: '1px solid var(--line)', borderRadius: 4, padding: '18px 20px',
-                display: 'flex', gap: 14, alignItems: 'flex-start',
-                transition: 'border-color .2s', cursor: 'pointer'
-              }}
-              onMouseEnter={e => e.currentTarget.style.borderColor = 'var(--flame)'}
-              onMouseLeave={e => e.currentTarget.style.borderColor = isNow ? 'var(--flame)' : 'var(--line)'}>
-                <div style={{ textAlign: 'center', minWidth: 48 }}>
-                  <div className="font-bebas" style={{ fontSize: 22, color: 'var(--sunrise)', lineHeight: 1 }}>{hr}</div>
-                  <div style={{ fontSize: 11, color: 'var(--ash)' }}>{ap}</div>
-                </div>
-                <div>
-                  {isNow && (
-                    <div style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 5,
-                      background: 'var(--flame)', color: '#fff', fontSize: 10, fontWeight: 700,
-                      letterSpacing: '.06em', padding: '3px 8px', borderRadius: 2, marginBottom: 5
-                    }}>
-                      <span className="ldot" style={{ width: 5, height: 5 }} /> LIVE
-                    </div>
-                  )}
-                  <div style={{ fontWeight: 600, fontSize: 14.5, marginBottom: 2, color: 'var(--white)' }}>{s.playlist_title || 'Broadcast'}</div>
-                  <div style={{ fontSize: 12, color: 'var(--ash)' }}>
-                    {dur ? `${dur} min` : 'Until finished'}
-                  </div>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </section>
+      {/* Main content */}
+      <main className="max-w-7xl mx-auto px-6 py-16 md:py-24 space-y-24">
+        {/* Schedule */}
+        <section>
+          <SectionHeader
+            eyebrow="Today on air"
+            title="Program Schedule"
+            subtitle="What's broadcasting on Embassy Radio today. Tune in live or catch each program in the archive later."
+          >
+            <Link to="/live" className="btn btn-ghost btn-sm">
+              Full schedule <ArrowRight className="w-3.5 h-3.5 ml-1" />
+            </Link>
+          </SectionHeader>
 
-      {/* ══ SERMON PLAYLIST ══ */}
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-        <div style={{ height: 1, background: 'var(--line)', margin: '56px 0' }} />
-      </div>
-      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 60px' }}>
-        <div style={{ marginBottom: 32 }}>
-          <div className="eyebrow">Sermon library</div>
-          <h2 className="font-bebas" style={{ fontSize: 'clamp(34px,4vw,52px)', margin: '8px 0 6px' }}>Build Your Playlist</h2>
-          <p style={{ color: 'var(--ash2)', fontSize: 15.5, maxWidth: 540, lineHeight: 1.6 }}>
-            Queue up sermons to play end-to-end for however long you need. Set it and let the Word run.
-          </p>
-        </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 28, alignItems: 'flex-start' }} className="playlist-grid">
-          {/* Sermon list */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {sermonsLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} style={{ display: 'flex', gap: 14, alignItems: 'center', padding: '12px 0', borderBottom: '1px solid var(--line)' }}>
-                  <div style={{ width: 22, textAlign: 'center', color: 'var(--ash)', fontSize: 13 }}>{i + 1}</div>
-                  <div style={{ width: 52, height: 52, borderRadius: 3, background: 'var(--panel2)', flexShrink: 0, animation: 'shimmer 1.6s infinite' }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ height: 13, background: 'var(--panel2)', borderRadius: 3, width: '65%', marginBottom: 8, animation: 'shimmer 1.6s infinite' }} />
-                    <div style={{ height: 10, background: 'var(--panel2)', borderRadius: 3, width: '40%', animation: 'shimmer 1.6s infinite' }} />
-                  </div>
-                </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {scheduleLoading ? (
+              Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="h-28 bg-[var(--coal)] border border-[var(--line)] rounded-md animate-pulse" />
               ))
-            ) : sermons.slice(0, 6).map((s, i) => (
-              <SermonListItem key={s.id} s={s} index={i}
-                onPlay={() => playTrack({ id: s.id, title: s.title, speaker: s.speaker || 'Pastor', audioUrl: s.audio_url || '', thumbnail: s.thumbnail_url, trackType: 'sermon' })} />
-            ))}
-            {!sermonsLoading && sermons.length === 0 && (
-              <div style={{ textAlign: 'center', padding: '32px 0', color: 'var(--ash)' }}>
-                <BookOpen style={{ width: 32, height: 32, margin: '0 auto 8px', opacity: .4 }} />
-                <p>No sermons uploaded yet.</p>
+            ) : scheduleItems.length === 0 ? (
+              <div className="col-span-full text-center py-10 text-[var(--ash)]">
+                <Radio className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                <p>No upcoming broadcasts scheduled.</p>
               </div>
+            ) : (
+              scheduleItems.map((s) => {
+                const start = new Date(s.start_time)
+                const end = s.end_time ? new Date(s.end_time) : null
+                const now = new Date()
+                const isNow = start <= now && (!end || end >= now)
+                const hr = start.toLocaleTimeString('en-US', { hour: 'numeric', hour12: true })
+                const min = start.toLocaleTimeString('en-US', { minute: '2-digit' })
+                const dur = end ? Math.round((end.getTime() - start.getTime()) / 60000) : null
+                return (
+                  <div
+                    key={s.id}
+                    className={`flex gap-4 p-4 rounded-md border transition-colors cursor-pointer ${
+                      isNow
+                        ? 'bg-[var(--mahog)] border-[var(--flame)]'
+                        : 'bg-[var(--coal)] border-[var(--line)] hover:border-[var(--flame)]'
+                    }`}
+                  >
+                    <div className="text-center min-w-[48px]">
+                      <div className="font-bebas text-2xl text-[var(--sunrise)] leading-none">{hr}</div>
+                      <div className="text-[11px] text-[var(--ash)]">{min}</div>
+                    </div>
+                    <div>
+                      {isNow && (
+                        <div className="inline-flex items-center gap-1.5 mb-1 bg-[var(--flame)] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-sm">
+                          <span className="w-1 h-1 rounded-full bg-white animate-pulse" />
+                          Live
+                        </div>
+                      )}
+                      <div className="font-semibold text-white text-sm">{s.playlist_title || 'Broadcast'}</div>
+                      <div className="text-xs text-[var(--ash)]">{dur ? `${dur} min` : 'Until finished'}</div>
+                    </div>
+                  </div>
+                )
+              })
             )}
           </div>
+        </section>
 
-          {/* Queue card */}
-          <div style={{
-            background: 'var(--panel)', border: '1px solid var(--line)', borderRadius: 4,
-            overflow: 'hidden', position: 'sticky', top: 80
-          }}>
-            <div style={{
-              background: 'linear-gradient(135deg,var(--mahog),var(--panel))',
-              padding: '14px 16px', borderBottom: '1px solid var(--line)'
-            }}>
-              <h3 className="font-bebas" style={{ fontSize: 20, letterSpacing: '.06em' }}>My Playlist</h3>
-              <div style={{ fontSize: 11.5, color: 'var(--ash)', marginTop: 2 }}>Plays continuously</div>
+        {/* Featured sermons */}
+        <section>
+          <SectionHeader
+            eyebrow="Sermon library"
+            title="Featured Sermons"
+            subtitle="Hand-picked messages to strengthen your faith and deepen your walk with God."
+          >
+            {!sermonsLoading && sermons.length > 0 && (
+              <button onClick={handlePlayAll} className="btn btn-sun btn-sm">
+                <Play className="w-3.5 h-3.5 mr-1 fill-current" /> Play all
+              </button>
+            )}
+          </SectionHeader>
+
+          {sermonsLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="aspect-[3/4] bg-[var(--coal)] border border-[var(--line)] rounded-md animate-pulse" />
+              ))}
             </div>
-            <div style={{ padding: 14 }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
-                <span style={{ fontSize: 12, color: 'var(--ash)' }}>Play for:</span>
-                <select className="input-dark" style={{ padding: '6px 10px', fontSize: 13, borderRadius: 4 }}>
-                  <option>1 hour</option>
-                  <option>2 hours</option>
-                  <option>3 hours</option>
-                  <option>All day</option>
-                </select>
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 8, marginBottom: 14, maxHeight: 280, overflowY: 'auto' }}>
-                {sermons.slice(0, 3).map((s) => (
-                  <div key={s.id} style={{
-                    display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px',
-                    background: 'var(--mahog)', borderRadius: 4
-                  }}>
-                    <span style={{ color: 'var(--ash)', fontSize: 14, cursor: 'grab' }}>⠿</span>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <div style={{ fontSize: 12.5, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--white)' }}>{s.title}</div>
-                      <div className="font-mono" style={{ fontSize: 11, color: 'var(--ash)' }}>
-                        {s.duration ? `${Math.floor(s.duration / 60)}:${String(s.duration % 60).padStart(2, '0')}` : '—'}
-                      </div>
-                    </div>
-                    <button style={{ background: 'transparent', border: 'none', color: 'var(--ash)', fontSize: 14, padding: 2, transition: 'color .15s' }}
-                      className="hover:!text-[var(--flame)]">✕</button>
-                  </div>
-                ))}
-                {sermons.length === 0 && <div style={{ color: 'var(--ash)', fontSize: 12, padding: 8 }}>No sermons in queue yet.</div>}
-              </div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, borderTop: '1px solid var(--line)', paddingTop: 10, marginBottom: 12 }}>
-                <span>Total runtime</span>
-                <span className="font-mono" style={{ color: 'var(--sunrise)' }}>—</span>
-              </div>
-              <button className="btn btn-sun" style={{ width: '100%' }}>▶ Play Playlist</button>
+          ) : sermons.length === 0 ? (
+            <div className="text-center py-12 text-[var(--ash)]">
+              <BookOpen className="w-10 h-10 mx-auto mb-3 opacity-40" />
+              <p>No sermons uploaded yet.</p>
             </div>
-          </div>
-        </div>
-      </section>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+              {sermons.map((s) => (
+                <SermonCard key={s.id} s={s} />
+              ))}
+            </div>
+          )}
 
-      {/* ══ PRINT MEDIA ══ */}
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-        <div style={{ height: 1, background: 'var(--line)', margin: '56px 0' }} />
-      </div>
-      <section style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px 60px' }}>
-        <div style={{ marginBottom: 32 }}>
-          <div className="eyebrow">Print media</div>
-          <h2 className="font-bebas" style={{ fontSize: 'clamp(34px,4vw,52px)', margin: '8px 0 6px' }}>Read & Download</h2>
-          <p style={{ color: 'var(--ash2)', fontSize: 15.5, maxWidth: 540, lineHeight: 1.6 }}>
-            Bulletins, devotional magazines, and study guides — free to download anytime.
-          </p>
-        </div>
-        {printLoading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 18 }}>
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} style={{ background: 'var(--coal)', border: '1px solid var(--line)', borderRadius: 4, overflow: 'hidden' }}>
-                <div style={{ height: 160, background: 'var(--panel2)', animation: 'shimmer 1.6s infinite' }} />
-                <div style={{ padding: '12px 14px' }}>
-                  <div style={{ height: 13, background: 'var(--panel2)', borderRadius: 3, width: '80%', marginBottom: 8, animation: 'shimmer 1.6s infinite' }} />
-                  <div style={{ height: 10, background: 'var(--panel2)', borderRadius: 3, width: '50%', animation: 'shimmer 1.6s infinite' }} />
-                </div>
-              </div>
-            ))}
+          <div className="mt-8 text-center md:text-left">
+            <Link to="/archive" className="btn btn-out btn-sm">
+              View all sermons <ArrowRight className="w-3.5 h-3.5 ml-1" />
+            </Link>
           </div>
-        ) : printItems.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '40px 24px', background: 'var(--coal)', border: '1px solid var(--line)', borderRadius: 6 }}>
-            <FileText style={{ width: 36, height: 36, margin: '0 auto 10px', color: 'var(--line)' }} />
-            <p style={{ color: 'var(--ash)', fontSize: 13 }}>No resources available yet. Check back soon.</p>
-          </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 18 }}>
-            {printItems.slice(0, 4).map(item => {
-              const dateStr = item.published_date
-                ? new Date(item.published_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                : null
-              return (
-                <div key={item.id} style={{
-                  background: 'var(--coal)', border: '1px solid var(--line)', borderRadius: 4,
-                  overflow: 'hidden', transition: 'border-color .2s, transform .2s'
-                }}
-                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--sunrise)'; e.currentTarget.style.transform = 'translateY(-4px)' }}
-                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--line)'; e.currentTarget.style.transform = 'translateY(0)' }}>
-                  {item.thumbnail_url ? (
-                    <div style={{ height: 160, overflow: 'hidden' }}>
-                      <img src={item.thumbnail_url} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-                    </div>
-                  ) : (
-                    <div style={{ height: 160, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--panel2)', borderBottom: '1px solid var(--line)' }}>
-                      <div style={{ width: 56, height: 72, borderRadius: 3, background: 'rgba(224,90,26,.1)', border: '1px solid rgba(224,90,26,.2)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 5 }}>
-                        <FileText style={{ width: 22, height: 22, color: 'var(--flame3)' }} />
-                        <span style={{ fontSize: 7, fontWeight: 700, letterSpacing: '.1em', textTransform: 'uppercase', color: 'var(--flame3)' }}>PDF</span>
-                      </div>
-                    </div>
-                  )}
-                  <div style={{ padding: '12px 14px' }}>
-                    <div style={{ fontWeight: 600, fontSize: 13.5, marginBottom: 2, color: 'var(--white)' }}>{item.title}</div>
-                    <div style={{ fontSize: 11.5, color: 'var(--ash)' }}>
-                      {dateStr}{dateStr && item.page_count ? ' · ' : ''}{item.page_count ? `${item.page_count} pages` : ''}
-                    </div>
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 10 }}>
-                      <a href={item.pdf_url} download target="_blank" rel="noopener noreferrer" className="btn btn-out btn-sm">
-                        <Download style={{ width: 14, height: 14 }} /> Download
-                      </a>
-                      <span style={{ fontSize: 11, color: 'var(--ash)' }}>PDF</span>
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        )}
-      </section>
+        </section>
 
-      {/* ══ CTA STRIP ══ */}
-      <div style={{ maxWidth: 1200, margin: '0 auto', padding: '0 24px' }}>
-        <div style={{
-          background: 'linear-gradient(135deg,var(--mahog),var(--panel))',
-          border: '1px solid var(--line2)', borderRadius: 4, padding: '48px 52px',
-          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          gap: 24, flexWrap: 'wrap', marginBottom: 60
-        }}>
-          <div>
-            <h2 className="font-bebas" style={{ fontSize: 'clamp(28px,3.5vw,42px)', marginBottom: 6 }}>Never miss a word.</h2>
-            <p style={{ color: 'var(--ash2)', fontSize: 15.5 }}>
-              Get notified when we go live, new sermons drop, and fresh resources arrive.
+        {/* Events */}
+        <section>
+          <SectionHeader
+            eyebrow="Coming up"
+            title="Upcoming Events"
+            subtitle="Conferences, live services, and special broadcasts you will not want to miss."
+          >
+            <Link to="/events" className="btn btn-ghost btn-sm">
+              All events <ArrowRight className="w-3.5 h-3.5 ml-1" />
+            </Link>
+          </SectionHeader>
+
+          {eventsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="h-40 bg-[var(--coal)] border border-[var(--line)] rounded-md animate-pulse" />
+              ))}
+            </div>
+          ) : events.length === 0 ? (
+            <div className="text-center py-12 text-[var(--ash)]">
+              <Calendar className="w-10 h-10 mx-auto mb-3 opacity-40" />
+              <p>No upcoming events right now.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {events.slice(0, 6).map((event) => (
+                <EventCard key={event.id} event={event} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* Print media */}
+        <section>
+          <SectionHeader
+            eyebrow="Print media"
+            title="Read & Download"
+            subtitle="Bulletins, devotional magazines, and study guides — free to download anytime."
+          >
+            <Link to="/print" className="btn btn-ghost btn-sm">
+              Browse library <ArrowRight className="w-3.5 h-3.5 ml-1" />
+            </Link>
+          </SectionHeader>
+
+          {printLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="h-64 bg-[var(--coal)] border border-[var(--line)] rounded-md animate-pulse" />
+              ))}
+            </div>
+          ) : printItems.length === 0 ? (
+            <div className="text-center py-12 bg-[var(--coal)] border border-[var(--line)] rounded-md text-[var(--ash)]">
+              <FileText className="w-10 h-10 mx-auto mb-3 opacity-40" />
+              <p>No resources available yet. Check back soon.</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              {printItems.slice(0, 4).map((item) => (
+                <PrintCard key={item.id} item={item} />
+              ))}
+            </div>
+          )}
+        </section>
+
+        {/* CTA */}
+        <section
+          className="rounded-xl border border-[var(--line)] p-8 md:p-12 text-center md:text-left"
+          style={{
+            background:
+              'linear-gradient(135deg, rgba(139,92,246,0.12) 0%, rgba(224,90,26,0.08) 50%, rgba(245,166,35,0.05) 100%), var(--coal)',
+          }}
+        >
+          <div className="max-w-2xl">
+            <h2 className="font-bebas text-3xl md:text-5xl text-white mb-3">Take Embassy Radio with you</h2>
+            <p className="text-[var(--fog2)] mb-6 leading-relaxed">
+              Install the app, enable notifications, and never miss a live broadcast or new sermon. The whole word, everywhere you go.
             </p>
+            <div className="flex flex-wrap justify-center md:justify-start gap-3">
+              <Link to="/live" className="btn btn-flame inline-flex items-center">
+                <Radio className="w-4 h-4 mr-2" /> Start listening
+              </Link>
+              <Link to="/about" className="btn btn-ghost inline-flex items-center">
+                Learn more <ArrowRight className="w-4 h-4 ml-1" />
+              </Link>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
-            <button className="btn btn-flame">Get notifications</button>
-            <button className="btn btn-ghost">Visit wamefm.vercel.app</button>
-          </div>
-        </div>
-      </div>
+        </section>
+      </main>
 
-      {/* ══ FOOTER ══ */}
-      <footer style={{ borderTop: '1px solid var(--line)', padding: '40px 24px', maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
-        <div>
-          <div className="font-bebas" style={{ fontSize: 18, letterSpacing: '.06em' }}>Embassy Radio</div>
-          <div style={{ fontSize: 11, color: 'var(--ash)' }}>The whole word to the whole world</div>
+      <footer className="border-t border-[var(--line)] bg-[var(--abyss)] py-12">
+        <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <SignalLogo size={40} />
+            <div>
+              <div className="font-bebas text-xl text-white tracking-wide">EMBASSY RADIO</div>
+              <div className="text-[11px] text-[var(--ash)] uppercase tracking-widest">The Whole Word to the Whole World</div>
+            </div>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-[var(--ash2)]">
+            <Link to="/" className="hover:text-[var(--sunrise)] transition-colors">Home</Link>
+            <Link to="/archive" className="hover:text-[var(--sunrise)] transition-colors">Sermons</Link>
+            <Link to="/live" className="hover:text-[var(--sunrise)] transition-colors">Live</Link>
+            <Link to="/events" className="hover:text-[var(--sunrise)] transition-colors">Events</Link>
+            <Link to="/about" className="hover:text-[var(--sunrise)] transition-colors">About</Link>
+          </div>
+          <div className="text-xs text-[var(--ash)]">© {new Date().getFullYear()} Embassy Radio. All rights reserved.</div>
         </div>
-        <div style={{ display: 'flex', gap: 20, fontSize: 13, color: 'var(--ash)' }}>
-          <Link to="/live" style={{ transition: 'color .15s' }} className="hover:!text-[var(--sunrise)]">Radio</Link>
-          <Link to="/archive" style={{ transition: 'color .15s' }} className="hover:!text-[var(--sunrise)]">Sermons</Link>
-          <Link to="/print" style={{ transition: 'color .15s' }} className="hover:!text-[var(--sunrise)]">Print</Link>
-          <Link to="/donate" style={{ transition: 'color .15s' }} className="hover:!text-[var(--sunrise)]">Give</Link>
-          <Link to="/about" style={{ transition: 'color .15s' }} className="hover:!text-[var(--sunrise)]">Contact</Link>
-        </div>
-        <div className="font-mono" style={{ fontSize: 12, color: 'var(--ash)' }}>© 2026 Word and Miracle Embassy Church</div>
       </footer>
-
-      {/* Responsive overrides */}
-      <style>{`
-        @media (max-width: 900px) {
-          .hero-stage { grid-template-columns: 1fr !important; text-align: center; padding: 40px 0 0 !important; }
-          .hero-stage > div:first-child { padding-right: 0 !important; }
-          .hero-stage > div:last-child { display: none !important; }
-          .playlist-grid { grid-template-columns: 1fr !important; }
-        }
-        @media (max-width: 640px) {
-          .now-playing-bar > div > div:nth-child(4) { display: none !important; }
-          .now-playing-bar > div > div:nth-child(5) { display: none !important; }
-        }
-      `}</style>
     </div>
   )
 }
