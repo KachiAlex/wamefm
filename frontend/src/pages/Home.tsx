@@ -159,14 +159,14 @@ export default function Home() {
     <div style={{ background: 'var(--ember)', color: 'var(--cream)' }}>
       {/* Push notification banner */}
       {showPushBanner && (
-        <div style={{ background: 'rgba(224,90,26,.12)', borderBottom: '1px solid rgba(224,90,26,.2)', padding: '10px 24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
-          <Bell style={{ width: 15, height: 15, color: 'var(--flame3)', flexShrink: 0 }} />
-          <span style={{ fontSize: 13, color: 'var(--cream2)' }}>Get notified when we go live and when new sermons drop.</span>
+        <div style={{ background: '#0B061F', borderBottom: '1px solid rgba(139,92,246,.2)', padding: '12px 24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
+          <Bell style={{ width: 16, height: 16, color: 'var(--lav)', flexShrink: 0 }} />
+          <span style={{ fontSize: 13, color: '#F2EDFF', fontWeight: 500 }}>Get notified when we go live and when new sermons drop.</span>
           <button onClick={requestPush} disabled={loadingPush}
-            style={{ fontSize: 12, fontWeight: 700, padding: '5px 14px', borderRadius: 4, background: 'var(--flame)', color: '#fff', border: 'none', cursor: 'pointer', opacity: loadingPush ? .6 : 1 }}>
+            style={{ fontSize: 12, fontWeight: 700, padding: '6px 16px', borderRadius: 6, background: 'var(--violet)', color: '#fff', border: 'none', cursor: 'pointer', opacity: loadingPush ? .6 : 1, boxShadow: '0 4px 14px rgba(139,92,246,.25)' }}>
             {loadingPush ? 'Enabling…' : 'Enable Notifications'}
           </button>
-          <button onClick={dismissPush} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--ash)', padding: 4 }}>
+          <button onClick={dismissPush} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--fog)', padding: 4 }}>
             <X style={{ width: 14, height: 14 }} />
           </button>
         </div>
