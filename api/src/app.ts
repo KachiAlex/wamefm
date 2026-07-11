@@ -162,6 +162,18 @@ async function _doInitDb() {
   // Add event columns if missing
   try { await dbQuery(`ALTER TABLE events ADD COLUMN IF NOT EXISTS category TEXT`) } catch {}
 
+  // Add broadcasts columns if missing
+  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS scripture_reference TEXT`) } catch {}
+  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS audio_path TEXT`) } catch {}
+  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS stream_key TEXT`) } catch {}
+  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS stream_type TEXT DEFAULT 'church_online'`) } catch {}
+  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS church_online_url TEXT`) } catch {}
+  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS rtmp_url TEXT`) } catch {}
+  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS thumbnail_url TEXT`) } catch {}
+  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS speaker TEXT`) } catch {}
+  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS recording_url TEXT`) } catch {}
+  try { await dbQuery(`ALTER TABLE broadcasts ADD COLUMN IF NOT EXISTS recorded_at TIMESTAMP`) } catch {}
+
   // New tables
   await dbQuery(`CREATE TABLE IF NOT EXISTS featured_sermons (
     id TEXT PRIMARY KEY, sermon_id TEXT NOT NULL, order_index INTEGER DEFAULT 0,
