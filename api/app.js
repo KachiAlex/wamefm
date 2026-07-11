@@ -998,28 +998,41 @@ app.get('/radio-schedules/public', async (_req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
+// ── Chat helpers ──────────────────────────────────────────────
+async function fetchChatMessages(broadcastId, userId) {
+    await initDb();
+    let rows;
+    if (userId) {
+        rows = await dbQuery(`SELECT * FROM chat_messages WHERE broadcast_id=$1 AND (
+        is_private=FALSE OR user_id=$2 OR recipient_id=$2
+      ) ORDER BY created_at DESC LIMIT 200`, [broadcastId, userId]);
+    }
+    else {
+        rows = await dbQuery(`SELECT * FROM chat_messages WHERE broadcast_id=$1 AND is_private=FALSE ORDER BY created_at DESC LIMIT 200`, [broadcastId]);
+    }
+    return rows.reverse();
+}
+async function fetchChatUsers(broadcastId) {
+    await initDb();
+    const rows = await dbQuery(`SELECT DISTINCT user_id, user_name FROM chat_messages
+     WHERE broadcast_id=$1 AND user_id IS NOT NULL
+       AND created_at > NOW() - INTERVAL '30 minutes'
+     ORDER BY user_name`, [broadcastId]);
+    return rows;
+}
 // ── Chat routes ───────────────────────────────────────────────
-app.get('/chat/:broadcastId', optionalAuth, async (req, res) => {
+// Broadcast-scoped chat (matches frontend /chat/broadcast/:id)
+app.get('/chat/broadcast/:broadcastId', optionalAuth, async (req, res) => {
     try {
-        await initDb();
         const userId = req.user?.id || null;
-        // Public + private where user is sender or recipient
-        let rows;
-        if (userId) {
-            rows = await dbQuery(`SELECT * FROM chat_messages WHERE broadcast_id=$1 AND (
-          is_private=FALSE OR user_id=$2 OR recipient_id=$2
-        ) ORDER BY created_at DESC LIMIT 200`, [req.params.broadcastId, userId]);
-        }
-        else {
-            rows = await dbQuery(`SELECT * FROM chat_messages WHERE broadcast_id=$1 AND is_private=FALSE ORDER BY created_at DESC LIMIT 200`, [req.params.broadcastId]);
-        }
-        res.json({ messages: rows.reverse() });
+        const messages = await fetchChatMessages(req.params.broadcastId, userId);
+        res.json({ messages });
     }
     catch (e) {
         res.status(500).json({ error: e.message });
     }
 });
-app.post('/chat/:broadcastId', auth, async (req, res) => {
+app.post('/chat/broadcast/:broadcastId', auth, async (req, res) => {
     try {
         await initDb();
         const { message, recipientId } = req.body;
@@ -1036,7 +1049,7 @@ app.post('/chat/:broadcastId', auth, async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
-app.post('/chat/:broadcastId/guest', async (req, res) => {
+app.post('/chat/broadcast/:broadcastId/guest', async (req, res) => {
     try {
         await initDb();
         const { message, guestName } = req.body;
@@ -1056,21 +1069,16 @@ app.post('/chat/:broadcastId/guest', async (req, res) => {
         res.status(500).json({ error: e.message });
     }
 });
-app.get('/chat/:broadcastId/users', async (req, res) => {
+app.get('/chat/broadcast/:broadcastId/users', async (req, res) => {
     try {
-        await initDb();
-        // Active users who posted in this broadcast in the last 30 min
-        const rows = await dbQuery(`SELECT DISTINCT user_id, user_name FROM chat_messages
-       WHERE broadcast_id=$1 AND user_id IS NOT NULL
-         AND created_at > NOW() - INTERVAL '30 minutes'
-       ORDER BY user_name`, [req.params.broadcastId]);
-        res.json({ users: rows });
+        const users = await fetchChatUsers(req.params.broadcastId);
+        res.json({ users });
     }
     catch (e) {
         res.status(500).json({ error: e.message });
     }
 });
-app.post('/chat/:id/react', async (req, res) => {
+app.post('/chat/broadcast/:id/react', async (req, res) => {
     try {
         await initDb();
         const { emoji } = req.body;
@@ -1088,6 +1096,17 @@ app.post('/chat/:id/react', async (req, res) => {
         reactions[emoji] = (reactions[emoji] || 0) + 1;
         await dbQuery(`UPDATE chat_messages SET reactions=$1 WHERE id=$2`, [JSON.stringify(reactions), req.params.id]);
         res.json({ reactions });
+    }
+    catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+});
+// General chat room (admin dashboard overview, etc.)
+app.get('/chat/general', optionalAuth, async (req, res) => {
+    try {
+        const userId = req.user?.id || null;
+        const messages = await fetchChatMessages('general', userId);
+        res.json({ messages });
     }
     catch (e) {
         res.status(500).json({ error: e.message });
