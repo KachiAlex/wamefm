@@ -118,6 +118,8 @@ function AudioBars({ active }: { active: boolean }) {
 
 function LivePlayerHero({ broadcast, isPlaying, setIsPlaying, isMuted, setIsMuted }: any) {
   const isLive = broadcast?.status==='live'
+  const navigate = useNavigate()
+  const liveUrl = broadcast?.id ? `/live/${broadcast.id}` : '/live'
   return (
     <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-gradient-to-br from-[#0E0A1E] to-[#120A1F] overflow-hidden mb-5">
       <div className="relative">
@@ -128,7 +130,7 @@ function LivePlayerHero({ broadcast, isPlaying, setIsPlaying, isMuted, setIsMute
             <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-[#1A1030] to-[#0E0A1E] flex items-center justify-center border border-[#8B5CF6]/20 shrink-0">
               <Radio className="w-7 h-7 md:w-9 md:h-9 text-[#8B5CF6]/60" />
             </div>
-            <div className="text-center md:text-left flex-1">
+            <Link to={liveUrl} className="text-center md:text-left flex-1 group">
               <div className="flex items-center justify-center md:justify-start gap-2 mb-1.5">
                 {isLive && (
                   <span className="inline-flex items-center gap-1 bg-[#F59E0B] text-white text-[10px] font-bold px-2 py-0.5 rounded-full">
@@ -137,11 +139,11 @@ function LivePlayerHero({ broadcast, isPlaying, setIsPlaying, isMuted, setIsMute
                 )}
                 <span className="text-[10px] text-[#AFA8C2] uppercase tracking-wider">Embassy Radio Live Radio</span>
               </div>
-              <h2 className="font-serif text-lg md:text-xl font-medium text-white">{broadcast?.title || 'No broadcast currently live'}</h2>
+              <h2 className="font-serif text-lg md:text-xl font-medium text-white group-hover:text-[#8B5CF6] transition-colors">{broadcast?.title || 'No broadcast currently live'}</h2>
               {broadcast?.description && <p className="text-xs text-[#AFA8C2] mt-0.5">{broadcast.description}</p>}
-            </div>
+            </Link>
             <div className="flex items-center gap-3 shrink-0">
-              <button onClick={()=>setIsPlaying(!isPlaying)} className="w-12 h-12 rounded-full bg-[#8B5CF6] hover:bg-[#7C3AED] flex items-center justify-center transition-colors">
+              <button onClick={() => broadcast?.id ? navigate(liveUrl) : setIsPlaying(!isPlaying)} className="w-12 h-12 rounded-full bg-[#8B5CF6] hover:bg-[#7C3AED] flex items-center justify-center transition-colors">
                 {isPlaying ? <Pause className="w-5 h-5 text-white fill-current" /> : <Play className="w-5 h-5 text-white fill-current ml-0.5" />}
               </button>
               <button onClick={()=>setIsMuted(!isMuted)} className="w-10 h-10 rounded-full bg-[rgba(139,92,246,0.1)] hover:bg-[rgba(139,92,246,0.15)] flex items-center justify-center transition-colors">
@@ -157,7 +159,7 @@ function LivePlayerHero({ broadcast, isPlaying, setIsPlaying, isMuted, setIsMute
           <div className="flex items-center gap-4">
             <div>
               <p className="text-[10px] text-[#AFA8C2] uppercase tracking-wider">Status</p>
-              <p className="text-lg font-semibold text-white">{isLive ? <span className="text-[#4ade80] text-xs font-normal">? LIVE</span> : <span className="text-xs font-normal text-[#AFA8C2]">OFFLINE</span>}</p>
+              <p className="text-lg font-semibold text-white">{isLive ? <span className="text-[#4ade80] text-xs font-normal">● LIVE</span> : <span className="text-xs font-normal text-[#AFA8C2]">OFFLINE</span>}</p>
             </div>
             <div className="h-8 w-px bg-[rgba(139,92,246,0.1)]" />
             <div>
@@ -165,7 +167,7 @@ function LivePlayerHero({ broadcast, isPlaying, setIsPlaying, isMuted, setIsMute
               <p className="text-xs text-white font-medium">High <TrendingUp className="w-3 h-3 text-[#4ade80] inline ml-1" /></p>
             </div>
           </div>
-          <Link to={broadcast?`/live/${broadcast.id}`:'/live'} className="flex items-center gap-2 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-xs font-medium px-4 py-2 rounded-full transition-colors">
+          <Link to={liveUrl} className="flex items-center gap-2 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-xs font-medium px-4 py-2 rounded-full transition-colors">
             <Headphones className="w-3.5 h-3.5" /> Open Player
           </Link>
         </div>
