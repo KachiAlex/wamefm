@@ -346,7 +346,7 @@ function NowPlayingStrip({
 }
 
 export default function Home() {
-  usePageTitle('The Whole Word to the Whole World', {
+  usePageTitle('Representing the Kingdom in Word and Power', {
     description: 'Embassy Radio — the 24/7 digital radio ministry of Word and Miracle Embassy Church. Listen to live broadcasts, explore sermon archives, worship music, prayer, and Christian community.',
     path: '/',
   })
@@ -452,10 +452,11 @@ export default function Home() {
               )}
 
               <h1 className="font-bebas text-[clamp(48px,9vw,96px)] leading-[0.9] tracking-wide text-white">
-                THE <span className="text-[var(--flame)] [text-shadow:0_0_60px_rgba(224,90,26,0.35)]">WHOLE</span> WORD
+                REPRESENTING THE KINGDOM<br />
+                IN <span className="text-[var(--flame)] [text-shadow:0_0_60px_rgba(224,90,26,0.35)]">WORD</span> AND <span className="text-[var(--flame)] [text-shadow:0_0_60px_rgba(224,90,26,0.35)]">POWER</span>
               </h1>
               <p className="font-serif italic text-[clamp(16px,1.8vw,22px)] text-[var(--cream2)] mt-5 mb-8 max-w-md mx-auto md:mx-0 leading-relaxed">
-                To the whole world — live from the studio, every hour of every day.
+                Live from the studio, every hour of every day.
               </p>
               <div className="flex flex-wrap items-center justify-center md:justify-start gap-4">
                 <Link
@@ -696,7 +697,7 @@ export default function Home() {
             <SignalLogo size={40} />
             <div>
               <div className="font-bebas text-xl text-white tracking-wide">EMBASSY RADIO</div>
-              <div className="text-[11px] text-[var(--ash)] uppercase tracking-widest">The Whole Word to the Whole World</div>
+              <div className="text-[11px] text-[var(--ash)] uppercase tracking-widest">Representing the Kingdom in Word and Power</div>
             </div>
           </div>
           <div className="flex flex-wrap items-center justify-center gap-6 text-sm text-[var(--ash2)]">
