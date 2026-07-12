@@ -26,7 +26,10 @@ interface Track {
 }
 
 export default function MusicPage() {
-  usePageTitle('Music Library')
+  usePageTitle('Music Library', {
+    description: 'Explore Christian worship music, gospel songs, and hymns on Embassy Radio. Create playlists and listen to uplifting music from Word and Miracle Embassy Church.',
+    path: '/music',
+  })
   const { showToast } = useToast()
   const { currentTrack, isPlaying, playTrack: globalPlayTrack, togglePlay, playQueue, shuffle, toggleShuffle } = useAudioPlayer()
   const { isFavorite, toggleFavorite } = useFavorites()

@@ -38,7 +38,10 @@ export default function SermonDetail() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
 
-  usePageTitle(sermon?.title || 'Sermon')
+  usePageTitle(sermon?.title || 'Sermon', {
+    description: sermon?.description || 'Listen to this sermon from Word and Miracle Embassy Church. Stream or download the full message with scripture references and speaker details.',
+    path: `/sermons/${sermon?.id || ''}`,
+  })
 
   useEffect(() => {
     if (!id) return

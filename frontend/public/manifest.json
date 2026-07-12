@@ -1,14 +1,25 @@
 {
   "name": "Embassy Radio - Word and Miracle Embassy Church",
   "short_name": "Embassy Radio",
-  "description": "Live broadcasts, sermons, podcasts, music, and community for Word and Miracle Embassy Church.",
+  "description": "Live broadcasts, sermons, podcasts, worship music, and community for Word and Miracle Embassy Church. 24/7 Christian radio ministry.",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
   "background_color": "#1a0a2e",
   "theme_color": "#1a0a2e",
   "orientation": "portrait-primary",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["music", "religion", "education", "entertainment"],
   "icons": [
+    { "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
     { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Live Broadcast", "url": "/live", "description": "Listen to the current live broadcast" },
+    { "name": "Sermon Archive", "url": "/archive", "description": "Browse on-demand sermon recordings" },
+    { "name": "Prayer Wall", "url": "/prayer", "description": "Submit and pray for prayer requests" },
+    { "name": "Donate", "url": "/donate", "description": "Support the ministry financially" }
   ]
 }

@@ -58,7 +58,7 @@ export default function Navbar() {
           <LogoImg size={38} />
           <div style={{ lineHeight: 1 }} className="hidden sm:block">
             <div style={{ fontFamily: "'Bebas Neue',sans-serif", fontSize: 20, letterSpacing: '.06em', color: 'var(--white)' }}>Embassy Radio</div>
-            <div style={{ fontSize: 10, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--ash)' }}>wamefm.vercel.app</div>
+            <div style={{ fontSize: 10, letterSpacing: '.14em', textTransform: 'uppercase', color: 'var(--ash)' }}>Word & Miracle Embassy</div>
           </div>
         </Link>
 

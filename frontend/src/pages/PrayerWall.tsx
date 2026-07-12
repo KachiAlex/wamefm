@@ -20,7 +20,10 @@ interface Prayer {
 }
 
 export default function PrayerWall() {
-  usePageTitle('Prayer Wall')
+  usePageTitle('Prayer Wall', {
+    description: 'Submit your prayer requests and pray for others on the Embassy Radio Prayer Wall. Join our faith community in intercession and support.',
+    path: '/prayer',
+  })
   const { user } = useAuth()
   const { showToast } = useToast()
   const [prayers, setPrayers] = useState<Prayer[]>([])

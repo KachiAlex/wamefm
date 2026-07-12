@@ -22,7 +22,10 @@ interface SeriesGroup {
 }
 
 export default function SermonSeries() {
-  usePageTitle('Sermon Series')
+  usePageTitle('Sermon Series', {
+    description: 'Explore sermon series from Word and Miracle Embassy Church. Thematic collections of teachings on faith, prayer, salvation, and Christian living.',
+    path: '/series',
+  })
   const [allSermons, setAllSermons] = useState<Sermon[]>([])
   const [loading, setLoading] = useState(true)
   const [search, setSearch] = useState('')

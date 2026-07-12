@@ -28,7 +28,10 @@ interface Sermon {
 }
 
 export default function Archive() {
-  usePageTitle('Sermon Archive')
+  usePageTitle('Sermon Archive', {
+    description: 'Browse and listen to on-demand sermon recordings from Word and Miracle Embassy Church. Search by speaker, series, or scripture reference.',
+    path: '/archive',
+  })
   const { currentTrack, isPlaying, playTrack, togglePlay, playQueue, shuffle, toggleShuffle } = useAudioPlayer()
   const { isFavorite, toggleFavorite } = useFavorites()
   const [sermons, setSermons] = useState<Sermon[]>([])

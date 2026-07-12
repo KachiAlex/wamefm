@@ -18,7 +18,10 @@ interface Event {
 }
 
 export default function Events() {
-  usePageTitle('Events')
+  usePageTitle('Events', {
+    description: 'Stay connected with upcoming events at Word and Miracle Embassy Church. Services, conferences, prayer meetings, and special gatherings.',
+    path: '/events',
+  })
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')

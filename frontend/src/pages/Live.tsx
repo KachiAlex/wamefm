@@ -429,7 +429,10 @@ function StreamPlayer({ broadcastId, title, thumbnailUrl, streamKey, streamType 
 }
 
 export default function Live() {
-  usePageTitle('Live Broadcast')
+  usePageTitle('Live Broadcast', {
+    description: 'Listen to the live broadcast from Word and Miracle Embassy Church. Join the conversation with live chat, prayer, and community interaction.',
+    path: '/live',
+  })
   const { broadcastId } = useParams()
   const { user } = useAuth()
 

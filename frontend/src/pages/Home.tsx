@@ -346,7 +346,10 @@ function NowPlayingStrip({
 }
 
 export default function Home() {
-  usePageTitle('The Whole Word to the Whole World')
+  usePageTitle('The Whole Word to the Whole World', {
+    description: 'Embassy Radio — the 24/7 digital radio ministry of Word and Miracle Embassy Church. Listen to live broadcasts, explore sermon archives, worship music, prayer, and Christian community.',
+    path: '/',
+  })
   const { user } = useAuth()
   const { pushEnabled, pushSupported, requestPush, loadingPush } = useNotifications()
   const { data: broadcast } = useActiveBroadcast()

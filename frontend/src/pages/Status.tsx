@@ -12,7 +12,10 @@ interface StatusData {
 }
 
 export default function Status() {
-  usePageTitle('Status')
+  usePageTitle('System Status', {
+    description: 'Check the real-time status of Embassy Radio services including live streaming, database, API, and media delivery.',
+    path: '/status',
+  })
   const [data, setData] = useState<StatusData | null>(null)
   const [error, setError] = useState(false)
 

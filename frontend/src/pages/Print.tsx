@@ -41,7 +41,10 @@ function Thumbnail({ item }: { item: { thumbnail_url?: string; title: string; ca
 }
 
 export default function Print() {
-  usePageTitle('Print Media')
+  usePageTitle('Print Media', {
+    description: 'Download Christian tracts, booklets, and print resources from Word and Miracle Embassy Church. Free gospel literature for evangelism and discipleship.',
+    path: '/print',
+  })
   const { data: items = [], isLoading, error } = usePrintMedia()
   const [searchQ, setSearchQ] = useState('')
   const [categoryFilter, setCategoryFilter] = useState<string>('all')

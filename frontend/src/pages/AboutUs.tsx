@@ -2,7 +2,10 @@
 import { usePageTitle } from '../hooks/usePageTitle'
 
 export default function AboutUs() {
-  usePageTitle('About')
+  usePageTitle('About Us', {
+    description: 'Learn about Word and Miracle Embassy Church and Embassy Radio, our 24/7 digital radio ministry bringing the whole Word to the whole world through live broadcasts, sermons, and worship.',
+    path: '/about',
+  })
   return (
     <div className="min-h-screen py-8 lg:py-12" style={{ background: 'var(--ink)', color: 'var(--parchment)' }}>
       <div className="max-w-4xl mx-auto px-6">

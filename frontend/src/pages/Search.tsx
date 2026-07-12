@@ -37,7 +37,10 @@ export default function Search() {
   const inputRef = useRef<HTMLInputElement>(null)
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
-  usePageTitle(query ? `Search: ${query}` : 'Search')
+  usePageTitle(query ? `Search: ${query}` : 'Search', {
+    description: 'Search for sermons, music, events, and more on Embassy Radio. Find content from Word and Miracle Embassy Church across our digital library.',
+    path: '/search',
+  })
 
   useEffect(() => { inputRef.current?.focus() }, [])
 

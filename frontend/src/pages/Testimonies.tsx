@@ -15,7 +15,10 @@ interface Testimony {
 }
 
 export default function Testimonies() {
-  usePageTitle('Testimonies')
+  usePageTitle('Testimonies', {
+    description: 'Read and share testimonies of God\'s faithfulness from the Word and Miracle Embassy Church community. Be encouraged by stories of transformation and grace.',
+    path: '/testimonies',
+  })
   const { user } = useAuth()
   const [testimonies, setTestimonies] = useState<Testimony[]>([])
   const [loading, setLoading] = useState(true)
