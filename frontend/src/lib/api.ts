@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 const isDev = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
 export const API_BASE = isDev ? '' : 'https://sureword.fly.dev'
 export const SOCKET_BASE = 'https://sureword.fly.dev'
-export const api = axios.create({ baseURL: `${API_BASE}/api`, timeout: 15000 })
+export const api = axios.create({ baseURL: `${API_BASE}/api`, timeout: 30000 })
 
 let isRefreshing = false
 let refreshSubscribers: ((token: string) => void)[] = []
@@ -567,7 +567,8 @@ export async function uploadFile(file: File, type: 'image' | 'audio'): Promise<s
   const fd = new FormData()
   fd.append(type, file)
   const { data } = await api.post(`/uploads/${type}`, fd, {
-    headers: { 'Content-Type': 'multipart/form-data' }
+    headers: { 'Content-Type': 'multipart/form-data' },
+    timeout: 5 * 60 * 1000,
   })
   return data.url as string
 }
