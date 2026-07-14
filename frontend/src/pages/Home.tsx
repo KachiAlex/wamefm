@@ -413,7 +413,7 @@ export default function Home() {
             'radial-gradient(ellipse at 50% 0%, rgba(224,90,26,0.18) 0%, rgba(245,166,35,0.06) 40%, transparent 70%), radial-gradient(ellipse at 80% 80%, rgba(245,158,11,0.08) 0%, transparent 40%), var(--void)',
         }}
       >
-        <div className="absolute inset-0 pointer-events-none" aria-hidden="true">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 font-bebas text-[clamp(120px,20vw,280px)] tracking-wider text-[var(--flame)] opacity-[0.04] whitespace-nowrap select-none">
             EMBASSY
           </div>

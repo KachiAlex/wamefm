@@ -25,8 +25,8 @@ export default function MiniPlayer() {
   const favorited = isFavorite(currentTrack.id, 'music') || isFavorite(currentTrack.id, 'sermon')
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[rgba(240,190,100,0.08)] bg-[#230d02]/95 backdrop-blur-md animate-slide-up">
-      <div className="max-w-[1440px] mx-auto px-4 py-2 flex items-center gap-3">
+    <div className="fixed bottom-0 left-0 right-0 z-50 border-t border-[rgba(240,190,100,0.08)] bg-[#230d02]/95 backdrop-blur-md animate-slide-up overflow-hidden">
+      <div className="max-w-[1440px] mx-auto px-2 sm:px-4 py-2 flex items-center gap-2 sm:gap-3">
         {currentTrack.thumbnail ? (
           <img src={currentTrack.thumbnail} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
         ) : (

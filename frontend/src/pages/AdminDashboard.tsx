@@ -306,17 +306,15 @@ export default function AdminDashboard() {
 
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
         {/* Topbar */}
-        <header style={{
-          height: 56, flexShrink: 0, background: 'var(--abyss)', borderBottom: '1px solid var(--rim)',
-          display: 'flex', alignItems: 'center', gap: 16, padding: '0 24px',
-          zIndex: 30
+        <header className="h-14 shrink-0 flex items-center gap-3 sm:gap-4 px-3 sm:px-6 max-w-full overflow-hidden" style={{
+          background: 'var(--abyss)', borderBottom: '1px solid var(--rim)', zIndex: 30
         }}>
           <button onClick={() => setMobileSidebarOpen(true)} className="lg:hidden" style={{ color: 'var(--fog)', background: 'transparent', border: 'none', cursor: 'pointer' }} aria-label="Open navigation"><Menu className="w-5 h-5" /></button>
-          <div className="cg" style={{ fontSize: 20, fontWeight: 600, flex: 1, color: 'var(--parch)' }}>{screenTitles[activeTab] || activeTab}</div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'var(--panel)', border: '1px solid var(--rim)', borderRadius: 6, padding: '6px 12px', width: 220 }}>
+          <div className="cg truncate" style={{ fontSize: 20, fontWeight: 600, flex: 1, minWidth: 0, color: 'var(--parch)' }}>{screenTitles[activeTab] || activeTab}</div>
+          <div className="hidden sm:flex" style={{ alignItems: 'center', gap: 8, background: 'var(--panel)', border: '1px solid var(--rim)', borderRadius: 6, padding: '6px 12px', width: 220, maxWidth: '40vw', flexShrink: 1, minWidth: 0 }}>
             <Search className="w-[13px] h-[13px] flex-shrink-0" style={{ color: 'var(--fog)' }} />
             <input type="text" placeholder="Search sermons, files…" aria-label="Search dashboard"
-              style={{ background: 'transparent', border: 'none', color: 'var(--parch)', fontSize: 12.5, width: '100%', outline: 'none' }}
+              style={{ background: 'transparent', border: 'none', color: 'var(--parch)', fontSize: 12.5, width: '100%', outline: 'none', minWidth: 0 }}
             />
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -331,7 +329,7 @@ export default function AdminDashboard() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto dashboard-content" style={{ padding: '20px 24px' }}>
+        <div className="flex-1 overflow-y-auto dashboard-content p-3 sm:p-5">
           {activeTab === 'dashboard' ? (
             <div>
               {/* KPI row */}
