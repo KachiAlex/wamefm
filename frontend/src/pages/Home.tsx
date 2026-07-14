@@ -11,11 +11,13 @@ import {
   usePublicRadioSchedules,
   getOptimizedImageUrl,
   useEvents,
+  usePrayers,
+  useTestimonies,
 } from '../lib/api'
 import type { Sermon, PrintMedia, EventItem } from '../lib/api'
 import StructuredData from '../components/StructuredData'
 import { useState } from 'react'
-import { Play, Pause, BookOpen, FileText, Bell, X, Radio, Video, Calendar, ArrowRight, Headphones, Download } from 'lucide-react'
+import { Play, Pause, BookOpen, FileText, Bell, X, Radio, Video, Calendar, ArrowRight, Headphones, Download, Heart, MessageSquare, Star } from 'lucide-react'
 
 function formatDuration(seconds?: number | null): string {
   if (!seconds || seconds <= 0) return '—'
@@ -358,6 +360,8 @@ export default function Home() {
   const { data: radioData } = useRadioCurrent()
   const { data: scheduleItems = [], isLoading: scheduleLoading } = usePublicRadioSchedules()
   const { data: events = [], isLoading: eventsLoading } = useEvents()
+  const { data: prayers = [], isLoading: prayersLoading } = usePrayers()
+  const { data: testimonies = [], isLoading: testimoniesLoading } = useTestimonies()
   const { playQueue } = useAudioPlayer()
   const navigate = useNavigate()
   const isLive = broadcast?.status === 'live'
@@ -632,6 +636,110 @@ export default function Home() {
               ))}
             </div>
           )}
+        </section>
+
+        {/* Prayer & Testimony */}
+        <section>
+          <SectionHeader
+            eyebrow="Faith community"
+            title="Prayer & Testimonies"
+            subtitle="Join our community in prayer and be inspired by stories of God's faithfulness."
+          >
+            <div className="flex gap-2">
+              <Link to="/prayer" className="btn btn-ghost btn-sm">
+                Prayer wall <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              </Link>
+              <Link to="/testimonies" className="btn btn-ghost btn-sm">
+                Testimonies <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              </Link>
+            </div>
+          </SectionHeader>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Prayer Requests */}
+            <div className="rounded-xl border border-[var(--line)] bg-[var(--coal)] p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Heart className="w-5 h-5 text-[var(--flame)]" />
+                <h3 className="font-bebas text-xl text-white tracking-wide">Recent Prayer Requests</h3>
+              </div>
+              {prayersLoading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-16 bg-[var(--void)] rounded-lg animate-pulse" />
+                  ))}
+                </div>
+              ) : prayers.length === 0 ? (
+                <div className="text-center py-8 text-[var(--ash)]">
+                  <Heart className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                  <p className="text-sm">No prayer requests yet.</p>
+                  <Link to="/prayer" className="text-xs text-[var(--sunrise)] hover:underline mt-2 inline-block">
+                    Be the first to share a request
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {prayers.slice(0, 4).map((p: any) => (
+                    <div key={p.id} className="p-3 rounded-lg bg-[var(--void)] border border-[var(--line)]">
+                      <p className="text-sm text-[var(--cream)] line-clamp-2">{p.request}</p>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-[11px] text-[var(--ash)]">
+                          {p.is_anonymous ? 'Anonymous' : p.name || 'Anonymous'}
+                        </span>
+                        <span className="text-[11px] text-[var(--ash)] flex items-center gap-1">
+                          <Heart className="w-3 h-3" /> {p.prayers_count || 0} praying
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                  <Link to="/prayer" className="block text-center text-sm text-[var(--sunrise)] hover:underline pt-2">
+                    View all & submit a prayer request
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            {/* Testimonies */}
+            <div className="rounded-xl border border-[var(--line)] bg-[var(--coal)] p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Star className="w-5 h-5 text-[var(--flame)]" />
+                <h3 className="font-bebas text-xl text-white tracking-wide">Testimonies</h3>
+              </div>
+              {testimoniesLoading ? (
+                <div className="space-y-3">
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={i} className="h-16 bg-[var(--void)] rounded-lg animate-pulse" />
+                  ))}
+                </div>
+              ) : testimonies.length === 0 ? (
+                <div className="text-center py-8 text-[var(--ash)]">
+                  <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-40" />
+                  <p className="text-sm">No testimonies shared yet.</p>
+                  <Link to="/testimonies" className="text-xs text-[var(--sunrise)] hover:underline mt-2 inline-block">
+                    Share your testimony
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {testimonies.slice(0, 4).map((t: any) => (
+                    <div key={t.id} className="p-3 rounded-lg bg-[var(--void)] border border-[var(--line)]">
+                      <p className="text-sm text-[var(--cream)] line-clamp-2">{t.content}</p>
+                      <div className="flex items-center justify-between mt-2">
+                        <span className="text-[11px] text-[var(--ash)]">{t.name || 'Anonymous'}</span>
+                        {t.is_featured && (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-[var(--flame)]/10 text-[var(--sunrise)] flex items-center gap-1">
+                            <Star className="w-2.5 h-2.5" /> Featured
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                  <Link to="/testimonies" className="block text-center text-sm text-[var(--sunrise)] hover:underline pt-2">
+                    View all & share your testimony
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
         </section>
 
         {/* Print media */}
