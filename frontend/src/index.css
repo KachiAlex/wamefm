@@ -190,6 +190,9 @@
      Deep abyss/void backgrounds, violet accents, ember for live.
      Fonts: Cormorant Garamond (headings), Nunito (body), Space Mono (data). */
   .dashboard-content {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
     --abyss:   #07041A;
     --void:    #100C2E;
     --card:    #19104A;

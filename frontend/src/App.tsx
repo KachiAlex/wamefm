@@ -9,28 +9,43 @@ import Layout from './components/Layout'
 import ErrorBoundary from './components/ErrorBoundary'
 import ProtectedRoute from './components/ProtectedRoute'
 
+function lazyWithRetry(factory: () => Promise<any>) {
+  return lazy(() =>
+    factory().catch(() => {
+      const reloaded = sessionStorage.getItem('chunk_reload')
+      if (!reloaded) {
+        sessionStorage.setItem('chunk_reload', '1')
+        window.location.reload()
+        return new Promise(() => {})
+      }
+      sessionStorage.removeItem('chunk_reload')
+      return factory()
+    })
+  )
+}
+
 // Code-split pages for smaller initial bundle
-const Home = lazy(() => import('./pages/Home'))
-const Login = lazy(() => import('./pages/Login'))
-const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
-const ResetPassword = lazy(() => import('./pages/ResetPassword'))
-const Broadcast = lazy(() => import('./pages/Broadcast'))
-const Archive = lazy(() => import('./pages/Archive'))
-const AdminDashboard = lazy(() => import('./pages/AdminDashboard'))
-const MemberDashboard = lazy(() => import('./pages/MemberDashboard'))
-const Status = lazy(() => import('./pages/Status'))
-const Live = lazy(() => import('./pages/Live'))
-const Music = lazy(() => import('./pages/Music'))
-const SermonDetail = lazy(() => import('./pages/SermonDetail'))
-const PrayerWall = lazy(() => import('./pages/PrayerWall'))
-const Testimonies = lazy(() => import('./pages/Testimonies'))
-const Events = lazy(() => import('./pages/Events'))
-const EventDetail = lazy(() => import('./pages/EventDetail'))
-const AboutUs = lazy(() => import('./pages/AboutUs'))
-const Donate = lazy(() => import('./pages/Donate'))
-const Print = lazy(() => import('./pages/Print'))
-const Search = lazy(() => import('./pages/Search'))
-const SermonSeries = lazy(() => import('./pages/SermonSeries'))
+const Home = lazyWithRetry(() => import('./pages/Home'))
+const Login = lazyWithRetry(() => import('./pages/Login'))
+const ForgotPassword = lazyWithRetry(() => import('./pages/ForgotPassword'))
+const ResetPassword = lazyWithRetry(() => import('./pages/ResetPassword'))
+const Broadcast = lazyWithRetry(() => import('./pages/Broadcast'))
+const Archive = lazyWithRetry(() => import('./pages/Archive'))
+const AdminDashboard = lazyWithRetry(() => import('./pages/AdminDashboard'))
+const MemberDashboard = lazyWithRetry(() => import('./pages/MemberDashboard'))
+const Status = lazyWithRetry(() => import('./pages/Status'))
+const Live = lazyWithRetry(() => import('./pages/Live'))
+const Music = lazyWithRetry(() => import('./pages/Music'))
+const SermonDetail = lazyWithRetry(() => import('./pages/SermonDetail'))
+const PrayerWall = lazyWithRetry(() => import('./pages/PrayerWall'))
+const Testimonies = lazyWithRetry(() => import('./pages/Testimonies'))
+const Events = lazyWithRetry(() => import('./pages/Events'))
+const EventDetail = lazyWithRetry(() => import('./pages/EventDetail'))
+const AboutUs = lazyWithRetry(() => import('./pages/AboutUs'))
+const Donate = lazyWithRetry(() => import('./pages/Donate'))
+const Print = lazyWithRetry(() => import('./pages/Print'))
+const Search = lazyWithRetry(() => import('./pages/Search'))
+const SermonSeries = lazyWithRetry(() => import('./pages/SermonSeries'))
 
 function PageLoader() {
   return (

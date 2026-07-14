@@ -1,4 +1,4 @@
-﻿import { lazy, Suspense, useEffect, useState } from 'react'
+﻿import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQueryClient } from '@tanstack/react-query'
 import { useAuth } from '../contexts/AuthContext'
@@ -70,6 +70,7 @@ export default function AdminDashboard() {
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [activeTab, setActiveTab] = useState<Tab>('dashboard')
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
   const [bcActionLoading, setBcActionLoading] = useState(false)
   const [liveElapsed, setLiveElapsed] = useState(0)
 
@@ -90,6 +91,10 @@ export default function AdminDashboard() {
   useEffect(() => {
     if (!user || user.role !== 'admin') { navigate('/'); return }
   }, [user, navigate])
+
+  useEffect(() => {
+    contentRef.current?.scrollTo({ top: 0, behavior: 'smooth' })
+  }, [activeTab])
 
   function refresh() {
     queryClient.invalidateQueries({ queryKey: ['broadcasts'] })
@@ -287,7 +292,7 @@ export default function AdminDashboard() {
           </div>
         </header>
 
-        <div className="flex-1 overflow-y-auto dashboard-content p-3 sm:p-5">
+        <div ref={contentRef} className="flex-1 overflow-y-auto dashboard-content p-3 sm:p-5">
           {activeTab === 'dashboard' ? (
             <div>
               {/* KPI row */}
