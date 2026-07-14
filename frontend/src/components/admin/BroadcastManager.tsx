@@ -682,14 +682,10 @@ export default function BroadcastManager({ broadcasts, onRefresh }: { broadcasts
   /* ─── SETUP VIEW ─── */
   if (view === 'setup') {
     return (
-      <div className="space-y-5">
-        <button onClick={() => setView('list')}
-          className="flex items-center gap-1.5 text-[11px] text-[#9a7c60] hover:text-white transition-colors">
-          <ArrowLeft className="w-3.5 h-3.5" /> Back to broadcasts
-        </button>
-
-        <div className="rounded-xl bg-[#230d02] border border-[rgba(240,190,100,0.06)] overflow-hidden max-h-[calc(100dvh-8rem)] flex flex-col">
-          <div className="px-5 py-4 border-b border-[rgba(240,190,100,0.06)] shrink-0">
+      <div className="fixed inset-0 z-[60] flex flex-col bg-[#07041A]">
+        {/* Header — fixed at top */}
+        <div className="px-5 py-4 border-b border-[rgba(240,190,100,0.06)] shrink-0 flex items-center justify-between">
+          <div>
             <h3 className="text-xs font-bold text-white flex items-center gap-2">
               <Radio className="w-4 h-4 text-[#E05A1A]" /> New Broadcast
             </h3>
@@ -699,8 +695,14 @@ export default function BroadcastManager({ broadcasts, onRefresh }: { broadcasts
                 : 'Step 2 of 2: Test audio and upload soundtrack.'}
             </p>
           </div>
+          <button onClick={() => setView('list')}
+            className="text-[11px] text-[#9a7c60] hover:text-white transition-colors flex items-center gap-1.5 px-3 py-2 rounded-lg hover:bg-[rgba(240,190,100,0.05)]">
+            <X className="w-4 h-4" /> Close
+          </button>
+        </div>
 
-          <div className="p-5 space-y-5 overflow-y-auto flex-1 min-h-0">
+        {/* Scrollable form content */}
+        <div className="flex-1 overflow-y-auto p-5 space-y-5">
             {setupError && (
               <div className="p-3 rounded-lg bg-[#ef4444]/10 border border-[#ef4444]/20 text-[#fca5a5] text-[11px] flex items-center gap-2">
                 <AlertCircle className="w-4 h-4" /> {setupError}
@@ -840,16 +842,6 @@ export default function BroadcastManager({ broadcasts, onRefresh }: { broadcasts
                   </div>
                 )}
 
-                <div className="flex items-center justify-between pt-2">
-                  <button type="button" onClick={() => setView('list')}
-                    className="text-[11px] text-[#9a7c60] hover:text-white transition-colors px-3 py-2">
-                    Cancel
-                  </button>
-                  <button type="button" onClick={goToPage2}
-                    className="flex items-center gap-1.5 bg-[#E05A1A] hover:bg-[#F5A623] text-[#1b1208] text-[11px] font-medium px-5 py-2.5 rounded-lg transition-colors">
-                    Next <ChevronDown className="w-3.5 h-3.5 rotate-[-90deg]" />
-                  </button>
-                </div>
               </>
             ) : (
               /* ── PAGE 2: Audio Pre-Flight ── */
@@ -919,23 +911,38 @@ export default function BroadcastManager({ broadcasts, onRefresh }: { broadcasts
                     </div>
                   )}
                 </div>
+              </>
+            )}
+          </div>
 
-                <div className="flex items-center justify-between pt-2">
-                  <button type="button" onClick={() => setSetupPage(1)}
-                    className="text-[11px] text-[#9a7c60] hover:text-white transition-colors px-3 py-2 flex items-center gap-1">
-                    <ChevronDown className="w-3.5 h-3.5 rotate-90" /> Back
-                  </button>
-                  <button type="button" onClick={createAndGoLive} disabled={creating}
-                    className="flex items-center gap-1.5 bg-[#ef4444] hover:bg-[#ef4444]/90 text-white text-[11px] font-medium px-5 py-2.5 rounded-lg transition-colors disabled:opacity-50">
-                    {creating ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Radio className="w-3.5 h-3.5" />}
-                    {creating ? 'Starting...' : 'Go Live'}
-                  </button>
-                </div>
+          {/* Fixed action footer — always visible */}
+          <div className="px-5 py-3.5 border-t border-[rgba(240,190,100,0.06)] shrink-0 flex items-center justify-between bg-[#230d02]">
+            {setupPage === 1 ? (
+              <>
+                <button type="button" onClick={() => setView('list')}
+                  className="text-[12px] text-[#9a7c60] hover:text-white transition-colors px-4 py-3">
+                  Cancel
+                </button>
+                <button type="button" onClick={goToPage2}
+                  className="flex items-center gap-1.5 bg-[#E05A1A] hover:bg-[#F5A623] text-[#1b1208] text-[13px] font-semibold px-7 py-3 rounded-lg transition-colors">
+                  Next <ChevronDown className="w-4 h-4 rotate-[-90deg]" />
+                </button>
+              </>
+            ) : (
+              <>
+                <button type="button" onClick={() => setSetupPage(1)}
+                  className="text-[12px] text-[#9a7c60] hover:text-white transition-colors px-4 py-3 flex items-center gap-1">
+                  <ChevronDown className="w-4 h-4 rotate-90" /> Back
+                </button>
+                <button type="button" onClick={createAndGoLive} disabled={creating}
+                  className="flex items-center gap-1.5 bg-[#ef4444] hover:bg-[#ef4444]/90 text-white text-[13px] font-semibold px-7 py-3 rounded-lg transition-colors disabled:opacity-50">
+                  {creating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Radio className="w-4 h-4" />}
+                  {creating ? 'Starting...' : 'Go Live'}
+                </button>
               </>
             )}
           </div>
         </div>
-      </div>
     )
   }
 
