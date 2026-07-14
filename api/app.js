@@ -79,7 +79,7 @@ app.use((req, res, next) => {
     next();
 });
 // ── Database ───────────────────────────────────────────────────
-const dbUrl = process.env.DATABASE_URL || 'DATABASE_URL_REMOVED';
+const dbUrl = process.env.DATABASE_URL;
 const sql = dbUrl ? neon(dbUrl) : null;
 async function dbQuery(query, params) {
     if (!sql)
