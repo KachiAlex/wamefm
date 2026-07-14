@@ -55,48 +55,6 @@ function LiveWaveform({ active }: { active: boolean }) {
   )
 }
 
-function VUMeter({ active }: { active: boolean }) {
-  const [bars, setBars] = useState<number[]>(Array.from({ length: 32 }, () => 20))
-  useEffect(() => {
-    if (!active) { setBars(Array.from({ length: 32 }, () => 20)); return }
-    const id = setInterval(() => {
-      setBars(Array.from({ length: 32 }, () => Math.max(5, Math.min(100, Math.random() * 85 + 15))))
-    }, 180)
-    return () => clearInterval(id)
-  }, [active])
-  return (
-    <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 48, padding: '0 4px' }}>
-      {bars.map((h, i) => (
-        <div key={i} style={{
-          width: 3, borderRadius: 1,
-          height: `${h}%`,
-          background: h > 80 ? 'var(--red)' : h > 50 ? 'var(--ember)' : 'var(--green)',
-          opacity: active ? 1 : .25,
-          transition: 'height .18s ease'
-        }} />
-      ))}
-    </div>
-  )
-}
-
-function SignalBars({ label, value }: { label: string; value: number }) {
-  const bars = [20, 40, 60, 80, 100]
-  return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-      <span style={{ fontSize: 10, color: 'var(--fog)', width: 40, textAlign: 'right' }}>{label}</span>
-      <div style={{ display: 'flex', alignItems: 'flex-end', gap: 2, height: 18 }}>
-        {bars.map((h, i) => (
-          <div key={i} style={{
-            width: 4, borderRadius: 1, height: `${h * .16}px`,
-            background: value >= h ? (i >= 3 ? 'var(--violet)' : 'var(--green)') : 'var(--rim)',
-            transition: 'background .2s'
-          }} />
-        ))}
-      </div>
-      <span style={{ fontSize: 10, color: 'var(--fog2)', fontWeight: 600 }}>{value}%</span>
-    </div>
-  )
-}
 
 export default function AdminDashboard() {
   const { showToast } = useToast()
@@ -510,46 +468,6 @@ export default function AdminDashboard() {
                     <button className="dbtn dbtn-ghost dbtn-sm" onClick={() => setActiveTab('playlists')}>Load playlist</button>
                     <button className="dbtn dbtn-ghost dbtn-sm">Announce</button>
                   </div>
-                </div>
-              </div>
-
-              {/* VU Meter */}
-              <div className="vu-wrap">
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
-                  <span style={{ fontSize: 12, fontWeight: 600, color: 'var(--fog2)' }}>VU Meter — Audio input levels</span>
-                  <span className="mono" style={{ fontSize: 11, color: 'var(--fog)' }}>{live ? '−4 dBFS' : '—'}</span>
-                </div>
-                <VUMeter active={!!live} />
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 8, fontSize: 10, color: 'var(--fog)' }}>
-                  <span>L</span>
-                  <span className="mono">{live ? '−12 dB' : '—'}</span>
-                  <span>R</span>
-                </div>
-              </div>
-
-              {/* Signal row */}
-              <div className="sig-row">
-                <div className="sig">
-                  <div style={{ fontSize: 10, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--fog)', fontWeight: 600 }}>Bitrate</div>
-                  <div className="cg" style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginTop: 4 }}>{live ? '128' : '—'}</div>
-                  <div style={{ fontSize: 10, color: 'var(--fog)' }}>kbps</div>
-                </div>
-                <div className="sig">
-                  <div style={{ fontSize: 10, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--fog)', fontWeight: 600 }}>Listeners</div>
-                  <div className="cg" style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginTop: 4 }}>{live ? (dashboard?.listenersOnline?.toLocaleString() || '0') : '—'}</div>
-                  <div style={{ fontSize: 10, color: 'var(--fog)' }}>right now</div>
-                </div>
-                <div className="sig">
-                  <div style={{ fontSize: 10, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--fog)', fontWeight: 600, marginBottom: 6 }}>Signal quality</div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                    <SignalBars label="L" value={live ? 92 : 0} />
-                    <SignalBars label="R" value={live ? 88 : 0} />
-                  </div>
-                </div>
-                <div className="sig">
-                  <div style={{ fontSize: 10, letterSpacing: '.08em', textTransform: 'uppercase', color: 'var(--fog)', fontWeight: 600 }}>Buffer</div>
-                  <div className="cg" style={{ fontSize: 22, fontWeight: 700, color: '#fff', marginTop: 4 }}>{live ? '0.4' : '—'}</div>
-                  <div style={{ fontSize: 10, color: 'var(--fog)' }}>sec latency</div>
                 </div>
               </div>
 

@@ -688,8 +688,8 @@ export default function BroadcastManager({ broadcasts, onRefresh }: { broadcasts
           <ArrowLeft className="w-3.5 h-3.5" /> Back to broadcasts
         </button>
 
-        <div className="rounded-xl bg-[#230d02] border border-[rgba(240,190,100,0.06)] overflow-hidden">
-          <div className="px-5 py-4 border-b border-[rgba(240,190,100,0.06)]">
+        <div className="rounded-xl bg-[#230d02] border border-[rgba(240,190,100,0.06)] overflow-hidden max-h-[calc(100dvh-8rem)] flex flex-col">
+          <div className="px-5 py-4 border-b border-[rgba(240,190,100,0.06)] shrink-0">
             <h3 className="text-xs font-bold text-white flex items-center gap-2">
               <Radio className="w-4 h-4 text-[#E05A1A]" /> New Broadcast
             </h3>
@@ -700,7 +700,7 @@ export default function BroadcastManager({ broadcasts, onRefresh }: { broadcasts
             </p>
           </div>
 
-          <div className="p-5 space-y-5">
+          <div className="p-5 space-y-5 overflow-y-auto flex-1 min-h-0">
             {setupError && (
               <div className="p-3 rounded-lg bg-[#ef4444]/10 border border-[#ef4444]/20 text-[#fca5a5] text-[11px] flex items-center gap-2">
                 <AlertCircle className="w-4 h-4" /> {setupError}
