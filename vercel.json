@@ -39,24 +39,40 @@
       "destination": "/manifest.json"
     },
     {
-      "source": "/robots.txt",
-      "destination": "/robots.txt"
+      "source": "/sitemap.xml",
+      "destination": "/api/index?__path=sitemap-dynamic"
     },
     {
-      "source": "/sitemap.xml",
-      "destination": "/sitemap.xml"
+      "source": "/sitemap-dynamic",
+      "destination": "/api/index?__path=sitemap-dynamic"
+    },
+    {
+      "source": "/robots.txt",
+      "destination": "/robots.txt"
     },
     {
       "source": "/favicon.svg",
       "destination": "/favicon.svg"
     },
     {
+      "source": "/favicon-32.png",
+      "destination": "/favicon-32.png"
+    },
+    {
       "source": "/icon-192.svg",
       "destination": "/icon-192.svg"
     },
     {
+      "source": "/icon-192.png",
+      "destination": "/icon-192.png"
+    },
+    {
       "source": "/icon-512.svg",
       "destination": "/icon-512.svg"
+    },
+    {
+      "source": "/icon-512.png",
+      "destination": "/icon-512.png"
     },
     {
       "source": "/assets/(.*)",

@@ -2166,6 +2166,51 @@ app.delete('/sermon-playlists/:id/items/:itemId', auth, requireRole('admin'), as
   } catch (e: any) { res.status(500).json({ error: e.message }) }
 })
 
+// ── Dynamic Sitemap ────────────────────────────────────────────
+app.get('/sitemap-dynamic', async (_req, res) => {
+  try {
+    await initDb()
+    const BASE = 'https://wamefm.vercel.app'
+    const staticRoutes = [
+      { loc: '/', changefreq: 'daily', priority: '1.0' },
+      { loc: '/live', changefreq: 'hourly', priority: '0.9' },
+      { loc: '/archive', changefreq: 'daily', priority: '0.8' },
+      { loc: '/music', changefreq: 'weekly', priority: '0.7' },
+      { loc: '/series', changefreq: 'weekly', priority: '0.7' },
+      { loc: '/prayer', changefreq: 'daily', priority: '0.7' },
+      { loc: '/testimonies', changefreq: 'weekly', priority: '0.6' },
+      { loc: '/events', changefreq: 'weekly', priority: '0.7' },
+      { loc: '/about', changefreq: 'monthly', priority: '0.5' },
+      { loc: '/donate', changefreq: 'monthly', priority: '0.6' },
+      { loc: '/print', changefreq: 'monthly', priority: '0.5' },
+      { loc: '/search', changefreq: 'monthly', priority: '0.4' },
+      { loc: '/status', changefreq: 'hourly', priority: '0.3' },
+    ]
+
+    const urls: string[] = []
+
+    for (const r of staticRoutes) {
+      urls.push(`  <url>\n    <loc>${BASE}${r.loc}</loc>\n    <changefreq>${r.changefreq}</changefreq>\n    <priority>${r.priority}</priority>\n  </url>`)
+    }
+
+    const sermons = await dbQuery('SELECT id, date FROM sermons ORDER BY date DESC LIMIT 500')
+    for (const s of sermons) {
+      const lastmod = s.date ? new Date(s.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+      urls.push(`  <url>\n    <loc>${BASE}/sermons/${s.id}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.6</priority>\n  </url>`)
+    }
+
+    const events = await dbQuery('SELECT id, date FROM events WHERE is_active = TRUE ORDER BY date ASC LIMIT 100')
+    for (const e of events) {
+      const lastmod = e.date ? new Date(e.date).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
+      urls.push(`  <url>\n    <loc>${BASE}/events/${e.id}</loc>\n    <lastmod>${lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.6</priority>\n  </url>`)
+    }
+
+    const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.join('\n')}\n</urlset>`
+    res.setHeader('Content-Type', 'application/xml')
+    res.send(xml)
+  } catch (e: any) { res.status(500).json({ error: e.message }) }
+})
+
 // ── 404 & Error handlers ─────────────────────────────────────
 app.use((_req, res) => res.status(404).json({ error: 'Not found' }))
 app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

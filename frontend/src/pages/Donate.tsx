@@ -34,6 +34,7 @@ export default function Donate() {
   usePageTitle('Give & Support', {
     description: 'Support the ministry of Word and Miracle Embassy Church through your giving. Help us continue broadcasting the gospel 24/7 and reaching the world with the Word.',
     path: '/donate',
+    breadcrumbs: [{ name: 'Home', path: '/' }, { name: 'Donate', path: '/donate' }],
   })
   const { data: campaigns = [] } = useCampaigns()
   const [form, setForm] = useState({ name: '', email: '', amount: '', message: '', is_anonymous: false })

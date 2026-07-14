@@ -41,6 +41,39 @@ export default function SermonDetail() {
   usePageTitle(sermon?.title || 'Sermon', {
     description: sermon?.description || 'Listen to this sermon from Word and Miracle Embassy Church. Stream or download the full message with scripture references and speaker details.',
     path: `/sermons/${sermon?.id || ''}`,
+    type: 'article',
+    image: sermon?.thumbnail_url || undefined,
+    publishedTime: sermon?.date,
+    author: sermon?.speaker || undefined,
+    breadcrumbs: [
+      { name: 'Home', path: '/' },
+      { name: 'Archive', path: '/archive' },
+      { name: sermon?.title || 'Sermon', path: `/sermons/${sermon?.id || ''}` },
+    ],
+    jsonLd: sermon ? [
+      {
+        '@context': 'https://schema.org',
+        '@type': sermon.video_url ? 'VideoObject' : 'AudioObject',
+        name: sermon.title,
+        description: sermon.description || `${sermon.title} by ${sermon.speaker || 'Embassy Radio'}`,
+        url: `https://wamefm.vercel.app/sermons/${sermon.id}`,
+        contentUrl: sermon.audio_url || sermon.video_url,
+        thumbnailUrl: sermon.thumbnail_url || undefined,
+        uploadDate: sermon.date,
+        duration: sermon.duration ? `PT${Math.floor(sermon.duration / 60)}M${sermon.duration % 60}S` : undefined,
+        author: { '@type': 'Person', name: sermon.speaker || 'Word and Miracle Embassy Church' },
+        publisher: { '@type': 'Organization', name: 'Embassy Radio' },
+      },
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://wamefm.vercel.app/' },
+          { '@type': 'ListItem', position: 2, name: 'Archive', item: 'https://wamefm.vercel.app/archive' },
+          { '@type': 'ListItem', position: 3, name: sermon.title, item: `https://wamefm.vercel.app/sermons/${sermon.id}` },
+        ],
+      },
+    ] : undefined,
   })
 
   useEffect(() => {

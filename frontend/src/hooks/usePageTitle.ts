@@ -8,6 +8,11 @@ interface SeoOptions {
   image?: string
   type?: string
   path?: string
+  breadcrumbs?: { name: string; path: string }[]
+  jsonLd?: object | object[]
+  publishedTime?: string
+  modifiedTime?: string
+  author?: string
 }
 
 function setMeta(attr: 'name' | 'property', key: string, content: string) {
@@ -28,6 +33,23 @@ function setCanonical(url: string) {
     document.head.appendChild(el)
   }
   el.setAttribute('href', url)
+}
+
+const JSONLD_ID = 'page-jsonld'
+
+function setJsonLd(data: object | object[]) {
+  let el = document.getElementById(JSONLD_ID)
+  if (!el) {
+    el = document.createElement('script')
+    el.id = JSONLD_ID
+    el.setAttribute('type', 'application/ld+json')
+    document.head.appendChild(el)
+  }
+  el.textContent = JSON.stringify(data)
+}
+
+function clearJsonLd() {
+  document.getElementById(JSONLD_ID)?.remove()
 }
 
 export function usePageTitle(title: string, options: SeoOptions = {}) {
@@ -51,6 +73,33 @@ export function usePageTitle(title: string, options: SeoOptions = {}) {
     setMeta('name', 'twitter:image', image)
     setCanonical(url)
 
+    if (options.publishedTime) setMeta('property', 'article:published_time', options.publishedTime)
+    if (options.modifiedTime) setMeta('property', 'article:modified_time', options.modifiedTime)
+    if (options.author) setMeta('property', 'article:author', options.author)
+
+    const jsonLdData: object[] = []
+
+    if (options.breadcrumbs && options.breadcrumbs.length > 0) {
+      jsonLdData.push({
+        '@context': 'https://schema.org',
+        '@type': 'BreadcrumbList',
+        itemListElement: options.breadcrumbs.map((b, i) => ({
+          '@type': 'ListItem',
+          position: i + 1,
+          name: b.name,
+          item: `${BASE_URL}${b.path}`,
+        })),
+      })
+    }
+
+    if (options.jsonLd) {
+      if (Array.isArray(options.jsonLd)) jsonLdData.push(...options.jsonLd)
+      else jsonLdData.push(options.jsonLd)
+    }
+
+    if (jsonLdData.length > 0) setJsonLd(jsonLdData.length === 1 ? jsonLdData[0] : jsonLdData)
+    else clearJsonLd()
+
     return () => {
       const defaultTitle = `${BASE_NAME} - Word and Miracle Embassy Church`
       const defaultDesc = 'Embassy Radio brings the Word and Miracle Embassy Church to the world. Listen to live broadcasts, on-demand sermons, Christian podcasts, worship music, and join our prayer community — 24/7.'
@@ -65,7 +114,8 @@ export function usePageTitle(title: string, options: SeoOptions = {}) {
       setMeta('name', 'twitter:description', defaultDesc)
       setMeta('name', 'twitter:image', `${BASE_URL}/icon-512.png`)
       setCanonical(`${BASE_URL}/`)
+      clearJsonLd()
     }
-  }, [title, options.description, options.image, options.type, options.path])
+  }, [title, options.description, options.image, options.type, options.path, options.breadcrumbs, options.jsonLd, options.publishedTime, options.modifiedTime, options.author])
 }
 

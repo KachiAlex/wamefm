@@ -33,7 +33,29 @@ export default function EventDetail() {
   const [rsvpLoading, setRsvpLoading] = useState(false)
   const [attendeeCount, setAttendeeCount] = useState(0)
 
-  usePageTitle(event?.title || 'Event')
+  usePageTitle(event?.title || 'Event', {
+    description: event?.description || 'Join us for this upcoming event at Word and Miracle Embassy Church.',
+    path: `/events/${event?.id || id || ''}`,
+    type: 'article',
+    image: event?.image_url || undefined,
+    breadcrumbs: [
+      { name: 'Home', path: '/' },
+      { name: 'Events', path: '/events' },
+      { name: event?.title || 'Event', path: `/events/${event?.id || id || ''}` },
+    ],
+    jsonLd: event ? {
+      '@context': 'https://schema.org',
+      '@type': 'Event',
+      name: event.title,
+      description: event.description,
+      startDate: event.date ? `${event.date}T${event.time || '00:00'}` : undefined,
+      eventStatus: 'https://schema.org/EventScheduled',
+      eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+      location: { '@type': 'Place', name: event.location || 'Word and Miracle Embassy Church' },
+      image: event.image_url || undefined,
+      organizer: { '@type': 'Organization', name: 'Word and Miracle Embassy Church', url: 'https://wamefm.vercel.app' },
+    } : undefined,
+  })
 
   useEffect(() => { if (id) { fetchEvent(); fetchAttendees() } }, [id])
 

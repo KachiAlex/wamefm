@@ -432,6 +432,7 @@ export default function Live() {
   usePageTitle('Live Broadcast', {
     description: 'Listen to the live broadcast from Word and Miracle Embassy Church. Join the conversation with live chat, prayer, and community interaction.',
     path: '/live',
+    breadcrumbs: [{ name: 'Home', path: '/' }, { name: 'Live', path: '/live' }],
   })
   const { broadcastId } = useParams()
   const { user } = useAuth()

@@ -1,10 +1,14 @@
-# robots.txt
-# Allow all crawlers to index the site
-
+# robots.txt — Embassy Radio
 User-agent: *
 Allow: /
 
-# Disallow API routes
+# Disallow private/API routes
 Disallow: /api/
+Disallow: /admin
+Disallow: /dashboard
+Disallow: /broadcast
+Disallow: /login
+Disallow: /forgot-password
+Disallow: /reset-password
 
-Sitemap: https://example.com/sitemap.xml
+Sitemap: https://wamefm.vercel.app/sitemap.xml

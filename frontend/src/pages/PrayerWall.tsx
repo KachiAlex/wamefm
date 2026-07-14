@@ -23,6 +23,7 @@ export default function PrayerWall() {
   usePageTitle('Prayer Wall', {
     description: 'Submit your prayer requests and pray for others on the Embassy Radio Prayer Wall. Join our faith community in intercession and support.',
     path: '/prayer',
+    breadcrumbs: [{ name: 'Home', path: '/' }, { name: 'Prayer Wall', path: '/prayer' }],
   })
   const { user } = useAuth()
   const { showToast } = useToast()

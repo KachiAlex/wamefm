@@ -21,6 +21,7 @@ export default function Events() {
   usePageTitle('Events', {
     description: 'Stay connected with upcoming events at Word and Miracle Embassy Church. Services, conferences, prayer meetings, and special gatherings.',
     path: '/events',
+    breadcrumbs: [{ name: 'Home', path: '/' }, { name: 'Events', path: '/events' }],
   })
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)

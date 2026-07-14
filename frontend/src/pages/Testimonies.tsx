@@ -18,6 +18,7 @@ export default function Testimonies() {
   usePageTitle('Testimonies', {
     description: 'Read and share testimonies of God\'s faithfulness from the Word and Miracle Embassy Church community. Be encouraged by stories of transformation and grace.',
     path: '/testimonies',
+    breadcrumbs: [{ name: 'Home', path: '/' }, { name: 'Testimonies', path: '/testimonies' }],
   })
   const { user } = useAuth()
   const [testimonies, setTestimonies] = useState<Testimony[]>([])
