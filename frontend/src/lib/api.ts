@@ -2,8 +2,8 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 
 const isDev = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-export const API_BASE = isDev ? '' : 'https://sureword.fly.dev'
-export const SOCKET_BASE = 'https://sureword.fly.dev'
+export const API_BASE = isDev ? '' : 'http://67.211.210.8:8080'
+export const SOCKET_BASE = isDev ? '' : 'http://67.211.210.8:8080'
 export const api = axios.create({ baseURL: `${API_BASE}/api`, timeout: 30000 })
 
 let isRefreshing = false

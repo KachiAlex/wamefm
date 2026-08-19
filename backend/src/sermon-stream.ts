@@ -19,7 +19,7 @@ let active: ActiveSermonStream | null = null
 let schedulerTimer: ReturnType<typeof setInterval> | null = null
 
 function getRtmpUrl(streamKey: string) {
-  return `rtmp://127.0.0.1:1935/live/${streamKey}`
+  return `rtmp://${process.env.SRS_HOST || '127.0.0.1'}:1935/live/${streamKey}`
 }
 
 async function getPlaylistItems(playlistId: string) {

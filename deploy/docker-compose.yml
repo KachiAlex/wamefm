@@ -1,0 +1,56 @@
+# Embassy Radio — Docker Compose
+# Isolated backend stack: Node.js API + SRS media server + Nginx reverse proxy
+# All traffic enters through nginx on port 8080 (change as needed)
+
+services:
+  backend:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+    container_name: embassy-backend
+    restart: unless-stopped
+    env_file:
+      - .env
+    expose:
+      - "3001"
+    volumes:
+      - hls-data:/tmp/srs/hls
+    networks:
+      - embassy-net
+
+  srs:
+    image: ossrs/srs:5
+    container_name: embassy-srs
+    restart: unless-stopped
+    ports:
+      - "1935:1935"   # RTMP (broadcaster pushes here via ffmpeg)
+    expose:
+      - "1985"        # HTTP API (internal only — backend talks to it)
+    volumes:
+      - ./srs.conf:/usr/local/srs/conf/srs.conf:ro
+      - hls-data:/tmp/srs/hls
+    depends_on:
+      - backend
+    networks:
+      - embassy-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: embassy-nginx
+    restart: unless-stopped
+    ports:
+      - "8080:80"     # Expose on 8080 to avoid conflicts with other projects
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - backend
+      - srs
+    networks:
+      - embassy-net
+
+volumes:
+  hls-data:
+
+networks:
+  embassy-net:
+    driver: bridge

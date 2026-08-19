@@ -641,7 +641,7 @@ export default function RadioStudio({
   }
 
   const isNative = typeof (window as any).Capacitor !== 'undefined' && (window as any).Capacitor?.isNativePlatform?.()
-  const streamUrl = `${isNative ? 'https://sureword.fly.dev' : window.location.origin}/live${broadcastId ? `/${broadcastId}` : ''}`
+  const streamUrl = `${isNative ? 'http://67.211.210.8:8080' : window.location.origin}/live${broadcastId ? `/${broadcastId}` : ''}`
 
   return (
     <div>

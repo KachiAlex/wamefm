@@ -35,7 +35,7 @@ function killEncoder(socketId: string) {
 function startEncoder(socketId: string, streamKey: string): ActiveEncoder | null {
   if (activeEncoders.has(socketId)) killEncoder(socketId)
 
-  const rtmpUrl = `rtmp://127.0.0.1:1935/live/${streamKey}`
+  const rtmpUrl = `rtmp://${process.env.SRS_HOST || '127.0.0.1'}:1935/live/${streamKey}`
   console.log(`[SRS] starting ffmpeg → ${rtmpUrl}`)
 
   const ffmpeg = spawn('ffmpeg', [

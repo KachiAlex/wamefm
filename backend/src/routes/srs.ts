@@ -5,11 +5,13 @@ import { authenticateToken, requireRole, AuthenticatedRequest } from '../middlew
 
 const router = Router()
 
-const SRS_API_URL = 'http://127.0.0.1:1985/api/v1'
+function getSrsApiUrl() {
+  return `http://${process.env.SRS_HOST || '127.0.0.1'}:1985/api/v1`
+}
 
 // Helper to call SRS HTTP API
 async function srsFetch(path: string, options?: RequestInit) {
-  const res = await fetch(`${SRS_API_URL}${path}`, options)
+  const res = await fetch(`${getSrsApiUrl()}${path}`, options)
   if (!res.ok) {
     const text = await res.text().catch(() => 'unknown error')
     throw new Error(`SRS API error ${res.status}: ${text}`)
