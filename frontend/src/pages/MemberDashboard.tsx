@@ -46,52 +46,52 @@ function Sidebar({ activePath, activeSection, onSection, mobileOpen, onClose }: 
       {mobileOpen && (
         <div className="lg:hidden fixed inset-0 z-40 bg-black/60" onClick={onClose} />
       )}
-      <aside className={`${mobileOpen ? 'fixed inset-y-0 left-0 z-50 translate-x-0' : 'hidden lg:flex'} flex-col w-60 h-screen lg:h-[calc(100vh-3.5rem)] lg:sticky lg:top-14 border-r border-[rgba(139,92,246,0.1)] bg-[#0B061F] overflow-y-auto transition-transform duration-300 ${mobileOpen ? '' : '-translate-x-full lg:translate-x-0'}`}>
+      <aside className={`${mobileOpen ? 'fixed inset-y-0 left-0 z-50 translate-x-0' : 'hidden lg:flex'} flex-col w-60 h-screen lg:h-[calc(100vh-3.5rem)] lg:sticky lg:top-14 border-r border-[rgba(240,190,100,0.1)] bg-[#0f0400] overflow-y-auto transition-transform duration-300 ${mobileOpen ? '' : '-translate-x-full lg:translate-x-0'}`}>
       <div className="p-5">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 flex items-center justify-center">
-              <Cross className="w-5 h-5 text-[#8B5CF6]" />
+            <div className="w-10 h-10 rounded-xl bg-[#E05A1A]/10 border border-[#E05A1A]/20 flex items-center justify-center">
+              <Cross className="w-5 h-5 text-[#E05A1A]" />
             </div>
             <div>
               <p className="text-sm font-semibold text-white">Embassy Radio</p>
-              <p className="text-[10px] text-[#AFA8C2]">The Whole Word to the Whole World</p>
+              <p className="text-[10px] text-[#9a7c60]">The Whole Word to the Whole World</p>
             </div>
           </div>
-          <button onClick={onClose} className="lg:hidden text-[#AFA8C2] p-1"><X className="w-5 h-5" /></button>
+          <button onClick={onClose} className="lg:hidden text-[#9a7c60] p-1"><X className="w-5 h-5" /></button>
         </div>
-        <p className="text-[10px] uppercase tracking-wider text-[#AFA8C2] mb-3 ml-2">Menu</p>
+        <p className="text-[10px] uppercase tracking-wider text-[#9a7c60] mb-3 ml-2">Menu</p>
         <nav className="space-y-0.5">
           {sidebarNav.map(item => {
             const active = activeSection === 'home' && (activePath === item.path || (item.path !== '/' && activePath.startsWith(item.path)))
             const Icon = item.icon
             return (
               <Link key={item.label} to={item.path} onClick={() => onSection('home')}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors ${active ? 'bg-[#8B5CF6]/10 text-[#8B5CF6]' : 'text-[#AFA8C2] hover:text-white hover:bg-[rgba(139,92,246,0.04)]'}`}>
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors ${active ? 'bg-[#E05A1A]/10 text-[#E05A1A]' : 'text-[#9a7c60] hover:text-white hover:bg-[rgba(240,190,100,0.04)]'}`}>
                 <Icon className="w-4 h-4" /> {item.label}
               </Link>
             )
           })}
         </nav>
       </div>
-      <div className="mt-auto p-5 border-t border-[rgba(139,92,246,0.1)]">
+      <div className="mt-auto p-5 border-t border-[rgba(240,190,100,0.1)]">
         <nav className="space-y-0.5">
           {bottomNav.map(item => {
             const active = activeSection === item.section
             const Icon = item.icon
             return (
               <button key={item.label} onClick={() => { onSection(item.section); onClose?.() }}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors ${active ? 'bg-[#8B5CF6]/10 text-[#8B5CF6]' : 'text-[#AFA8C2] hover:text-white hover:bg-[rgba(139,92,246,0.04)]'}`}>
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-xs font-medium transition-colors ${active ? 'bg-[#E05A1A]/10 text-[#E05A1A]' : 'text-[#9a7c60] hover:text-white hover:bg-[rgba(240,190,100,0.04)]'}`}>
                 <Icon className="w-4 h-4" />
                 {item.label}
               </button>
             )
           })}
         </nav>
-        <div className="mt-5 rounded-xl p-4 bg-gradient-to-br from-[#0E0A1E] to-[#120A1F] border border-[rgba(139,92,246,0.1)]">
-          <p className="text-[10px] text-[#AFA8C2] mb-2">Download Embassy Radio App</p>
-          <p className="text-[10px] text-[#AFA8C2] mb-3">Take the presence of God with you everywhere.</p>
-          <button className="w-full rounded-lg bg-[#8B5CF6] text-white text-[10px] font-medium py-1.5 flex items-center justify-center gap-1">
+        <div className="mt-5 rounded-xl p-4 bg-gradient-to-br from-[#1a0a02] to-[#2a1208] border border-[rgba(240,190,100,0.1)]">
+          <p className="text-[10px] text-[#9a7c60] mb-2">Download Embassy Radio App</p>
+          <p className="text-[10px] text-[#9a7c60] mb-3">Take the presence of God with you everywhere.</p>
+          <button className="w-full rounded-lg bg-[#E05A1A] text-white text-[10px] font-medium py-1.5 flex items-center justify-center gap-1">
             <Smartphone className="w-3 h-3" /> Get App
           </button>
         </div>
@@ -108,7 +108,7 @@ function AudioBars({ active }: { active: boolean }) {
       {bars.map((h,i) => {
         const isActive = active && i%3===0
         return (
-          <span key={i} className="w-[2.5px] rounded-full bg-[#8B5CF6]/60"
+          <span key={i} className="w-[2.5px] rounded-full bg-[#E05A1A]/60"
             style={{height: isActive?`${h}%`:'30%', animation: isActive?'pulse 1.2s ease-in-out infinite':undefined, animationDelay: isActive?`${i*0.05}s`:undefined}} />
         )
       })}
@@ -121,14 +121,14 @@ function LivePlayerHero({ broadcast, isPlaying, setIsPlaying, isMuted, setIsMute
   const navigate = useNavigate()
   const liveUrl = broadcast?.id ? `/live/${broadcast.id}` : '/live'
   return (
-    <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-gradient-to-br from-[#0E0A1E] to-[#120A1F] overflow-hidden mb-5">
+    <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-gradient-to-br from-[#1a0a02] to-[#2a1208] overflow-hidden mb-5">
       <div className="relative">
-        <div className="aspect-[21/9] md:aspect-[3/1] bg-gradient-to-r from-[#0E0A1E] via-[#07041A] to-[#120A1F] flex items-center justify-center overflow-hidden">
+        <div className="aspect-[21/9] md:aspect-[3/1] bg-gradient-to-r from-[#1a0a02] via-[#07041A] to-[#2a1208] flex items-center justify-center overflow-hidden">
           <img src="https://images.unsplash.com/photo-1507692049790-de58290a4334?auto=format&fit=crop&w=1200&q=80" alt="" className="absolute inset-0 w-full h-full object-cover opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0E0A1E]/80 via-transparent to-[#0E0A1E]/60" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#1a0a02]/80 via-transparent to-[#1a0a02]/60" />
           <div className="relative flex flex-col md:flex-row items-center md:items-end gap-4 md:gap-6 px-5 md:px-8 pb-5 md:pb-6 pt-8 md:pt-0 w-full">
-            <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-[#1A1030] to-[#0E0A1E] flex items-center justify-center border border-[#8B5CF6]/20 shrink-0">
-              <Radio className="w-7 h-7 md:w-9 md:h-9 text-[#8B5CF6]/60" />
+            <div className="w-16 h-16 md:w-20 md:h-20 rounded-xl bg-gradient-to-br from-[#2a1208] to-[#1a0a02] flex items-center justify-center border border-[#E05A1A]/20 shrink-0">
+              <Radio className="w-7 h-7 md:w-9 md:h-9 text-[#E05A1A]/60" />
             </div>
             <Link to={liveUrl} className="text-center md:text-left flex-1 group">
               <div className="flex items-center justify-center md:justify-start gap-2 mb-1.5">
@@ -137,17 +137,17 @@ function LivePlayerHero({ broadcast, isPlaying, setIsPlaying, isMuted, setIsMute
                     <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" /> LIVE ON AIR
                   </span>
                 )}
-                <span className="text-[10px] text-[#AFA8C2] uppercase tracking-wider">Embassy Radio Live Radio</span>
+                <span className="text-[10px] text-[#9a7c60] uppercase tracking-wider">Embassy Radio Live Radio</span>
               </div>
-              <h2 className="font-serif text-lg md:text-xl font-medium text-white group-hover:text-[#8B5CF6] transition-colors">{broadcast?.title || 'No broadcast currently live'}</h2>
-              {broadcast?.description && <p className="text-xs text-[#AFA8C2] mt-0.5">{broadcast.description}</p>}
+              <h2 className="font-serif text-lg md:text-xl font-medium text-white group-hover:text-[#E05A1A] transition-colors">{broadcast?.title || 'No broadcast currently live'}</h2>
+              {broadcast?.description && <p className="text-xs text-[#9a7c60] mt-0.5">{broadcast.description}</p>}
             </Link>
             <div className="flex items-center gap-3 shrink-0">
-              <button onClick={() => broadcast?.id ? navigate(liveUrl) : setIsPlaying(!isPlaying)} className="w-12 h-12 rounded-full bg-[#8B5CF6] hover:bg-[#7C3AED] flex items-center justify-center transition-colors">
+              <button onClick={() => broadcast?.id ? navigate(liveUrl) : setIsPlaying(!isPlaying)} className="w-12 h-12 rounded-full bg-[#E05A1A] hover:bg-[#c44a14] flex items-center justify-center transition-colors">
                 {isPlaying ? <Pause className="w-5 h-5 text-white fill-current" /> : <Play className="w-5 h-5 text-white fill-current ml-0.5" />}
               </button>
-              <button onClick={()=>setIsMuted(!isMuted)} className="w-10 h-10 rounded-full bg-[rgba(139,92,246,0.1)] hover:bg-[rgba(139,92,246,0.15)] flex items-center justify-center transition-colors">
-                {isMuted ? <VolumeX className="w-4 h-4 text-[#AFA8C2]" /> : <Volume2 className="w-4 h-4 text-[#AFA8C2]" />}
+              <button onClick={()=>setIsMuted(!isMuted)} className="w-10 h-10 rounded-full bg-[rgba(240,190,100,0.1)] hover:bg-[rgba(240,190,100,0.15)] flex items-center justify-center transition-colors">
+                {isMuted ? <VolumeX className="w-4 h-4 text-[#9a7c60]" /> : <Volume2 className="w-4 h-4 text-[#9a7c60]" />}
               </button>
             </div>
           </div>
@@ -158,16 +158,16 @@ function LivePlayerHero({ broadcast, isPlaying, setIsPlaying, isMuted, setIsMute
         <div className="flex items-center justify-between mt-3">
           <div className="flex items-center gap-4">
             <div>
-              <p className="text-[10px] text-[#AFA8C2] uppercase tracking-wider">Status</p>
-              <p className="text-lg font-semibold text-white">{isLive ? <span className="text-[#4ade80] text-xs font-normal">● LIVE</span> : <span className="text-xs font-normal text-[#AFA8C2]">OFFLINE</span>}</p>
+              <p className="text-[10px] text-[#9a7c60] uppercase tracking-wider">Status</p>
+              <p className="text-lg font-semibold text-white">{isLive ? <span className="text-[#4ade80] text-xs font-normal">● LIVE</span> : <span className="text-xs font-normal text-[#9a7c60]">OFFLINE</span>}</p>
             </div>
-            <div className="h-8 w-px bg-[rgba(139,92,246,0.1)]" />
+            <div className="h-8 w-px bg-[rgba(240,190,100,0.1)]" />
             <div>
-              <p className="text-[10px] text-[#AFA8C2] uppercase tracking-wider">Stream Quality</p>
+              <p className="text-[10px] text-[#9a7c60] uppercase tracking-wider">Stream Quality</p>
               <p className="text-xs text-white font-medium">High <TrendingUp className="w-3 h-3 text-[#4ade80] inline ml-1" /></p>
             </div>
           </div>
-          <Link to={liveUrl} className="flex items-center gap-2 bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-xs font-medium px-4 py-2 rounded-full transition-colors">
+          <Link to={liveUrl} className="flex items-center gap-2 bg-[#E05A1A] hover:bg-[#c44a14] text-white text-xs font-medium px-4 py-2 rounded-full transition-colors">
             <Headphones className="w-3.5 h-3.5" /> Open Player
           </Link>
         </div>
@@ -178,16 +178,16 @@ function LivePlayerHero({ broadcast, isPlaying, setIsPlaying, isMuted, setIsMute
 
 function QuickCard({ icon: Icon, title, subtitle, actionLabel, to, accent }: any) {
   return (
-    <Link to={to} className="group block rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5 hover:border-[rgba(139,92,246,0.18)] transition-all duration-300 hover-lift">
+    <Link to={to} className="group block rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5 hover:border-[rgba(240,190,100,0.18)] transition-all duration-300 hover-lift">
       <div className="flex items-start justify-between mb-4">
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${accent} transition-transform duration-300 group-hover:scale-110`}>
           <Icon className="w-5 h-5" />
         </div>
-        <ChevronRight className="w-4 h-4 text-[#AFA8C2] group-hover:text-[#8B5CF6] transition-all duration-300 group-hover:translate-x-1" />
+        <ChevronRight className="w-4 h-4 text-[#9a7c60] group-hover:text-[#E05A1A] transition-all duration-300 group-hover:translate-x-1" />
       </div>
       <h3 className="text-sm font-medium text-white mb-1">{title}</h3>
-      <p className="text-xs text-[#AFA8C2] leading-relaxed mb-4">{subtitle}</p>
-      <span className="inline-flex items-center text-[11px] font-medium text-[#8B5CF6] bg-[#8B5CF6]/10 px-3 py-1.5 rounded-lg group-hover:bg-[#8B5CF6]/20 transition-colors">{actionLabel}</span>
+      <p className="text-xs text-[#9a7c60] leading-relaxed mb-4">{subtitle}</p>
+      <span className="inline-flex items-center text-[11px] font-medium text-[#E05A1A] bg-[#E05A1A]/10 px-3 py-1.5 rounded-lg group-hover:bg-[#E05A1A]/20 transition-colors">{actionLabel}</span>
     </Link>
   )
 }
@@ -195,9 +195,9 @@ function QuickCard({ icon: Icon, title, subtitle, actionLabel, to, accent }: any
 const SermonRow = memo(function SermonRow({ s }: { s: Sermon }) {
   const { playTrack } = useAudioPlayer()
   return (
-    <div className="group flex items-center gap-3 p-2.5 rounded-xl hover:bg-[rgba(139,92,246,0.04)] transition-colors">
-      <Link to={`/archive/${s.id}`} className="relative w-10 h-10 rounded-lg bg-[#120A1F] overflow-hidden shrink-0">
-        {s.thumbnail_url ? <img src={s.thumbnail_url} alt={`${s.title} sermon thumbnail`} loading="lazy" className="w-full h-full object-cover" /> : <BookOpen className="w-4 h-4 text-[#AFA8C2] m-2.5" />}
+    <div className="group flex items-center gap-3 p-2.5 rounded-xl hover:bg-[rgba(240,190,100,0.04)] transition-colors">
+      <Link to={`/archive/${s.id}`} className="relative w-10 h-10 rounded-lg bg-[#2a1208] overflow-hidden shrink-0">
+        {s.thumbnail_url ? <img src={s.thumbnail_url} alt={`${s.title} sermon thumbnail`} loading="lazy" className="w-full h-full object-cover" /> : <BookOpen className="w-4 h-4 text-[#9a7c60] m-2.5" />}
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="w-5 h-5 rounded-full bg-black/50 flex items-center justify-center">
             <Play className="w-3 h-3 text-white fill-white" />
@@ -205,19 +205,19 @@ const SermonRow = memo(function SermonRow({ s }: { s: Sermon }) {
         </div>
       </Link>
       <Link to={`/archive/${s.id}`} className="flex-1 min-w-0">
-        <p className="text-xs font-medium text-white truncate group-hover:text-[#8B5CF6] transition-colors">{s.title}</p>
-        <p className="text-[10px] text-[#AFA8C2]">{s.speaker || 'Pastor'} � {new Date(s.date).toLocaleDateString()}</p>
+        <p className="text-xs font-medium text-white truncate group-hover:text-[#E05A1A] transition-colors">{s.title}</p>
+        <p className="text-[10px] text-[#9a7c60]">{s.speaker || 'Pastor'} � {new Date(s.date).toLocaleDateString()}</p>
       </Link>
       <div className="flex items-center gap-2 shrink-0">
         {s.audio_url && (
           <button
             onClick={() => playTrack({ id: s.id, title: s.title, speaker: s.speaker || 'Pastor', audioUrl: s.audio_url!, thumbnail: s.thumbnail_url })}
-            className="w-7 h-7 rounded-full bg-[#8B5CF6] flex items-center justify-center text-white transition-transform hover:scale-110"
+            className="w-7 h-7 rounded-full bg-[#E05A1A] flex items-center justify-center text-white transition-transform hover:scale-110"
           >
             <Play className="w-3 h-3 fill-current ml-0.5" />
           </button>
         )}
-        <span className="text-[10px] text-[#AFA8C2]">{s.duration ? Math.round(s.duration/60)+' min' : '45 min'}</span>
+        <span className="text-[10px] text-[#9a7c60]">{s.duration ? Math.round(s.duration/60)+' min' : '45 min'}</span>
         <BookmarkButton sermonId={s.id} />
       </div>
     </div>
@@ -231,7 +231,7 @@ function BookmarkButton({ sermonId }: { sermonId: string }) {
   return (
     <button onClick={() => toggle.mutate(sermonId)} disabled={toggle.isPending}
       className="transition-colors" title={bookmarked ? 'Remove bookmark' : 'Save sermon'}>
-      <Bookmark className={`w-3.5 h-3.5 ${bookmarked ? 'text-[#8B5CF6] fill-current' : 'text-[#AFA8C2]'}`} />
+      <Bookmark className={`w-3.5 h-3.5 ${bookmarked ? 'text-[#E05A1A] fill-current' : 'text-[#9a7c60]'}`} />
     </button>
   )
 }
@@ -241,20 +241,20 @@ function ProfilePanel({ user }: { user: any }) {
   const initial = user?.name?.[0]?.toUpperCase() || 'L'
   return (
     <div className="space-y-5">
-      <h2 className="text-base font-semibold text-white flex items-center gap-2"><User className="w-4 h-4 text-[#8B5CF6]" /> My Profile</h2>
-      <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-6">
+      <h2 className="text-base font-semibold text-white flex items-center gap-2"><User className="w-4 h-4 text-[#E05A1A]" /> My Profile</h2>
+      <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-6">
         <div className="flex items-center gap-4 mb-6">
-          <div className="w-16 h-16 rounded-full bg-[#8B5CF6] flex items-center justify-center text-white text-2xl font-bold">{initial}</div>
+          <div className="w-16 h-16 rounded-full bg-[#E05A1A] flex items-center justify-center text-white text-2xl font-bold">{initial}</div>
           <div>
             <p className="text-base font-medium text-white">{user?.name || 'Listener'}</p>
-            <p className="text-xs text-[#AFA8C2]">{user?.email}</p>
-            <span className="inline-block mt-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-[#8B5CF6]/10 text-[#8B5CF6]">{user?.role}</span>
+            <p className="text-xs text-[#9a7c60]">{user?.email}</p>
+            <span className="inline-block mt-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-[#E05A1A]/10 text-[#E05A1A]">{user?.role}</span>
           </div>
         </div>
         <div className="space-y-3">
           {[{ label: 'Full Name', value: user?.name || '—' }, { label: 'Email', value: user?.email || '—' }, { label: 'Member Since', value: user?.created_at ? new Date(user.created_at).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) : '—' }].map(row => (
-            <div key={row.label} className="flex justify-between items-center py-2 border-b border-[rgba(139,92,246,0.08)]">
-              <span className="text-xs text-[#AFA8C2]">{row.label}</span>
+            <div key={row.label} className="flex justify-between items-center py-2 border-b border-[rgba(240,190,100,0.08)]">
+              <span className="text-xs text-[#9a7c60]">{row.label}</span>
               <span className="text-xs text-white font-medium">{row.value}</span>
             </div>
           ))}
@@ -267,11 +267,11 @@ function ProfilePanel({ user }: { user: any }) {
 function NotificationsPanel() {
   return (
     <div className="space-y-5">
-      <h2 className="text-base font-semibold text-white flex items-center gap-2"><Bell className="w-4 h-4 text-[#8B5CF6]" /> Notifications</h2>
-      <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-6 text-center">
-        <Bell className="w-10 h-10 text-[#AFA8C2] mx-auto mb-3" />
+      <h2 className="text-base font-semibold text-white flex items-center gap-2"><Bell className="w-4 h-4 text-[#E05A1A]" /> Notifications</h2>
+      <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-6 text-center">
+        <Bell className="w-10 h-10 text-[#9a7c60] mx-auto mb-3" />
         <p className="text-sm text-white font-medium mb-1">All caught up</p>
-        <p className="text-xs text-[#AFA8C2]">No new notifications right now. We'll let you know when a broadcast goes live, a new sermon drops, or your prayer is answered.</p>
+        <p className="text-xs text-[#9a7c60]">No new notifications right now. We'll let you know when a broadcast goes live, a new sermon drops, or your prayer is answered.</p>
       </div>
     </div>
   )
@@ -281,16 +281,16 @@ function SavedPanel() {
   const { data: sermons = [], isLoading } = useBookmarks()
   return (
     <div className="space-y-5">
-      <h2 className="text-base font-semibold text-white flex items-center gap-2"><Bookmark className="w-4 h-4 text-[#8B5CF6]" /> Saved Sermons</h2>
-      <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5">
+      <h2 className="text-base font-semibold text-white flex items-center gap-2"><Bookmark className="w-4 h-4 text-[#E05A1A]" /> Saved Sermons</h2>
+      <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5">
         {isLoading ? (
-          <div className="flex justify-center py-8"><div className="w-6 h-6 border-2 border-[#8B5CF6] border-t-transparent rounded-full animate-spin" /></div>
+          <div className="flex justify-center py-8"><div className="w-6 h-6 border-2 border-[#E05A1A] border-t-transparent rounded-full animate-spin" /></div>
         ) : sermons.length === 0 ? (
           <div className="text-center py-8">
-            <Bookmark className="w-10 h-10 text-[#AFA8C2] mx-auto mb-3" />
+            <Bookmark className="w-10 h-10 text-[#9a7c60] mx-auto mb-3" />
             <p className="text-sm text-white font-medium mb-1">No saved sermons yet</p>
-            <p className="text-xs text-[#AFA8C2]">Tap the bookmark icon on any sermon to save it here for later.</p>
-            <Link to="/archive" className="inline-block mt-4 text-xs font-medium text-[#8B5CF6] bg-[#8B5CF6]/10 px-4 py-2 rounded-lg">Browse Sermons</Link>
+            <p className="text-xs text-[#9a7c60]">Tap the bookmark icon on any sermon to save it here for later.</p>
+            <Link to="/archive" className="inline-block mt-4 text-xs font-medium text-[#E05A1A] bg-[#E05A1A]/10 px-4 py-2 rounded-lg">Browse Sermons</Link>
           </div>
         ) : (
           <div className="space-y-1">{sermons.map((s: any) => <SermonRow key={s.id} s={s} />)}</div>
@@ -306,23 +306,23 @@ function HistoryPanel() {
   return (
     <div className="space-y-5">
       <div className="flex items-center justify-between">
-        <h2 className="text-base font-semibold text-white flex items-center gap-2"><History className="w-4 h-4 text-[#8B5CF6]" /> Listening History</h2>
+        <h2 className="text-base font-semibold text-white flex items-center gap-2"><History className="w-4 h-4 text-[#E05A1A]" /> Listening History</h2>
         {sermons.length > 0 && (
           <button onClick={() => clearHistory.mutate()} disabled={clearHistory.isPending}
-            className="text-[11px] text-[#AFA8C2] hover:text-[#ef4444] transition-colors disabled:opacity-50">
+            className="text-[11px] text-[#9a7c60] hover:text-[#ef4444] transition-colors disabled:opacity-50">
             Clear history
           </button>
         )}
       </div>
-      <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5">
+      <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5">
         {isLoading ? (
-          <div className="flex justify-center py-8"><div className="w-6 h-6 border-2 border-[#8B5CF6] border-t-transparent rounded-full animate-spin" /></div>
+          <div className="flex justify-center py-8"><div className="w-6 h-6 border-2 border-[#E05A1A] border-t-transparent rounded-full animate-spin" /></div>
         ) : sermons.length === 0 ? (
           <div className="text-center py-8">
-            <History className="w-10 h-10 text-[#AFA8C2] mx-auto mb-3" />
+            <History className="w-10 h-10 text-[#9a7c60] mx-auto mb-3" />
             <p className="text-sm text-white font-medium mb-1">No listening history</p>
-            <p className="text-xs text-[#AFA8C2]">Sermons you play will appear here.</p>
-            <Link to="/archive" className="inline-block mt-4 text-xs font-medium text-[#8B5CF6] bg-[#8B5CF6]/10 px-4 py-2 rounded-lg">Start Listening</Link>
+            <p className="text-xs text-[#9a7c60]">Sermons you play will appear here.</p>
+            <Link to="/archive" className="inline-block mt-4 text-xs font-medium text-[#E05A1A] bg-[#E05A1A]/10 px-4 py-2 rounded-lg">Start Listening</Link>
           </div>
         ) : (
           <div className="space-y-1">{sermons.map((s: any) => <SermonRow key={s.id} s={s} />)}</div>
@@ -335,33 +335,33 @@ function HistoryPanel() {
 function SettingsPanel({ pushEnabled, pushSupported, requestPush, disablePush, loadingPush, biometricSupported, biometricRegistered, registerBiometric, loadingBiometric }: any) {
   return (
     <div className="space-y-5">
-      <h2 className="text-base font-semibold text-white flex items-center gap-2"><Settings className="w-4 h-4 text-[#8B5CF6]" /> Settings</h2>
-      <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5 space-y-5">
+      <h2 className="text-base font-semibold text-white flex items-center gap-2"><Settings className="w-4 h-4 text-[#E05A1A]" /> Settings</h2>
+      <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5 space-y-5">
         <div>
-          <p className="text-xs font-semibold text-white mb-1 flex items-center gap-1.5"><Bell className="w-3.5 h-3.5 text-[#8B5CF6]" /> Push Notifications</p>
-          <p className="text-[11px] text-[#AFA8C2] mb-3">Get alerted when we go live, new sermons drop, or you receive a reply.</p>
+          <p className="text-xs font-semibold text-white mb-1 flex items-center gap-1.5"><Bell className="w-3.5 h-3.5 text-[#E05A1A]" /> Push Notifications</p>
+          <p className="text-[11px] text-[#9a7c60] mb-3">Get alerted when we go live, new sermons drop, or you receive a reply.</p>
           {!pushSupported ? (
-            <p className="text-[10px] text-[#AFA8C2] border border-[rgba(139,92,246,0.1)] rounded-lg p-3">Not supported in this browser.</p>
+            <p className="text-[10px] text-[#9a7c60] border border-[rgba(240,190,100,0.1)] rounded-lg p-3">Not supported in this browser.</p>
           ) : (
             <button onClick={pushEnabled ? disablePush : requestPush} disabled={loadingPush}
               className={`w-full py-2.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 ${
                 pushEnabled ? 'bg-[rgba(239,68,68,0.1)] text-[#ef4444] border border-[#ef4444]/20 hover:bg-[rgba(239,68,68,0.2)]'
-                : 'bg-[#8B5CF6] hover:bg-[#7C3AED] text-white'}`}>
+                : 'bg-[#E05A1A] hover:bg-[#c44a14] text-white'}`}>
               {loadingPush ? '...' : pushEnabled ? 'Disable Notifications' : 'Enable Notifications'}
             </button>
           )}
         </div>
-        <div className="h-px bg-[rgba(139,92,246,0.1)]" />
+        <div className="h-px bg-[rgba(240,190,100,0.1)]" />
         <div>
-          <p className="text-xs font-semibold text-white mb-1 flex items-center gap-1.5"><Fingerprint className="w-3.5 h-3.5 text-[#8B5CF6]" /> Biometric Login</p>
-          <p className="text-[11px] text-[#AFA8C2] mb-3">Register your fingerprint or face ID for quick, passwordless sign-in.</p>
+          <p className="text-xs font-semibold text-white mb-1 flex items-center gap-1.5"><Fingerprint className="w-3.5 h-3.5 text-[#E05A1A]" /> Biometric Login</p>
+          <p className="text-[11px] text-[#9a7c60] mb-3">Register your fingerprint or face ID for quick, passwordless sign-in.</p>
           {!biometricSupported ? (
-            <p className="text-[10px] text-[#AFA8C2] border border-[rgba(139,92,246,0.1)] rounded-lg p-3">Not supported on this device.</p>
+            <p className="text-[10px] text-[#9a7c60] border border-[rgba(240,190,100,0.1)] rounded-lg p-3">Not supported on this device.</p>
           ) : (
             <button onClick={biometricRegistered ? undefined : registerBiometric} disabled={loadingBiometric || biometricRegistered}
               className={`w-full py-2.5 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 ${
                 biometricRegistered ? 'bg-[rgba(74,222,128,0.1)] text-[#4ade80] border border-[#4ade80]/20 cursor-default'
-                : 'bg-[#8B5CF6] hover:bg-[#7C3AED] text-white'}`}>
+                : 'bg-[#E05A1A] hover:bg-[#c44a14] text-white'}`}>
               {loadingBiometric ? '...' : biometricRegistered ? '✓ Biometric Registered' : 'Register Biometric'}
             </button>
           )}
@@ -468,16 +468,16 @@ export default function MemberDashboard() {
         <main className="flex-1 min-w-0 px-3 sm:px-4 md:px-6 py-4 md:py-6">
           {/* Mobile header bar */}
           <div className="lg:hidden flex items-center justify-between mb-4">
-            <button onClick={()=>setMobileSidebarOpen(true)} className="flex items-center gap-2 text-[#AFA8C2]">
+            <button onClick={()=>setMobileSidebarOpen(true)} className="flex items-center gap-2 text-[#9a7c60]">
               <Menu className="w-5 h-5" />
               <span className="text-xs">Menu</span>
             </button>
             <div className="flex items-center gap-2">
-              <button className="relative w-8 h-8 rounded-full bg-[#0E0A1E] border border-[rgba(139,92,246,0.1)] flex items-center justify-center">
-                <Bell className="w-4 h-4 text-[#AFA8C2]" />
+              <button className="relative w-8 h-8 rounded-full bg-[#1a0a02] border border-[rgba(240,190,100,0.1)] flex items-center justify-center">
+                <Bell className="w-4 h-4 text-[#9a7c60]" />
                 <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[#F59E0B]" />
               </button>
-              <div className="w-8 h-8 rounded-full bg-[#8B5CF6] flex items-center justify-center text-white text-xs font-bold">
+              <div className="w-8 h-8 rounded-full bg-[#E05A1A] flex items-center justify-center text-white text-xs font-bold">
                 {user.name?.[0]?.toUpperCase()||'L'}
               </div>
             </div>
@@ -494,25 +494,25 @@ export default function MemberDashboard() {
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <p className="text-xs text-[#AFA8C2]">{greeting()},</p>
+                  <p className="text-xs text-[#9a7c60]">{greeting()},</p>
                   <h1 className="text-xl font-serif font-medium text-white">Welcome back, {user.name?.split(' ')[0]||'Listener'}! ??</h1>
-                  <p className="text-xs text-[#AFA8C2] mt-0.5">We&apos;re glad to have you with us today. Stay connected, be blessed.</p>
+                  <p className="text-xs text-[#9a7c60] mt-0.5">We&apos;re glad to have you with us today. Stay connected, be blessed.</p>
                 </div>
                 <div className="flex items-center gap-3">
-                  <div className="hidden md:flex items-center bg-[#0E0A1E] rounded-full px-3 py-1.5 border border-[rgba(139,92,246,0.1)]">
-                    <Search className="w-3.5 h-3.5 text-[#AFA8C2] mr-2" />
-                    <input type="text" placeholder="Search sermons, topics, speakers..." className="bg-transparent text-xs text-white placeholder-[#AFA8C2] outline-none w-44" />
+                  <div className="hidden md:flex items-center bg-[#1a0a02] rounded-full px-3 py-1.5 border border-[rgba(240,190,100,0.1)]">
+                    <Search className="w-3.5 h-3.5 text-[#9a7c60] mr-2" />
+                    <input type="text" placeholder="Search sermons, topics, speakers..." className="bg-transparent text-xs text-white placeholder-[#9a7c60] outline-none w-44" />
                   </div>
-                  <button className="relative w-9 h-9 rounded-full bg-[#0E0A1E] border border-[rgba(139,92,246,0.1)] flex items-center justify-center">
-                    <Bell className="w-4 h-4 text-[#AFA8C2]" />
+                  <button className="relative w-9 h-9 rounded-full bg-[#1a0a02] border border-[rgba(240,190,100,0.1)] flex items-center justify-center">
+                    <Bell className="w-4 h-4 text-[#9a7c60]" />
                     <span className="absolute top-0 right-0 w-2 h-2 rounded-full bg-[#F59E0B]" />
                   </button>
-                  <div className="flex items-center gap-2 pl-2 border-l border-[rgba(139,92,246,0.1)]">
+                  <div className="flex items-center gap-2 pl-2 border-l border-[rgba(240,190,100,0.1)]">
                     <div className="text-right hidden sm:block">
                       <p className="text-xs text-white font-medium">{user.name}</p>
-                      <p className="text-[10px] text-[#AFA8C2] capitalize">{user.role}</p>
+                      <p className="text-[10px] text-[#9a7c60] capitalize">{user.role}</p>
                     </div>
-                    <div className="w-9 h-9 rounded-full bg-[#8B5CF6] flex items-center justify-center text-white text-xs font-bold">
+                    <div className="w-9 h-9 rounded-full bg-[#E05A1A] flex items-center justify-center text-white text-xs font-bold">
                       {user.name?.[0]?.toUpperCase()||'L'}
                     </div>
                   </div>
@@ -524,61 +524,61 @@ export default function MemberDashboard() {
 
               {/* Quick Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <QuickCard icon={BookOpen} title="Sermon Library" subtitle="Grow in the Word. Explore life-changing messages." actionLabel="Explore" to="/archive" accent="bg-[#8B5CF6]/10 text-[#8B5CF6]" />
+                <QuickCard icon={BookOpen} title="Sermon Library" subtitle="Grow in the Word. Explore life-changing messages." actionLabel="Explore" to="/archive" accent="bg-[#E05A1A]/10 text-[#E05A1A]" />
                 <QuickCard icon={BookOpenCheck} title="Sermon Transcripts" subtitle="Read, study, download. Auto-generated transcripts for deeper understanding." actionLabel="View Transcripts" to="/archive" accent="bg-[#C084FC]/10 text-[#C084FC]" />
               </div>
               {/* Prayer / Testimony / Chat */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                 {/* Prayer Wall */}
-                <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5">
+                <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2"><Heart className="w-4 h-4 text-[#8B5CF6]" /><h3 className="text-sm font-medium text-white">Live Prayer Wall</h3></div>
-                    <Link to="/prayer" className="text-[11px] text-[#8B5CF6]">View all</Link>
+                    <div className="flex items-center gap-2"><Heart className="w-4 h-4 text-[#E05A1A]" /><h3 className="text-sm font-medium text-white">Live Prayer Wall</h3></div>
+                    <Link to="/prayer" className="text-[11px] text-[#E05A1A]">View all</Link>
                   </div>
                   <div className="space-y-3 mb-4">
                     {prayers.map(p=> (
-                      <div key={p.id} className="flex items-start gap-3 p-3 rounded-xl bg-[#120A1F]">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8B5CF6]/20 to-[#F59E0B]/20 flex items-center justify-center shrink-0"><User className="w-3.5 h-3.5 text-[#8B5CF6]" /></div>
+                      <div key={p.id} className="flex items-start gap-3 p-3 rounded-xl bg-[#2a1208]">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#E05A1A]/20 to-[#F59E0B]/20 flex items-center justify-center shrink-0"><User className="w-3.5 h-3.5 text-[#E05A1A]" /></div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-medium text-white">{p.is_anonymous?'Anonymous':(p.name||'Anonymous')}</p>
-                          <p className="text-[11px] text-[#AFA8C2] mt-0.5 line-clamp-2">{p.request}</p>
+                          <p className="text-[11px] text-[#9a7c60] mt-0.5 line-clamp-2">{p.request}</p>
                         </div>
-                        <button onClick={()=>handlePrayFor(p.id)} className="shrink-0 text-[10px] text-[#8B5CF6] border border-[#8B5CF6]/20 px-2 py-1 rounded-lg hover:bg-[#8B5CF6]/10 transition-colors">Pray</button>
+                        <button onClick={()=>handlePrayFor(p.id)} className="shrink-0 text-[10px] text-[#E05A1A] border border-[#E05A1A]/20 px-2 py-1 rounded-lg hover:bg-[#E05A1A]/10 transition-colors">Pray</button>
                       </div>
                     ))}
-                    {prayers.length===0 && <p className="text-xs text-[#AFA8C2] text-center py-4">No prayers yet. Be the first!</p>}
+                    {prayers.length===0 && <p className="text-xs text-[#9a7c60] text-center py-4">No prayers yet. Be the first!</p>}
                   </div>
                 </div>
 
                 {/* Testimony Corner */}
-                <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5">
+                <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2"><MessageSquare className="w-4 h-4 text-[#8B5CF6]" /><h3 className="text-sm font-medium text-white">Testimony Corner</h3></div>
-                    <Link to="/testimonies" className="text-[11px] text-[#8B5CF6]">View all</Link>
+                    <div className="flex items-center gap-2"><MessageSquare className="w-4 h-4 text-[#E05A1A]" /><h3 className="text-sm font-medium text-white">Testimony Corner</h3></div>
+                    <Link to="/testimonies" className="text-[11px] text-[#E05A1A]">View all</Link>
                   </div>
                   {testimonies.length>0 ? (
-                    <div className="p-4 rounded-xl bg-[#120A1F] mb-4">
-                      <p className="text-xs text-[#AFA8C2] leading-relaxed line-clamp-4">&ldquo;{testimonies[0].content}&rdquo;</p>
-                      <p className="text-[11px] text-[#8B5CF6] mt-2">� {testimonies[0].name}</p>
+                    <div className="p-4 rounded-xl bg-[#2a1208] mb-4">
+                      <p className="text-xs text-[#9a7c60] leading-relaxed line-clamp-4">&ldquo;{testimonies[0].content}&rdquo;</p>
+                      <p className="text-[11px] text-[#E05A1A] mt-2">� {testimonies[0].name}</p>
                     </div>
                   ) : (
-                    <div className="p-4 rounded-xl bg-[#120A1F] mb-4 text-center">
-                      <p className="text-xs text-[#AFA8C2]">No testimonies yet. Be the first to share!</p>
+                    <div className="p-4 rounded-xl bg-[#2a1208] mb-4 text-center">
+                      <p className="text-xs text-[#9a7c60]">No testimonies yet. Be the first to share!</p>
                     </div>
                   )}
-                  <button className="w-full py-2.5 rounded-lg bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-xs font-medium transition-colors">Share Your Testimony</button>
+                  <button className="w-full py-2.5 rounded-lg bg-[#E05A1A] hover:bg-[#c44a14] text-white text-xs font-medium transition-colors">Share Your Testimony</button>
                 </div>
 
                 {/* Community Chat */}
-                <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5 flex flex-col h-full">
+                <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5 flex flex-col h-full">
                   <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center gap-2"><Users className="w-4 h-4 text-[#8B5CF6]" /><h3 className="text-sm font-medium text-white">Community Chat</h3></div>
-                    <Link to={broadcast?`/live/${broadcast.id}`:'/live'} className="text-[11px] text-[#8B5CF6]">Join chat</Link>
+                    <div className="flex items-center gap-2"><Users className="w-4 h-4 text-[#E05A1A]" /><h3 className="text-sm font-medium text-white">Community Chat</h3></div>
+                    <Link to={broadcast?`/live/${broadcast.id}`:'/live'} className="text-[11px] text-[#E05A1A]">Join chat</Link>
                   </div>
                   <div className="flex-1 space-y-3 mb-4 min-h-[120px]">
                     {chatMessages.map(msg => {
                       const initials = (msg.user_name || 'Guest').split(' ').map((n:string)=>n[0]).join('').slice(0,2).toUpperCase()
-                      const colors = ['#8B5CF6','#34D399','#C084FC','#60A5FA','#A855F7']
+                      const colors = ['#E05A1A','#34D399','#C084FC','#60A5FA','#A855F7']
                       const color = colors[(msg.user_name || 'G').charCodeAt(0) % colors.length]
                       return (
                         <div key={msg.id} className="flex items-start gap-2.5">
@@ -588,109 +588,109 @@ export default function MemberDashboard() {
                           <div className="flex-1">
                             <div className="flex items-center gap-2">
                               <span className="text-[11px] font-medium text-white">{msg.user_name || 'Guest'}</span>
-                              <span className="text-[10px] text-[#AFA8C2]">{new Date(msg.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
+                              <span className="text-[10px] text-[#9a7c60]">{new Date(msg.created_at).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
                             </div>
-                            <p className="text-[11px] text-[#AFA8C2] mt-0.5">{msg.message}</p>
+                            <p className="text-[11px] text-[#9a7c60] mt-0.5">{msg.message}</p>
                           </div>
                         </div>
                       )
                     })}
-                    {chatMessages.length===0 && <p className="text-xs text-[#AFA8C2] text-center py-4">No messages yet. Join the live stream to chat!</p>}
+                    {chatMessages.length===0 && <p className="text-xs text-[#9a7c60] text-center py-4">No messages yet. Join the live stream to chat!</p>}
                   </div>
                   <form onSubmit={sendChatMessage} className="flex items-center gap-2">
-                    <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Type your message..." className="flex-1 bg-[#120A1F] border border-[rgba(139,92,246,0.1)] rounded-lg px-3 py-2 text-xs text-white placeholder-[#AFA8C2] outline-none focus:border-[#8B5CF6]/30" />
-                    <button type="submit" disabled={!chatInput.trim() || !broadcast} className="w-8 h-8 rounded-lg bg-[#8B5CF6] hover:bg-[#7C3AED] flex items-center justify-center transition-colors disabled:opacity-40"><Send className="w-3.5 h-3.5 text-white" /></button>
+                    <input type="text" value={chatInput} onChange={e => setChatInput(e.target.value)} placeholder="Type your message..." className="flex-1 bg-[#2a1208] border border-[rgba(240,190,100,0.1)] rounded-lg px-3 py-2 text-xs text-white placeholder-[#9a7c60] outline-none focus:border-[#E05A1A]/30" />
+                    <button type="submit" disabled={!chatInput.trim() || !broadcast} className="w-8 h-8 rounded-lg bg-[#E05A1A] hover:bg-[#c44a14] flex items-center justify-center transition-colors disabled:opacity-40"><Send className="w-3.5 h-3.5 text-white" /></button>
                   </form>
                 </div>
               </div>
               {/* Listening History + Saved Sermons */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5">
+                <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-medium text-white">Listening History</h3>
-                    <Link to="/history" className="text-[11px] text-[#8B5CF6]">View all</Link>
+                    <Link to="/history" className="text-[11px] text-[#E05A1A]">View all</Link>
                   </div>
                   <div className="space-y-1">
                     {sermons.slice(0,3).map(s=> <SermonRow key={s.id} s={s} />)}
-                    {sermons.length===0 && <p className="text-xs text-[#AFA8C2] text-center py-4">No listening history yet.</p>}
+                    {sermons.length===0 && <p className="text-xs text-[#9a7c60] text-center py-4">No listening history yet.</p>}
                   </div>
                 </div>
-                <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5">
+                <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5">
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="text-sm font-medium text-white">Saved Sermons</h3>
-                    <Link to="/saved" className="text-[11px] text-[#8B5CF6]">View all</Link>
+                    <Link to="/saved" className="text-[11px] text-[#E05A1A]">View all</Link>
                   </div>
                   <div className="space-y-1">
                     {sermons.slice(0,3).map(s=> <SermonRow key={s.id} s={s} />)}
-                    {sermons.length===0 && <p className="text-xs text-[#AFA8C2] text-center py-4">No saved sermons yet.</p>}
+                    {sermons.length===0 && <p className="text-xs text-[#9a7c60] text-center py-4">No saved sermons yet.</p>}
                   </div>
                 </div>
               </div>
             </div>
             <div className="xl:col-span-3 space-y-5">
               {/* Notifications */}
-              <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5">
+              <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5">
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2"><Bell className="w-4 h-4 text-[#8B5CF6]" /><h3 className="text-sm font-medium text-white">Notifications</h3></div>
-                  <span className="text-[11px] text-[#8B5CF6]">View all</span>
+                  <div className="flex items-center gap-2"><Bell className="w-4 h-4 text-[#E05A1A]" /><h3 className="text-sm font-medium text-white">Notifications</h3></div>
+                  <span className="text-[11px] text-[#E05A1A]">View all</span>
                 </div>
                 <div className="space-y-3">
-                  <p className="text-xs text-[#AFA8C2] text-center py-4">No new notifications.</p>
+                  <p className="text-xs text-[#9a7c60] text-center py-4">No new notifications.</p>
                 </div>
               </div>
 
               {/* Upcoming Guest Speaker */}
-              <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5">
+              <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-sm font-medium text-white">Upcoming Guest Speaker</h3>
-                  <span className="text-[11px] text-[#8B5CF6]">View all</span>
+                  <span className="text-[11px] text-[#E05A1A]">View all</span>
                 </div>
-                <div className="rounded-xl overflow-hidden bg-[#120A1F] mb-4">
-                  <div className="aspect-[4/3] bg-gradient-to-br from-[#0E0A1E] to-[#120A1F] flex items-center justify-center">
+                <div className="rounded-xl overflow-hidden bg-[#2a1208] mb-4">
+                  <div className="aspect-[4/3] bg-gradient-to-br from-[#1a0a02] to-[#2a1208] flex items-center justify-center">
                     {guestSpeaker?.photo_url ? (
                       <img src={guestSpeaker.photo_url} alt={guestSpeaker.name} className="w-full h-full object-cover" />
                     ) : (
-                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#1A1030] to-[#0E0A1E] flex items-center justify-center border border-[#8B5CF6]/20">
-                        <Mic2 className="w-8 h-8 text-[#8B5CF6]/40" />
+                      <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#2a1208] to-[#1a0a02] flex items-center justify-center border border-[#E05A1A]/20">
+                        <Mic2 className="w-8 h-8 text-[#E05A1A]/40" />
                       </div>
                     )}
                   </div>
                   <div className="p-4">
                     <p className="text-sm font-medium text-white">{guestSpeaker?.name || 'No upcoming guest speaker'}</p>
-                    <p className="text-[11px] text-[#AFA8C2] mt-0.5">{guestSpeaker?.topic || 'Check back soon for updates.'}</p>
-                    {guestSpeaker?.date && <p className="text-[10px] text-[#AFA8C2] mt-1">{new Date(guestSpeaker.date).toLocaleDateString()} � 6:00 PM</p>}
-                    <button className="mt-3 w-full py-2 rounded-lg bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-xs font-medium transition-colors">Set Reminder</button>
+                    <p className="text-[11px] text-[#9a7c60] mt-0.5">{guestSpeaker?.topic || 'Check back soon for updates.'}</p>
+                    {guestSpeaker?.date && <p className="text-[10px] text-[#9a7c60] mt-1">{new Date(guestSpeaker.date).toLocaleDateString()} � 6:00 PM</p>}
+                    <button className="mt-3 w-full py-2 rounded-lg bg-[#E05A1A] hover:bg-[#c44a14] text-white text-xs font-medium transition-colors">Set Reminder</button>
                   </div>
                 </div>
               </div>
 
               {/* Support the Mission */}
-              <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5">
-                <div className="aspect-[16/9] rounded-xl overflow-hidden mb-4 bg-gradient-to-br from-[#0E0A1E] to-[#120A1F] flex items-center justify-center">
-                  <Heart className="w-8 h-8 text-[#8B5CF6]/40" />
+              <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5">
+                <div className="aspect-[16/9] rounded-xl overflow-hidden mb-4 bg-gradient-to-br from-[#1a0a02] to-[#2a1208] flex items-center justify-center">
+                  <Heart className="w-8 h-8 text-[#E05A1A]/40" />
                 </div>
                 <h3 className="text-sm font-medium text-white mb-1">Support the Mission</h3>
-                <p className="text-[11px] text-[#AFA8C2] mb-4">Your giving makes an eternal impact.</p>
-                <button className="w-full py-2.5 rounded-lg bg-[#8B5CF6] hover:bg-[#7C3AED] text-white text-xs font-medium transition-colors">Give Now</button>
+                <p className="text-[11px] text-[#9a7c60] mb-4">Your giving makes an eternal impact.</p>
+                <button className="w-full py-2.5 rounded-lg bg-[#E05A1A] hover:bg-[#c44a14] text-white text-xs font-medium transition-colors">Give Now</button>
               </div>
 
               {/* Settings */}
-              <div className="rounded-2xl border border-[rgba(139,92,246,0.1)] bg-[#0E0A1E] p-5 space-y-4">
+              <div className="rounded-2xl border border-[rgba(240,190,100,0.1)] bg-[#1a0a02] p-5 space-y-4">
                 <h3 className="text-sm font-medium text-white flex items-center gap-2">
-                  <Settings className="w-4 h-4 text-[#8B5CF6]" /> Settings
+                  <Settings className="w-4 h-4 text-[#E05A1A]" /> Settings
                 </h3>
 
                 {/* Push Notifications */}
                 <div>
-                  <p className="text-[11px] font-medium text-white mb-1 flex items-center gap-1.5"><Bell className="w-3.5 h-3.5 text-[#8B5CF6]" /> Push Notifications</p>
+                  <p className="text-[11px] font-medium text-white mb-1 flex items-center gap-1.5"><Bell className="w-3.5 h-3.5 text-[#E05A1A]" /> Push Notifications</p>
                   {!pushSupported ? (
-                    <p className="text-[10px] text-[#AFA8C2]">Not supported in this browser.</p>
+                    <p className="text-[10px] text-[#9a7c60]">Not supported in this browser.</p>
                   ) : (
                     <button onClick={pushEnabled ? disablePush : requestPush} disabled={loadingPush}
                       className={`w-full py-2 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 ${
                         pushEnabled
                           ? 'bg-[rgba(239,68,68,0.1)] text-[#ef4444] border border-[#ef4444]/20 hover:bg-[rgba(239,68,68,0.2)]'
-                          : 'bg-[#8B5CF6] hover:bg-[#7C3AED] text-white'
+                          : 'bg-[#E05A1A] hover:bg-[#c44a14] text-white'
                       }`}>
                       {loadingPush ? '...' : pushEnabled ? 'Disable Notifications' : 'Enable Notifications'}
                     </button>
@@ -699,15 +699,15 @@ export default function MemberDashboard() {
 
                 {/* Biometric */}
                 <div>
-                  <p className="text-[11px] font-medium text-white mb-1 flex items-center gap-1.5"><Fingerprint className="w-3.5 h-3.5 text-[#8B5CF6]" /> Biometric Login</p>
+                  <p className="text-[11px] font-medium text-white mb-1 flex items-center gap-1.5"><Fingerprint className="w-3.5 h-3.5 text-[#E05A1A]" /> Biometric Login</p>
                   {!biometricSupported ? (
-                    <p className="text-[10px] text-[#AFA8C2]">Not supported on this device.</p>
+                    <p className="text-[10px] text-[#9a7c60]">Not supported on this device.</p>
                   ) : (
                     <button onClick={biometricRegistered ? undefined : registerBiometric} disabled={loadingBiometric || biometricRegistered}
                       className={`w-full py-2 rounded-lg text-xs font-medium transition-colors disabled:opacity-50 ${
                         biometricRegistered
                           ? 'bg-[rgba(74,222,128,0.1)] text-[#4ade80] border border-[#4ade80]/20 cursor-default'
-                          : 'bg-[#8B5CF6] hover:bg-[#7C3AED] text-white'
+                          : 'bg-[#E05A1A] hover:bg-[#c44a14] text-white'
                       }`}>
                       {loadingBiometric ? '...' : biometricRegistered ? '? Biometric Registered' : 'Register Biometric'}
                     </button>
@@ -717,17 +717,17 @@ export default function MemberDashboard() {
             </div>
           </div>}
           {/* Footer */}
-          <div className="mt-8 py-4 border-t border-[rgba(139,92,246,0.1)] flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
+          <div className="mt-8 py-4 border-t border-[rgba(240,190,100,0.1)] flex flex-col sm:flex-row items-center justify-between gap-2 text-center sm:text-left">
             <div className="flex items-center gap-2">
-              <Cross className="w-4 h-4 text-[#8B5CF6]" />
-              <span className="text-xs text-[#AFA8C2]">Embassy Radio — <span className="text-[10px] uppercase tracking-wider">Word and Miracle Embassy Church</span></span>
+              <Cross className="w-4 h-4 text-[#E05A1A]" />
+              <span className="text-xs text-[#9a7c60]">Embassy Radio — <span className="text-[10px] uppercase tracking-wider">Word and Miracle Embassy Church</span></span>
             </div>
-            <p className="text-[10px] text-[#AFA8C2] italic">&ldquo;Go into all the world and preach the gospel to all creation.&rdquo; � Mark 16:15</p>
+            <p className="text-[10px] text-[#9a7c60] italic">&ldquo;Go into all the world and preach the gospel to all creation.&rdquo; � Mark 16:15</p>
           </div>
         </main>
       </div>
       {/* Mobile bottom nav */}
-      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-[rgba(139,92,246,0.1)] bg-[#0B061F]/95 backdrop-blur-md flex items-center justify-around py-2">
+      <div className="lg:hidden fixed bottom-0 inset-x-0 z-40 border-t border-[rgba(240,190,100,0.1)] bg-[#0f0400]/95 backdrop-blur-md flex items-center justify-around py-2">
         {[
           {icon: LayoutDashboard, label: 'Home', section: 'home'},
           {icon: Radio, label: 'Live', path: '/live'},
@@ -740,15 +740,15 @@ export default function MemberDashboard() {
           if (item.path) {
             return (
               <Link key={item.label} to={item.path!} onClick={() => setActiveSection('home')} className="flex flex-col items-center gap-0.5 px-2 py-1">
-                <Icon className={`w-5 h-5 ${active ? 'text-[#8B5CF6]' : 'text-[#AFA8C2]'}`} />
-                <span className={`text-[10px] ${active ? 'text-[#8B5CF6]' : 'text-[#AFA8C2]'}`}>{item.label}</span>
+                <Icon className={`w-5 h-5 ${active ? 'text-[#E05A1A]' : 'text-[#9a7c60]'}`} />
+                <span className={`text-[10px] ${active ? 'text-[#E05A1A]' : 'text-[#9a7c60]'}`}>{item.label}</span>
               </Link>
             )
           }
           return (
             <button key={item.label} onClick={() => setActiveSection(item.section!)} className="flex flex-col items-center gap-0.5 px-2 py-1">
-              <Icon className={`w-5 h-5 ${active ? 'text-[#8B5CF6]' : 'text-[#AFA8C2]'}`} />
-              <span className={`text-[10px] ${active ? 'text-[#8B5CF6]' : 'text-[#AFA8C2]'}`}>{item.label}</span>
+              <Icon className={`w-5 h-5 ${active ? 'text-[#E05A1A]' : 'text-[#9a7c60]'}`} />
+              <span className={`text-[10px] ${active ? 'text-[#E05A1A]' : 'text-[#9a7c60]'}`}>{item.label}</span>
             </button>
           )
         })}
